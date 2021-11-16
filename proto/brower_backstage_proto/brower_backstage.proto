@@ -1,0 +1,1813 @@
+package brower_backstage; 
+import "base.proto";
+import "common.proto";
+import "brower_wish.proto";
+import "game_server/proto/share_message/allcommon.proto";
+import "game_server/proto/share_message/esportCommon.proto";
+import "game_server/proto/share_message/table_struct.proto";
+import "game_server/proto/share_message/table_struct_shop.proto";
+import "game_server/proto/share_message/table_struct_player_base.proto";
+import "game_server/proto/share_message/table_struct_topic.proto";
+import "game_server/proto/share_message/table_struct_coin_shop.proto";
+import "game_server/proto/share_message/table_struct_voice_love.proto";
+
+import "game_server/proto/share_message/table_struct_wish.proto";
+import "game_server/proto/share_message/table_struct_wish_activity.proto";
+import "game_server/proto/share_message/table_struct_e-sports.proto";
+import "game_server/proto/share_message/table_struct_e-sports_api.proto";
+import "game_server/proto/share_message/table_struct_e-sports_bps.proto";
+
+
+//这里是后台的rpc
+//common.proto中有常用的rpc请求和返回的数据结构
+//
+//注册请求
+message SigninRequest {
+	required string Phone = 1;
+	optional int32 Types=2;			//用户类型 1普通用户，2陪聊用户   //验证码类型 1:登录发送验证码  2:注册发送验证码  3：设置支付密码短信验证  4：忘记登录密码短信验证  5:绑定银行卡短信验证
+	optional string Code = 3;		//验证码
+	optional string Password=4; 	//密码
+	optional string Account=5;		//账号
+	optional string AreaCode = 6; //国际才赋值区号，可从玩家账号数据获取
+}
+//注册返回
+message SigninResponse {
+	optional string Url = 1;
+}
+
+//登录返回
+message LoginResponse {
+	optional share_message.Manager User=1;
+	optional share_message.RolePower Power=2;
+	optional string Token=3;
+}
+
+//后台管理员列表返回
+message GetManagerListResponse {
+	repeated share_message.Manager List = 1;
+	optional int32 PageCount = 2; 					//总条数
+}
+
+//查询管理员日志返回
+message ManagerLogResponse {
+	repeated share_message.BackstageOptLog List=1;
+	optional int32 PageCount = 2; 					//总条数
+}
+
+message ManagerTypesResponse {
+	repeated share_message.ManagerTypes List=1;
+	optional int32 PageCount = 2; 					//总条数
+}
+
+// 查询角色权限列表
+message QueryRolePowerList {
+	repeated share_message.RolePower List=1;
+	optional int32 PageCount = 2; 					//总条数
+}
+
+//后台用户列表请求
+message GetPlayerListRequest {
+	optional int32 CurPage = 1;								//当前页
+	optional int32 PageSize = 2;							//每页多少条
+	optional string Keyword=3;								//关键词
+	optional int32 Type=4;									//查询条件 1柠檬号，2昵称，3手机号，4用户收款apiurl,5手机品牌
+	optional int64 BeginTimestamp = 5;						//开始时间戳
+	optional int64 EndTimestamp = 6;						//结束时间戳
+	optional string Sort=7;									//排序字段
+	optional int32 ListType=8;								//查询类型 1普通用户,2营销运营,3商城账号,4管理运营
+	optional int32 IsOnline = 9;							//是否在线
+	optional int32 Sex=10;									//性别 1男 2女
+	optional int32 Role=11;									//管理员类型 2客服
+	repeated string channel=12;								//渠道号
+	repeated int32 Label = 13;								//兴趣标签
+	repeated int32 CustomTag=14;							//自定义标签
+	repeated int32 GrabTag=15;								//抓取标签
+	optional int32 Status=16;								//用户状态
+	optional int32 RegType=17;								//注册来源
+	optional int32 DeviceType=18;							//设备类型
+	optional int32 TimeType=19;								//查询时间类型 1注册时间，2实名认证时间
+	optional int32 WaiterType=20;							//客服类型
+	optional int32 PlayerType=21;							//用户类型 1普通用户，2运营用户
+
+}
+
+//后台批量好友用户列表请求
+message GetPlayerFriendListRequest {
+	optional int32 CurPage = 1;                             //当前页
+	optional int32 PageSize = 2;                            //每页多少条
+	optional string Keyword= 3;                             //柠檬号
+	optional int64 player_id = 4;                           //做好友标记的玩家ID
+	optional int32 gender = 6;                              //性别 1男 2女 不传等于全部
+	optional int32 label = 7;                               //标签
+	optional string province = 8;                           //省 不传等于全部
+	optional string city = 9;                               //市 不传等于全部
+	optional string region = 10;                            //区 不传等于全部
+	optional int32 type = 11;                               //类型 1柠檬号 2昵称
+	optional int32 CustomTag=12;							//自定义标签
+	optional int32 GrabTag=13;								//抓取标签
+	optional int64 BeginTimestamp = 14;						//开始时间戳
+	optional int64 EndTimestamp = 15;						//结束时间戳
+	optional int32 PlayerType=16;							//用户类型 0全部,1普通用户,2营销运营,3商城账号,4管理运营,5官方运营
+}
+
+//后台用户列表返回
+message GetPlayerListResponse {
+	repeated share_message.PlayerBase List = 1;
+	optional int32 PageCount = 2; 					//总条数
+}
+
+//群列表请求
+message GetTeamListRequest {
+	optional int32 CurPage = 1;			//当前页
+	optional int32 PageSize = 2;		//每页多少条
+	optional string Keyword=3;			//关键词
+	optional int32 Type=4;				//查询条件 1柠檬号，2昵称，3手机号
+	optional bool Status=5;				//群状态 是否解散
+	optional int32 ListType=6;			//推荐 0全部 1是，2否
+	optional int32 State = 7;			//状态： 0正常，1解散，2封禁
+}
+//群列表返回
+message GetTeamListResponse {
+	repeated share_message.TeamData List = 1;
+	optional int32 PageCount = 2; 					//总条数
+}
+
+//增减群成员请求
+message MemberOptRequest{
+	optional int64 TeamId=1;		//群id
+	repeated string Account=2;		//待操作成员列表
+	optional int32 Types=3;			//操作类型 1增加，2删除
+}
+
+message TeamMemberRequest {
+	optional int32 CurPage = 1;			//当前页
+	optional int32 PageSize = 2;		//每页多少条
+	optional int64 TeamId=3;			//关键词
+	optional int32  State = 4;			//状态：0 全部，1 正常，2 禁言
+	optional int32 Type = 5;			//1柠檬号 2群昵称
+	optional string Keyword = 6;		//关键字
+}
+//群成员返回
+message TeamMemberResponse {
+	repeated share_message.PersonalTeamData List = 1;
+	optional int32 PageCount = 2; 					//总条数
+}
+message SourceTypeRequest {
+	optional int32 Types = 1;						//类型 0全部， 1入款，2出款
+	optional int32 Channel=2;						//1现金 2硬币 3钻石
+}
+//群成员返回
+message SourceTypeResponse {
+	repeated share_message.SourceType List = 1;
+}
+
+// 金币变化请求(请求下单)
+message AddGoldResult {
+	required int64 PlayerId = 1;							//用户ID
+	required int64 Gold = 2;								//金币 单位分 必须正整数
+	required int32 ChangeType = 3;							//变化类型(交易类型) lg：1 入账，2 出账
+	optional int64 Extra = 5;								//优惠数，额外数
+	optional int32 SourceType = 6;							//源类型，操作类型
+	optional int32 Channeltype = 7;							//渠道类型 lg：1人工，2第三方
+	optional string Note = 8;								//备注
+}
+
+//金币log请求
+message QueryGoldLogRequest {
+	optional int64 BeginTimestamp = 1;
+	optional int64 EndTimestamp = 2;
+	optional int32 CurPage = 3;								//当前页
+	optional int32 PageSize = 4;							//每页多少条
+	optional string Keyword = 6;							//搜索关键词
+	optional int32 KeyType = 7;								//搜索类型 1 订单号,2柠檬号
+	repeated int32 SourceType = 8;							//源类型(支付类型) lg: [1,101] [2,201]
+	optional int32 PayType=9;								//支付类型 1收入，2支出
+}
+
+//金币log返回
+message QueryGoldLogResponse {
+	repeated GoldLogList List = 1;
+	optional int32 PageCount = 2; 					//总条数
+}
+
+//金币日志结构
+message GoldLogList {
+	required share_message.GoldChangeLog InLine = 1;
+	optional share_message.RechargeExtend Extend = 2;
+}
+
+message PaymentSettingResponse{
+	repeated share_message.PaymentSetting List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+
+message PlayerKeepReportResponse{
+	repeated share_message.PlayerKeepReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message PlayerActiveReportResponse{
+	repeated share_message.PlayerActiveReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message PlayerBehaviorReportResponse{
+	repeated share_message.PlayerBehaviorReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message InOutCashSumReportResponse{
+	repeated share_message.InOutCashSumReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message RegisterLoginReportResponse{
+	repeated share_message.RegisterLoginReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message OperationChannelReportResponse{
+	repeated share_message.OperationChannelReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message ChannelReportResponse{
+	repeated share_message.ChannelReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message ArticleReportResponse{
+	repeated share_message.ArticleReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message SquareReportResponse{
+	repeated share_message.SquareReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message AdvReportResponse{
+	repeated share_message.AdvReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+
+message PayTypeResponse{
+	repeated share_message.PayType List=1;
+}
+
+message PaySceneResponse{
+	repeated share_message.PayScene List=1;
+}
+
+message PaymentPlatformResponse{
+	repeated share_message.PaymentPlatform List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message PlatformChannelRequest{
+	optional int32 ListType=1;	 	//类型 1入款，2出款
+	optional int32 PayType=2;		//方式 （用ListType查询此列表）
+	optional int32 Status=3;		//状态 1开启，2关闭
+	optional int32 Types=4; 		//下拉搜索项 1通道名称，2权重，3所属平台名称
+	optional string Keyword=5;
+	required int32 CurPage = 6;		//当前页码
+	required int32 PageSize=7;		//每页条数
+}
+
+message PlatformChannelResponse{
+	repeated share_message.PlatformChannel List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message QueryFeaturesRequest{
+	optional int32 Recipient=1;				//推送对象 0 全体用户，1 IOS，2 And,3 PC  (不发是全部)
+	optional int32 Status=2;				//状态 1未发送，2已发送
+	optional int32 Types=3;					//搜索项 1 标题，2操作者
+	optional string Keyword=4;
+	optional int64 BeginTimestamp = 5;		//开始时间戳
+	optional int64 EndTimestamp = 6;		//结束时间戳
+	required int32 CurPage = 7;				//当前页码
+	required int32 PageSize=8;
+}
+
+message QueryFeaturesResponse{
+	repeated share_message.AppPushMessage List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message PlayerComplaintResponse{
+	repeated share_message.PlayerComplaint List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+//===================定义商城结构体开始================
+message QueryShopItemResponse{
+	repeated QueryShopItemObject List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message QueryShopItemObject {
+	optional int64 ItemId = 1;                          //商品ID
+	optional string Name = 2;                           //商品名称
+	optional string ItemTypeName = 3;					//商品分类名字 后端转化后的 直接用
+	optional int32 Price = 4;						    //单价
+	optional int32 StockCount = 5;						//库存
+	optional string PlayerAccount = 6;					//卖家柠檬号
+	optional int32 State = 8;							//状态 0上架 1下架 前端自己转化
+	optional int64 CreateTime=9;						//上架时间 前端转化成需要格式
+}
+
+message QueryShopItemRequest {
+	optional int64 BeginTimestamp = 1;                  //开始时间 前端转化int64
+	optional int64 EndTimestamp = 2;                    //结束时间 前端转化int64
+	required int32 CurPage = 3;							//当前页 从1开始传
+	required int32 PageSize = 4;						//每页多少条
+	optional string Keyword = 6;						//搜索关键词
+	required int32 Types = 7;							//搜索类型 1商品id(默认) 2商品名称 3卖家柠檬号
+	required int32 Status = 8;							//状态 1000全部(默认) 0上架，1下架
+}
+
+message ShopItemFile{
+     required string file_url = 1;       // 文件url(包括图片和视频)
+     required int32 file_type = 2;       // 0:图片文件 1:视频文件
+     optional string file_width = 3;     // 文件(图片或视频的宽度)
+     optional string file_height = 4;    // 文件(图片或视频的高度)
+ }
+
+message QueryShopItemDetailResponse {
+	optional int64 ItemId = 1;                          //商品ID
+	optional string Name = 2;                           //商品名称
+	repeated ShopItemFile ItemFiles = 3;                //文件url(包括图片和视频)
+	optional string PlayerAccount = 4;					//卖家柠檬号
+	optional int32 Price = 5;						    //单价
+	optional string ItemTypeName = 6;					//商品分类名字 后端转化后的 直接用
+    optional string CategoryLabel = 7;				    //品类标签 后端转化后的 直接用
+    optional string CommonUseLabel = 8;				    //常用标签 后端转化后的 直接用
+    optional int32 goodCommentRate = 9;	                //好评率  前端自己加一个%
+	optional int32 StockCount = 10;						//库存
+	optional int32 PaymentCount = 11;			        //付款数
+	optional int32 PageViews = 12;			            //浏览数
+	optional int32 SellItemCount = 13;                  // 卖出的宝贝数
+	optional int64 CreateTime=14;						//上架时间 前端自己转化
+    optional int64 SoldOutTime=15;                      //下架时间 前端自己转化
+	optional int32 State = 16;							//状态 0上架，1下架 前端自己转化
+	optional string Title = 17;                         //商品正文描述
+	optional string PointCardName = 18;                 //点卡名称(45是点卡的时候显示)
+	optional int32 ItemType = 19;					    //商品分类(45是点卡)
+}
+
+message ShopItemType{
+     optional int32 ItemType = 1;       //商品分类值    具体和客户端内容保持一致
+     optional string TypeName = 2;      //商品分类名称  具体和客户端内容保持一致
+}
+
+message ShopItemCategory{
+     optional string ItemCategory = 1;       //品类标签值    内容和客户端保持一致 值和名称一样
+     optional string CategoryName = 2;       //品类标签名称  内容和客户端保持一致
+}
+
+message GetShopItemTypeDropDownResponse{
+     repeated KeyValueTag DropDownItemType = 1;        //商品分类下拉列表
+     repeated KeyValue DropDownItemCategory = 2;       //品类标签下拉列表
+}
+
+message QueryShopCommentRequest {
+    required int64 ItemId = 1;                          //商品id 上个页面跳转传过来
+	optional int64 BeginTimestamp = 2;                  //开始时间 前端转化int64
+	optional int64 EndTimestamp = 3;                    //结束时间 前端转化int64
+	required int32 CurPage = 4;							//当前页 从1开始传
+	required int32 PageSize = 5;						//每页多少条
+	required int32 ComType = 6;							//类型 1000全部(默认) 3好评，2中评,1差评,0普通
+	optional string Nickname = 7;                       //昵称
+}
+
+message QueryShopCommentResponse{
+	repeated share_message.TableItemComment List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message EditShopCommentRequest {
+    required int64 CommentId = 1;                       //留言唯一id 上个页面跳转传过来
+	optional int32 FakeLikeCount = 2;				    //假的点赞数
+}
+
+message QueryShopOrderRequest {
+    required int32 TimeTypes = 1;			//搜索的时间类型 1创建时间(默认) 2付款时间 3发货时间 4完成时间
+	optional int64 BeginTimestamp = 2;      //开始时间  前端转化int64
+	optional int64 EndTimestamp = 3;        //结束时间  前端转化int64
+	required int32 CurPage = 4;			    //当前页    从1开始传
+	required int32 PageSize = 5;		    //每页多少条
+	required int32 Status = 6;			    //状态 1000全部(默认) 0待付款 3待发货 4待收货 5已完成 6已评价 8取消(1超时,2取消,7后台取消)
+	required int32 Types = 7;			    //搜索类型 1订单id(默认) 2商品id 3卖家柠檬号 4买家柠檬号
+	optional string Keyword = 8;		    //搜索关键词
+}
+
+message QueryShopOrderResponse{
+	repeated share_message.TableShopOrder List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message CancelShopOrderRequest {
+    required int64 OrderId = 1;			      //订单id
+	optional string CancelReason = 2;		  //取消原因
+}
+
+message SendShopOrderRequest {
+    required int64 OrderId = 1;			      //订单id
+	required string ExpressCom = 2;		      //快递公司代码
+	required string ExpressCode = 3;		  //快递单号
+}
+
+message ShopOrderExpressCom{
+    optional string Code = 1;                //快递公司代码
+    optional string Name = 2;                //快递公司名称
+}
+
+message QueryShopOrderExpressBody{
+    optional string dateTime = 1;           //时间
+    optional string remark = 2;             //具体信息
+}
+
+
+message QueryShopOrderExpressResponse{
+       repeated QueryShopOrderExpressBody expressInfos = 1;       //物流信息列表
+       optional string expressPhone = 2;                          //快递电话号码
+       optional string expressName = 3;                           //快递公司名字
+}
+message GetExpressComDropDownResponse{
+     repeated ShopOrderExpressCom DropDownExpressCom = 1;     	//快递单号下拉列表
+}
+
+message ReleaseEditShopItemObject {
+	optional string Name = 1;                       //商品名称
+	optional string PlayerAccount = 2;				//卖家柠檬号
+	optional int32 ItemType = 3;                    //商品分类值    下拉列表选择的值(45为点卡)
+	optional string ItemCategory = 4;               //品类标签值    下拉列表选择的值
+	repeated string CommonUseLabel = 5;             //常用选项    checkbox多选后的值切片(直接放页面上的汉字)
+	optional int32 Price = 6;						//单价
+	optional int32 StockCount = 7;					//库存
+	optional string UserName = 8;					//发货人姓名
+    optional string Phone = 9;                      //发货人手机号
+    optional string Address = 10;                   //发货人地区(吉林省-长春市-南关区  这种形式传入)
+    optional string DetailAddress = 11;             //发货人详细地址
+	optional int32 FakePaymentCount = 12;			//假的付款数
+	optional int32 FakePageViews = 13;			    //假的浏览数
+	optional int32 FakeSellItemCount = 14;          //假的卖出的宝贝数
+	optional string Title = 15;                     //商品正文描述
+	repeated ShopItemFile ItemFiles = 16;           //文件url(包括图片和视频)
+	optional int32 State = 17;						//状态 0上架，1下架
+	//===以上是发布商品和修改商品共通的数据内容
+	//===以下是修改商品需要的数据内容
+    optional int32 FakeGoodCommentRate = 18;	    //假的好评率
+    optional int32 RealPaymentCount = 19;			//实际的付款数
+    optional int32 RealPageViews = 20;			    //实际的浏览数
+    optional int32 RealSellItemCount = 21;          //实际的卖出的宝贝数
+    optional int32 RealGoodCommentRate = 22;	    //实际的好评率
+    optional int64 ItemId = 23;	             		//修改的时候需要传商品id
+    //点卡的时候新增项目(点卡45的时候才显示)
+    optional string PointCardName = 24;						//点卡名称
+}
+
+message QueryShopReceiveAddressResponse{
+	repeated share_message.TableReceiveAddress List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message QueryShopDeliverAddressResponse{
+	repeated share_message.TableDeliverAddress List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+//导入用点卡结构体
+message ShopPointCardObject{
+    optional string CardName = 1;    // 点卡名称
+    optional string CardNo = 2;      // 点卡号
+    optional string CardPassword = 3;      // 点卡密码
+    optional string SellerAccount = 4;    // 卖家柠檬号
+}
+
+//点卡表导入请求
+message ImportShopPointCardRequest {
+    repeated ShopPointCardObject PointCardList = 1;			      //点卡导入列表
+}
+
+//点卡表导入响应
+message ImportShopPointCardResponse{
+    optional int32 result = 1;         // 错误码 0成功 1失败
+    repeated string msg = 2;           // 错误提示(可能多条)
+}
+
+message QueryShopPointCardRequest {
+	required int32 CurPage = 1;			    //当前页    从1开始传
+	required int32 PageSize = 2;		    //每页多少条
+	required int32 Status = 3;			    //状态 1000全部 1待售 2已售
+	required int32 Types = 4;			    //搜索类型 1000全部(默认) 1点卡id 2点卡名称 3卡号 4卖家柠檬号 5订单号
+	optional string Keyword = 5;		    //搜索关键词
+}
+
+//查询返回用点卡结构体(不直接用表返回是为了不把key返回给前端)
+message ResShopPointCardObject {
+     optional int64 CardId = 1;    // 点卡名称
+	 optional string CardName = 2;    // 点卡名称
+     optional string CardNo = 3;      // 点卡号
+     optional string CardPassword = 4;      // 点卡密码
+     optional string SellerAccount = 5;    // 卖家柠檬号
+     optional int32 CardStatus = 6;    // 点卡状态 1待售 2已售
+     optional int64 orderNo = 7;    // 对应的订单号
+}
+
+//点卡查询返回值
+message QueryShopPointCardResponse{
+	repeated ResShopPointCardObject List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+//通过卖家帐号查询存在库存的点卡种类名称的请求值
+message GetShopPointCardDropDownRequest {
+	required string SellerAccount = 1;			    //卖家柠檬号
+}
+//通过卖家帐号查询存在库存的点卡种类名称的返回值
+message GetShopPointCardDropDownResponse{
+     repeated KeyValue DropDownShopPointCard = 1;       //点卡名称下拉列表
+}
+
+//===================定义商城结构体结束================
+
+message QueryOrderRequest {
+	optional int64 BeginTimestamp = 1;
+	optional int64 EndTimestamp = 2;
+	optional int32 CurPage = 3;							//当前页
+	optional int32 PageSize = 4;						//每页多少条
+	optional string Keyword = 6;						//搜索关键词
+	optional int32 Types = 7;							//搜索类型 1订单号，2柠檬号，3操作人
+	optional int32 Status = 8;							//状态 lg：0未处理，1已完成，3已取消
+	optional int32 SourceType=9;						//源类型
+	optional int32 PayType=10;							//支付方式 lg：1通联微信，2快付微信
+	optional int32 ChangeType=11;						//变化类型(交易类型) lg：1 入款，2 出款
+	optional int32 PayStatus=12;						//订单支付状态查询
+}
+
+message QueryOrderResponse{
+	repeated share_message.Order List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message OptOrderRequest{
+	optional string Oid=1;   	//订单ID
+	optional int32 Opt=2;		//订单操作 1完成 3取消 4拒绝
+	optional string Note=3;		//备注
+}
+
+message ComplaintListResponse{
+	repeated share_message.PlayerComplaint List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message ReComplaintRequest{
+	optional int64 Id=1;   			//ID
+	optional string Content=2;		//内容
+}
+
+message AddWaiterRequest{
+	optional int32 Type=1; 		//用户类型 1普通用户，2客服用户
+	optional int32 Count=2;		//数量
+	optional string Password=3;	//密码
+	optional string Payword=4;	//支付密码 6位数字
+	optional bool Approve=5;	//是否自动实名认证
+	repeated int32 Label=6;		//兴趣标签
+	optional string ChannelNo=7;	//渠道号
+	optional int32 Sex=8;		//-1随机，1男，2女
+	optional bool IsCity=9;		//是否随机城市
+	optional bool IsSlogan=10;	//是否随机个性签名
+}
+
+message AddWaiterResponse{
+	optional string Account=1;  //lg:10010000001~1001000011
+	optional string Password=3;	//密码
+	optional string Payword=4;	//支付密码 6位数字
+	optional bool Approve=5;	//是否自动实名认证
+}
+
+message QuerySystemNoticeResponse{
+	repeated share_message.SystemNotice List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+//导出聊天记录返回
+message ExportChatRecordResponse{
+	repeated share_message.TeamChatLog List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+//查询好友信息
+message PlayerFriendInfo{
+    optional int32 FriendCount = 1;                         //当前好友数量
+    optional int32 MaxFriendCount = 2;                      //最大好友数量
+    optional share_message.PlayerBase info = 3;             // 玩家信息
+}
+//添加批量好友
+message AddPlayerFriendInfo{
+    optional int64 PlayerID = 1;                            //玩家ID
+    repeated int64 list = 2;                                //添加的玩家列表ID
+}
+//请求创建群
+message CreateTeamInfo{
+    optional int64 PlayerID = 1;                            //群主ID
+    optional string team_name = 2;                          //群名称
+}
+
+//后台拉群用户列表请求
+message GetTeamPlayerListRequest {
+	optional int32 CurPage = 1;								//当前页
+	optional int32 PageSize = 2;							//每页多少条
+	optional string Keyword=3;								//关键词
+	optional int32 Type=4;									//查询条件 1柠檬号，2昵称
+	optional int64 BeginTimestamp = 5;						//开始时间戳
+	optional int64 EndTimestamp = 6;						//结束时间戳
+    optional int32 label = 7;						        //标签
+    optional string channel = 8;						    //渠道
+	optional int64 TeamId = 9;                              //群ID
+	optional int32 CustomTag=12;							//自定义标签
+	optional int32 GrabTag=13;								//抓取标签
+	optional int32 PlayerType=14;							//用户类型筛选
+
+}
+
+//后台拉群用户列表返回
+message GetTeamPlayerListResponse {
+	repeated share_message.PlayerBase List = 1;
+	optional int32 PageCount = 2; 					//总条数
+	optional share_message.TeamData Team = 3;
+}
+
+//运营渠道列表返回
+message OperationListResponse{
+	repeated share_message.OperationChannel List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+//兴趣标签列表返回
+message InterestTypeResponse{
+	repeated share_message.InterestType List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+//兴趣词列表返回
+message InterestTagResponse{
+	repeated share_message.InterestTag List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+message InterestGroupResponse{
+	repeated share_message.InterestGroup List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+//自定义标签列表返回
+message CustomTagResponse{
+	repeated share_message.CustomTag List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+//抓取标签列表返回
+message GrabTagResponse{
+	repeated share_message.GrabTag List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+//抓取词列表返回
+message CrawlWordsResponse{
+	repeated share_message.CrawlWords List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+//玩家抓取词列表返回
+message PlayerCrawlWordsResponse{
+	repeated share_message.PlayerCrawlWords List=1;
+}
+//运营汇总曲线
+message OperationChannelReportLine{
+	repeated int64 RegCount = 1;
+	repeated int64 LoginCount = 2;
+	repeated int64 ShopOrderSumCount = 3;
+	repeated int64 ShopDealSumAmount = 4;
+	repeated int64 RechargeSumAmount = 5;
+	repeated int64 WithdrawSumAmount = 6;
+	repeated int64 TaxDate = 11;
+}
+
+message OperationChannelReportLineResponse{
+	optional OperationChannelReportLine Line = 1;
+}
+
+//文章信息
+message ArticleResponse{
+	optional int32 ID = 1;														//文章ID
+	optional string Title = 2;													//文章标题
+	optional string Icon = 3;													//图片URL
+	optional string ArticleAdd = 4;												//文章URL
+	optional int32 Type = 5;													//跳转类型
+}
+
+//推送文章
+message ArticleListResponse{
+	required int32 ArticleListID = 1;				//文章列表ID
+	repeated ArticleResponse ArticleList = 2;		//文章列表
+}
+
+//查询文章
+message QueryArticleResponse{
+	repeated share_message.Article List = 1;        //文章列表
+	optional int32 PageCount = 2;                   //文章数
+}
+
+//查询推文
+message QueryTweetsResponse{
+	repeated share_message.Tweets List = 1;        //文章列表
+	optional int32 PageCount = 2;                  //文章数
+}
+
+//查询注册推文
+message QueryRegisterPushResponse{
+    repeated share_message.RegisterPush List = 1;   //注册推文列表
+    optional int32 PageCount = 2;                   //推文数
+}
+
+//添加查询文章请求
+message ArticleInfo{
+    optional int64 ArticleId = 1; 		//文章id
+	optional int32 ArticleType = 2; 	//文章类型 1 图文文章，2 转载文章，3 内部跳转
+	optional string Title = 3;      	//文章标题
+	optional int32 IsMain = 4;          //是否主要：0 次要 ，1 主要
+}
+
+//添加查询文章
+message ArticleInfoResponse{
+    repeated ArticleInfo List = 1;  //文章列表
+}
+
+message ArticleCommentResponse{
+	repeated share_message.ArticleComment List = 1;  //文章评论列表
+	optional int32 PageCount = 2;                   
+}
+
+//小助手文章或者推文查询
+message QueryArticleOrTweetsRequest{
+    optional int32 Querytype = 1;           //查询类型  1 图文标题/推送标题 ，2 操作人
+    optional string Keyword = 2;			//关键词
+    optional int32 State = 3;       		//状态： 0 全部 1 禁用 2 启用 ,  0 未推送   1 已推送,
+    optional int32 IsMain = 4;              //是否主要：0 全部 ，1 次要 ，2 主要
+    optional int32 ArticleType = 5; 		//文章类型 0 全部 ，1 图文文章/全体用户，2 转载文章/IOS用户，3 内部跳转/Android用户
+	optional int64 BeginTimestamp = 6;		//开始时间戳
+	optional int64 EndTimestamp = 7;		//结束时间戳
+	optional int32 CurPage = 8;				//当前页码
+	optional int32 PageSize = 9;            //页数
+	repeated int64 Ids = 10;                //文章id
+	optional string title = 11;             //推送主标题
+}
+//客服绩效查询返回
+message WaiterPerformanceResponse{
+	repeated share_message.WaiterPerformance List = 1;        
+    optional int32 PageCount = 2;                         	 
+}
+
+//客服聊天记录列表查询返回
+message IMmessageResponse{
+	repeated share_message.IMmessage List=1;
+	optional int32 PageCount = 2;
+}
+
+message IMmessageNopageResponse{
+	repeated share_message.IMmessage List=1;
+}
+
+//客服常见问题列表查询返回
+message WaiterFAQResponse{
+	repeated share_message.WaiterFAQ List=1;
+	optional int32 PageCount = 2;
+}
+
+//客服快捷语列表查询返回
+message WaiterFastReplyResponse{
+	repeated share_message.WaiterFastReply List=1;
+	optional int32 PageCount = 2;
+}
+
+//群管理
+message TeamManager{
+    repeated int64 TeamIds = 1;             //群号/群成员列表
+    optional int32 Flag = 2;                //解禁：1 解，2 封
+    optional int32 Hour = 3;                //小时
+    optional int32 Minutes = 4;             //分钟
+    optional string Reason = 5;             //原因
+    optional int32 Day = 6;               	//天
+    optional int64 TeamId = 7;              //群Id
+    repeated string NickName = 8;           //群昵称
+    optional int64 CloseTime = 9;           //禁言时间
+    optional int64 SendTime = 10;           //发送时间
+    optional int64 LogId = 11;
+    optional int64 PlayerId = 12;
+}
+
+message CheckScoreRequest{
+	optional int32 Type=1;		//1文字，2图片url
+	optional string Key=2;		//文字或者图片url
+}
+
+message CheckScoreResponse{
+	optional int32 EvilFlag=1;       //0正常，1可疑
+	optional int32 EvilType=2;       //类型:100
+	optional int32 Score=3;          //命中的模型分值
+}
+
+
+//  获取动态详情
+message DynamicListRequest{
+    optional int32 CurPage = 1;						//当前页
+	optional int32 PageSize = 2;					//每页多少条
+	optional string Keyword = 3;					//关键词
+	optional int32 Type = 4;						//查询条件：0全部，1柠檬号，2用户昵称，3评论人昵称，4评论人柠檬号，5回复对象昵称，6回复对象柠檬号，7内容,8ID
+	optional int32 IsTop = 5;                       //普通置顶：0全部，1是，2否
+	optional int32 IsBsTop = 6;						//后台置顶：0全部，1是，2否
+	optional int32 IsShield=7;						//屏蔽：0全部，1是，2否
+    optional int64 BeginTimestamp = 8;              //开始时间
+    optional int64 EndTimestamp = 9;                //结束时间
+	optional int32 LogId = 10;                      //动态ID
+	optional int32 Status=11;						//状态查询 全部1000， 0：正常 1:后台删除 2：前端删除,3未发布，4已过期
+	optional int32 Check=31; 						//审核状态 100全部 0未处理,1已审核,2已拒绝，3自动审核
+	optional int32 ListType=32;						//列表类型 1普通用户，2运营账户
+	optional int64 ReportCountMin=33;				//举报数最小值
+	optional int64 ReportCountMax=34;				//举报数最大值
+	optional int64 TopicType=35;					//话题类别
+	repeated int64 TopicId=36;						//话题id
+}
+
+message DynamicListResponse{
+    repeated share_message.DynamicData List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message DirtyWordsResponse{
+	repeated share_message.DirtyWords List=1;
+	optional int32 PageCount = 2;               	//总数
+}
+
+message SignatureResponse{
+	repeated share_message.Signature List=1;
+	optional int32 PageCount = 2;               	//总数
+}
+
+message CommentList{
+	repeated share_message.CommentData List = 1;	//评论信息
+	optional int32 PageCount = 2;               	//总数
+}
+
+message PlayerFreezeLogResponse{
+	repeated share_message.PlayerFreezeLog List=1;
+	optional int32 PageCount = 2;               	//总数
+}
+
+message DelDynamicRequest{
+	repeated QueryDataById List = 1;  	//删除信息
+	optional string Note=2;				//删除原因
+}
+
+message PlayerCancleAccountListResponse{
+	repeated share_message.PlayerCancleAccount List=1;
+	optional int32 PageCount = 2;               //总数
+}
+
+message ChatLogRequest{
+	optional int64 BeginTimestamp = 1;	//开始时间戳
+	optional int64 EndTimestamp = 2;	//结束时间戳
+	optional int32 Types=3;				//聊天类型
+	optional string Keyword1=4;				
+	optional string Keyword2=5;
+	optional string Keyword3=6;
+	required int32 CurPage = 7;			//当前页码
+	required int32 PageSize=8;			//每页条数
+}
+
+message PersonalChatLogResponse{
+	repeated share_message.PersonalChatLog List=1;
+	optional int32 PageCount = 2;               
+}
+
+message TeamChatLogResponse{
+	repeated share_message.TeamChatLog List=1;
+	optional int32 PageCount = 2;               
+}
+
+message PlayerPortraitResponse{
+	repeated NameValueTag List=1;
+	optional int64 Total=4; 		//总数量
+	optional int64 ManCount=2;
+	optional int64 WomanCount=3;
+}
+
+message AdvListResponse{
+    repeated share_message.AdvSetting List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message IndexTipsResponse{
+    repeated share_message.IndexTips List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message PopSuspendResponse{
+    repeated share_message.PopSuspend List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message ActivityReportResponse{
+    repeated share_message.ActivityReport List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message TopicTypeResponse{
+    repeated share_message.TopicType List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message TopicResponse{
+    repeated share_message.Topic List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message TopicApplyListRes{
+    repeated share_message.ApplyEditTopicInfo List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message QueryTopicApplyRes{
+    optional share_message.ApplyEditTopicInfo New=1;
+    optional share_message.Topic Old = 2;
+}
+
+message AuditTopicApplyReq{
+	optional string Id=1;		//Id
+	optional int32 Status=2;	//审核状态 1-通过,2-拒绝
+	repeated int32 Note=3;		//拒绝理由 id数组
+}
+
+message ApplyTopicMasterRes{
+    repeated share_message.ApplyTopicMaster List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message RecallReportResponse{
+    repeated share_message.RecallReport List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message RecallplayerLogResponse{
+    repeated share_message.RecallPlayerLog List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message CoinItemListResponse{
+    repeated share_message.CoinRecharge List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message QueryNearSetResponse{
+    repeated share_message.NearSet List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message CoinChangeLogResponse{
+    repeated CoinLogList List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message CoinLogList {
+	required share_message.CoinChangeLog InLine = 1;
+	optional share_message.GoldExtendLog Extend = 2;
+}
+
+message CoinProductResponse{
+    repeated share_message.CoinProduct List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message PropsItemResponse{
+	repeated share_message.PropsItem List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message PlayerBagItemResponse{
+	repeated share_message.PlayerBagItem List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message PlayerGetPropsLogResponse{
+	repeated share_message.PlayerGetPropsLog List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message CoinProductReportResponse{
+    repeated share_message.CoinProductReport List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+message NewsSourceResponse{
+	repeated share_message.TableESPortsRealTimeInfo List=1;
+	optional int32 PageCount=2;
+}
+
+message VideoSourceResponse{
+	repeated share_message.TableESPortsVideoInfo List=1;
+	optional int32 PageCount=2;
+}
+
+message CrawlJobResponse{
+	repeated share_message.TableCrawlJob List=1;
+	optional int32 PageCount=2;
+}
+
+message SysLabelResponse{
+	repeated share_message.TableESPortsLabel List=1;
+	optional int32 PageCount=2;
+}
+
+message CarouselResponse{
+	repeated share_message.TableESPortsCarousel List=1;
+	optional int32 PageCount=2;
+}
+
+message GameListResponse{
+	repeated share_message.TableESPortsGame List=1;
+	optional int32 PageCount=2;
+}
+
+message CommentDelRequest{
+	optional int64 Id=1;	//文章或视频的ID
+	optional int32 Type=2; 	//(1-资讯评论,2-资讯回复3-视频评论4-视频回复)
+	repeated int64 Ids64=3;	//要删除的评论ID
+}
+
+message CommentUploadRequest{
+	optional int64 Id=1;	//文章或视频的ID
+	optional int32 Type=2; 	//(1-资讯评论，2-视频评论)
+	repeated string List=3;	//评论列表
+	optional int32 Count=4;	//评论数量
+}
+
+message CommentListResponse{
+	repeated share_message.TableESportComment List=1;
+	optional int32 PageCount=2;
+}
+message NearReportResponse{
+	repeated share_message.NearReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message ButtonClickReportResponse{
+	repeated share_message.ButtonClickReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message PageRegLogReportResponse{
+	repeated share_message.PageRegLogReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message VoiceWorkListResponse{
+	repeated share_message.PlayerMixVoiceVideo List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message BgVoiceVideoListResponse{
+	repeated share_message.BgVoiceVideo List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message MatchGuideListResponse{
+	repeated share_message.CommStrId List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message SystemBgImageListResponse{
+	repeated share_message.SystemBgImage List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message IntimacyConfigRes{
+	repeated share_message.IntimacyConfig List=1;
+}
+message SportSysNoticeResponse{
+	repeated share_message.TableESPortsSysMsg List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message BetSlipListResponse{
+	repeated share_message.TableESPortsGuessBetRecord List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message BetSlipStatisticsResponse{
+	repeated share_message.BetSlipReport List=1;
+	optional int32 PageCount = 2; 		//总条数
+	optional int64 SumAmount = 3;		//总盈利金额
+}
+
+message GameGuessRequest{
+	optional int32 LabelId=1;
+	optional string GameId=2; 
+	optional int32 ApiOrigin=3;
+	optional int32 MornRollGuessFlag=4;
+}
+
+message GameGuessResponse{
+	optional int64 List1Id=1;
+	repeated share_message.GameGuessOddsNumObject List1=2;
+	optional int64 List2Id=3;
+	repeated share_message.GameGuessOddsNumObject List2=4;
+	optional share_message.ESPortsGameLivePathObj live_paths  = 5;//直播地址
+}
+
+message EditGameGuess{
+	optional int64 Id=1;							//竞猜ID
+	repeated brower_backstage.NameValueTag Guess=2; //竞猜项
+}
+
+message EditGameGuessRequest{
+	optional int64 Id=1;				//赛事ID
+	optional string Opt=2;				//操作 add-发布，edit-修改
+	repeated EditGameGuess Guesses=3;	//竞猜修改列表
+	optional int64 HistoryId=4;			//比赛队伍历史战绩id
+}
+
+message RpcBetSlipOperateRequest{
+    //订单ID
+	repeated int64 Id=1;
+	//操作(字符串数字) 1:无效，2:违规
+	optional string Opt=2;
+}
+
+//比赛队伍数据
+message GameTeamInfoResponse{
+	repeated share_message.APIPlayerDetail TeamA=1;
+	repeated share_message.APIPlayerDetail TeamB=2;
+}
+
+//比赛实时数据返回
+message GameRealTimeResponse{
+	optional int64 Id=1;
+	optional int32 LabelId=2;
+	repeated share_message.TableESPortsLOLRealTimeData Lol=3;
+	repeated share_message.TableESPortsWZRYRealTimeData Wzry=4;
+}
+//充值赠送白名单返回
+message GiveWhiteListRes{
+	repeated share_message.TableESportsGiveWhiteList List = 1;
+	optional int32 PageCount = 2; 						//总条数
+}
+//电竞币配置返回
+message RechargeEsCfgRes{
+	repeated share_message.TableESportsExchangeCfg List = 1;
+}
+//电竞埋点报表返回
+message PointsReportRes{
+	repeated share_message.BasisPointsReport Basis = 1;
+	repeated share_message.MenuPointsReport Menu = 2;
+	repeated share_message.LabelPointsReport Label = 3;
+	repeated share_message.NewsAmusePointsReport NewsAmuse = 4;
+	repeated share_message.VdoHallPointsReport VdoHall = 5;
+	repeated share_message.ApplyVdoHallPointsReport ApplyVdoHall = 6;
+	repeated share_message.MatchLsPointsReport MatchLs = 7;
+	repeated share_message.MatchDilPointsReport MatchDil = 8;
+	repeated share_message.GuessPointsReport Guess = 9;
+	repeated share_message.MsgPointsReport Msg = 10;
+	repeated share_message.EsportCoinPointsReport EsportCoin = 11;
+	optional int32 PageCount = 100; 						//总条数
+}
+
+//修改比赛实时数据请求
+message EditGameRealTimeRequest{
+    //比赛表中的id
+    optional int64 Id=1;
+    //这里做复数传输、以防后续能改多个
+    repeated GameRealTimeObject RealTimeObject = 2;
+}
+
+//修改比赛实时数据的结构体
+message GameRealTimeObject{
+    //当前局数
+    optional int32 GameRound=1;
+    //一塔 0:无、1:A队一塔 2:B队一塔
+    optional int32 FirstTower = 2;
+    //一小龙  0:无、1:A队一小龙 2:B队一小龙
+    optional int32 FirstSmallDragon = 3;
+    //先五杀  0:无、1:A队先五杀 2:B队先五杀
+    optional int32 FirstFiveKill = 4;
+    //一大龙  0:无、1:A队一大龙 2:B队一大龙
+    optional int32 FirstBigDragon = 5;
+    //先十杀  0:无、1:A队先十杀 2:B队先十杀
+    optional int32 FirstTenKill = 6;
+
+    //LOL不能改、王者荣耀能改项目(击杀小龙数、击杀大龙数)
+    //A队击杀小龙数
+    optional int32 TeamADrakes = 7;
+    //A队击杀大龙数
+    optional int32 TeamANahsorBarons = 8;
+
+    //B队击杀小龙数
+    optional int32 TeamBDrakes = 9;
+    //B队击杀大龙数
+    optional int32 TeamBNahsorBarons = 10;
+
+    //A队伍人员以及头像信息
+    repeated GameRealTimePlayerObject TeamAPlayers = 11;
+    //B队伍人员以及头像信息
+    repeated GameRealTimePlayerObject TeamBPlayers = 12;
+}
+
+//队伍人员以及头像信息
+message GameRealTimePlayerObject{
+    //队员名称
+	optional string Name = 1;
+  	//队员照片
+    optional string Photo = 2;
+}
+
+//金币log返回
+message SportCoinLogResponse {
+	repeated SportCoinLogList List = 1;
+	optional int32 PageCount = 2; 					//总条数
+}
+
+//电竞币日志结构
+message SportCoinLogList {
+	required share_message.ESportCoinChangeLog InLine = 1;
+	optional share_message.GoldExtendLog Extend = 2;
+}
+
+message VCBuryingPointReportRes{
+	repeated share_message.VCBuryingPointReport List=1;
+	optional int32 PageCount = 2; 						//总条数
+}
+
+message AddWishAllowListReq{
+	repeated string Accounts = 1;	//柠檬号
+	optional string Remark = 2; //备注
+}
+
+//白名单列表
+message WishAllowListResp{
+	repeated share_message.WishWhite List = 1;	//白名单列表
+}
+
+//许愿池活动报表
+message WishPoolActivityReportResp{
+	repeated share_message.WishActivityReport List = 1;
+	optional int32 PageCount = 2;
+}
+
+/*message WishPoolActivityReport{
+	optional int64 CreateTime = 1;						//CreateTime
+	optional int32 InPoolPlayerCount = 2;			// 进入许愿池人数
+	optional int64 InPoolCount = 3;				// 进入许愿池次数
+	repeated CountMap DayCountData = 4;				// 天数
+	repeated CountMap CounterData = 5;				// 次数
+}*/
+
+message CountMap{
+	optional string Key = 1;	//key name
+	optional int32 Value = 2;	//value
+}
+//累计完成天数的用户数
+message DayCountMap{
+	optional int32 WeekCount = 1;			//7天
+	optional int32 TwoWeekCount = 2;	//14天
+	optional int32 ThreeWeekCount = 3;	//21天
+	optional int32 FourWeekCount = 4;	//28天
+}
+
+//累计完成次数的用户数
+message CounterDataMap{
+	optional int32 TenCount = 1;					//10天
+	optional int32 TwentyCount = 2;				//20天
+	optional int32 ThirtyCount = 3;				//30天
+	optional int32 FortyWeekCount = 4;		//40天
+}
+
+// 浏览器主动发起
+service Brower2Backstage {
+	//电竞服开启
+	rpc RpcUploadFile(brower_backstage.UploadRequest)returns(brower_backstage.UploadResponse);			//上传文件到存储桶
+	rpc RpcDelUploadFile(brower_backstage.UploadRequest)returns(base.Empty);							//删除存储桶中的文件 FileName(必传) Path(默认upload) IsBucket(默认为true)
+	rpc RpcUploadFileList(brower_backstage.ListRequest)returns(brower_backstage.UploadListResponse);	//获取存储桶列表 Keyword-上次查询的最后一条title, PageSize条数-10, SrtType查询目录-"upload" 
+	//谷歌验证器
+	rpc RpcGoogleCode(brower_backstage.GoogleCodeRequest)returns(brower_backstage.GoogleCodeResponse);
+	//扫码注册
+	rpc RpcGetCode(brower_backstage.SigninRequest)returns(brower_backstage.CodeResponse); 		//获取验证码
+	rpc RpcSignin(brower_backstage.SigninRequest)returns(brower_backstage.SigninResponse);		//注册
+	rpc RpcGetBsCode(brower_backstage.SigninRequest)returns(brower_backstage.CodeResponse); 	//特殊界面获取验证码
+	rpc RpcVerCode(brower_backstage.SigninRequest)returns(base.Empty);							//特殊界面校验验证码
+	// 登录后台相关操作
+	rpc RpcLogin(brower_backstage.LoginRequest)returns(brower_backstage.LoginResponse); 		//管理员登录
+	rpc RpcLogout(base.Empty)returns(base.Empty); 												//管理员登出
+	rpc RpcQueryVersion(base.Empty)returns(brower_backstage.VersionData);						//查询客户端版本管理
+	rpc RpcUpdateVersion(brower_backstage.VersionData)returns(base.Empty);						//更新客户端版本管理
+	rpc RpcQueryTfserver(base.Empty)returns(brower_backstage.Tfserver);							//获取转发服务器列表
+	rpc RpcUpdateTfserver(brower_backstage.Tfserver)returns(base.Empty);						//更新转发服务器列表
+	//管理员相关操作 ListType 1正常 ，2冻结       Type 1用户名 2昵称
+	rpc RpcManagerList(brower_backstage.GetPlayerListRequest)returns(brower_backstage.GetManagerListResponse);		//获取管理员列表
+	rpc RpcEditManager(share_message.Manager)returns(base.Empty);													//修改管理员
+	rpc RpcAddManager(share_message.Manager)returns(base.Empty);													//新增管理员
+	rpc RpcAdminFreeze(brower_backstage.QueryDataByIds)returns(base.Empty); 										//冻结管理员账户
+	rpc RpcAdminUnFreeze(brower_backstage.QueryDataByIds)returns(base.Empty);										//解冻管理员账户
+	rpc RpcQueryManagerLog(brower_backstage.ListRequest)returns(brower_backstage.ManagerLogResponse);				//查询管理员日志 SrtType字符串类型传操作项目文字
+	rpc RpcManagerLogTypesKeyValue(base.Empty)returns(brower_backstage.KeyValueResponse);							//查询管理员日志分类下拉列表
+	rpc RpcQueryManagerTypes(brower_backstage.ListRequest)returns(brower_backstage.ManagerTypesResponse);			//查询客服分类
+	rpc RpcManagerTypesKeyValue(base.Empty)returns(brower_backstage.KeyValueResponseTag);							//查询客服分类下拉列表
+	rpc RpcEditManagerTypes(share_message.ManagerTypes)returns(base.Empty);											//修改客服分类
+	//首页业务
+	rpc RpcQueryDataOverview(base.Empty)returns(brower_backstage.DataOverview);										//首页查询数据概览
+	rpc RpcRegisterLoginReportLine(brower_backstage.ListRequest)returns(brower_backstage.LineChartResponse);		//查询运营渠道汇总报表曲线图 ListType = 1注册人数，2登录人数，3pv数，4uv数.pagesize=查询的天数
+	rpc RpcInterestTagLine(brower_backstage.ListRequest)returns(brower_backstage.LineChartResponse);				//兴趣爱好柱状图 ListType = 兴趣分类（生活，兴趣）
+	rpc RpcPhoneBrandLine(base.Empty)returns(brower_backstage.NameValueResponseTag);								//手机品牌柱状图
+	rpc RpcPlayerOnlineLine(brower_backstage.ListRequest)returns(brower_backstage.LineChartResponse);				//上网热度柱状图
+	rpc RpcPlayerLogLocation(brower_backstage.ListRequest)returns(brower_backstage.NameValueResponseTag);			//用户登录地区分布图 ListType (设备分类 1 IOS，2 Android，3 other) Type (0 全部 1国内 2国外)
+	rpc RpcPlayerPortrait(base.Empty)returns(brower_backstage.PlayerPortraitResponse);								//用户画像
+	//权限的操作
+	rpc RpcQueryRolePower(brower_backstage.ListRequest)returns(brower_backstage.QueryRolePowerList);				//查询角色权限
+	rpc RpcUpdateRolePower(share_message.RolePower)returns(base.Empty);												//更新角色权限
+	rpc RpcDeleteRolePower(brower_backstage.QueryDataByIds)returns(base.Empty);										//删除角色权限  使用int64
+	rpc RpcGetPowerRouter(brower_backstage.QueryDataById)returns(share_message.RolePower);							//查询指定角色权限数据
+	rpc RpcGetRolePowerList(base.Empty)returns(brower_backstage.KeyValueResponseTag);								//查询角色下拉配置列表
+	//用户管理
+	rpc RpcPlayerList(brower_backstage.GetPlayerListRequest)returns(brower_backstage.GetPlayerListResponse);		//查询用户列表
+	rpc RpcGetPlayerById(brower_backstage.QueryDataById)returns(share_message.PlayerBase);							//Id查询用户资料
+	rpc RpcGetPlayerByAccount(brower_backstage.QueryDataById)returns(share_message.PlayerBase);						//柠檬号或手机号查询用户资料
+	rpc RpcEditPlayer(share_message.PlayerBase)returns(base.Empty);													//修改用户
+	rpc RpcAddPlayer(brower_backstage.SigninRequest)returns(base.Empty);											//新增用户
+	rpc RpcAddWaiter(brower_backstage.AddWaiterRequest)returns(brower_backstage.AddWaiterResponse);					//新增运营用户
+	rpc RpcPlayerFreeze(brower_backstage.QueryDataByIds)returns(base.Empty); 										//冻结账户 ObjIds[0]封禁结束时间
+	rpc RpcPlayerUnFreeze(brower_backstage.QueryDataByIds)returns(base.Empty);										//解冻账户
+	rpc	RpcQueryPlayerComplaint(brower_backstage.ListRequest)returns(brower_backstage.PlayerComplaintResponse);		//查询用户投诉
+	rpc	RpcQueryPlayerComplaintOther(brower_backstage.ListRequest)returns(brower_backstage.PlayerComplaintResponse);//查询其他投诉
+	rpc RpcReplyPlayerComplaint(share_message.PlayerComplaint)returns(base.Empty);									//回复用户投诉
+	rpc RpcEditPlayerCustomTag(brower_backstage.QueryDataByIds)returns(base.Empty);									//修改用户自定义标签
+	rpc RpcEditPlayerLable(brower_backstage.QueryDataByIds)returns(base.Empty);										//批量修改用户兴趣标签
+	rpc RpcEditPersonalityTags(brower_backstage.QueryDataByIds)returns(base.Empty);									//修改用户个性标签
+	rpc RpcGetPersonalityTags(base.Empty)returns(brower_backstage.KeyValueResponseTag);                             //个性标签下拉列表
+	rpc RpcInterestTypeList(brower_backstage.ListRequest)returns(brower_backstage.InterestTypeResponse);			//兴趣标签分类列表查询 
+	rpc RpcEditInterestType(share_message.InterestType)returns(base.Empty);											//修改兴趣标签分类
+	rpc RpcGetInterestTypeList(base.Empty)returns(brower_backstage.KeyValueResponseTag);                            //兴趣分类列表
+	rpc RpcInterestTagList(brower_backstage.ListRequest)returns(brower_backstage.InterestTagResponse);				//兴趣标签列表查询  Type=兴趣标签ID ，listType=1查名字
+	rpc RpcEditInterestTag(share_message.InterestTag)returns(base.Empty); 											//修改兴趣标签
+	rpc RpcInterestGroupList(brower_backstage.ListRequest)returns(brower_backstage.InterestGroupResponse);			//兴趣组合列表
+	rpc RpcEditInterestGroup(share_message.InterestGroup)returns(base.Empty);										//修改兴趣组合
+	rpc RpcDelInterestGroups(brower_backstage.QueryDataByIds)returns(base.Empty);									//删除兴趣组合
+	rpc RpcGetInterestTagList(brower_backstage.ListRequest)returns(brower_backstage.KeyValueResponseTag);			//查询兴趣列表
+	rpc RpcCustomTagList(brower_backstage.ListRequest)returns(brower_backstage.CustomTagResponse);					//自定义标签列表查询 
+	rpc RpcEditCustomTag(share_message.CustomTag)returns(base.Empty);												//修改自定义标签
+	rpc RpcGetCustomTagList(brower_backstage.QueryDataById)returns(brower_backstage.KeyValueResponseTag);           //自定义标签下拉列表
+	rpc RpcToPlayerCustomTag(brower_backstage.QueryDataByIds)returns(base.Empty);									//给玩家加自定义标签
+	rpc RpcGrabTagList(brower_backstage.ListRequest)returns(brower_backstage.GrabTagResponse);						//抓取标签列表查询
+	rpc RpcEditGrabTag(share_message.GrabTag)returns(base.Empty);													//修改抓取标签
+	rpc RpcCrawlWordsList(brower_backstage.ListRequest)returns(brower_backstage.CrawlWordsResponse);				//抓取词列表查询 type： 1 抓取词名称 ， listType：下拉类别选择
+	rpc RpcEditCrawlWords(share_message.CrawlWords)returns(base.Empty);												//修改抓取词
+	rpc RpcGetGrabTagList(base.Empty)returns(brower_backstage.KeyValueResponseTag);                                 //抓取标签下拉列表
+	rpc RpcDelCrawlWords(brower_backstage.QueryDataByIds)returns(base.Empty);										//删除抓取词
+	rpc RpcQueryPlayerWordsList(brower_backstage.QueryDataById)returns(brower_backstage.PlayerCrawlWordsResponse);	//玩家抓取词列表  Id32 类型,IdStr 关键词,Id64 玩家ID
+    rpc RpcQueryFriendPlayerList(brower_backstage.GetPlayerFriendListRequest)returns(brower_backstage.GetPlayerListResponse);     //查询添加用户列表
+    rpc RpcQueryPlayerInfo(brower_backstage.QueryDataById)returns(brower_backstage.PlayerFriendInfo);                             //查询好友数量
+	rpc RpcAddFriend(brower_backstage.AddPlayerFriendInfo)returns(base.Empty);                                                    //批量添加好友
+	rpc RpcPlayerCancleAccountList(brower_backstage.ListRequest)returns(brower_backstage.PlayerCancleAccountListResponse); 	//注销账号记录列表 Status：状态， DownType：下拉选择搜索项
+	rpc RpcEditPlayerCancleAccount(share_message.PlayerCancleAccount)returns(base.Empty);									//审核注销账号
+	rpc RpcQueryPersonalChatLog(brower_backstage.ChatLogRequest)returns(brower_backstage.PersonalChatLogResponse);			//查询个人聊天记录列表 Keyword1 Keyword2 指定的2个聊天对象柠檬号 不支持服务端分页
+	rpc RpcQueryPersonalChatLogByObj(brower_backstage.ChatLogRequest)returns(brower_backstage.PersonalChatLogResponse);		//查询指定个人聊天记录 Keyword1 Keyword2 指定的2个聊天对象柠檬号
+	rpc RpcQueryTeamChatLog(brower_backstage.ChatLogRequest)returns(brower_backstage.TeamChatLogResponse);					//查询群聊天记录详情 群列表直接用群管理rpc
+	rpc RpcCheckChatLogWhitelist(brower_backstage.ChatLogRequest)returns(brower_backstage.CommonResponse); 					//检查用户报名单 返回结果true要验证手机号 Types=1私聊 Keyword1 Keyword2 指定的2个聊天对象柠檬号,Types=2群聊 Keyword1 群号
+	//群管理
+    rpc RpcQueryTeamList(brower_backstage.GetTeamListRequest)returns(brower_backstage.GetTeamListResponse);						//查询群列表
+    rpc RpcGetTeamById(brower_backstage.QueryDataById)returns(share_message.TeamData);											//Id查询群资料
+    rpc RpcEditTeam(share_message.TeamData)returns(base.Empty);																	//修改群资料
+    rpc RpcDefunctTeam(brower_backstage.QueryDataById)returns(base.Empty);														//解散群
+    rpc RpcTeamMemberOpt(brower_backstage.MemberOptRequest)returns(base.Empty);													//增减群成员
+    rpc RpcQueryTeamMember(brower_backstage.TeamMemberRequest)returns(brower_backstage.TeamMemberResponse);						//查询群成员列表
+    rpc RpcExportChatRecord(brower_backstage.ListRequest)returns(brower_backstage.ExportChatRecordResponse);					//查询群聊天记录列表  keyword传群ID， ListType=1解析聊天内容，不传或其他不解析
+    rpc RpcQueryTeamMessage(brower_backstage.ListRequest)returns(brower_backstage.ExportChatRecordResponse);					//查询群历史
+    rpc RpcCreateTeamMessage(brower_backstage.CreateTeamInfo)returns(share_message.TeamData);                      				//创建群
+	rpc RpcQueryTeamPlayerList(brower_backstage.GetTeamPlayerListRequest)returns(brower_backstage.GetTeamPlayerListResponse);   //获取拉人进群用户列表
+	rpc RpcTeamBan(brower_backstage.QueryDataByIds)returns(base.Empty);															//群封禁
+	rpc RpcTeamUnBan(brower_backstage.QueryDataByIds)returns(base.Empty);														//解解封
+    rpc RpcTeamCloseAndOpen(brower_backstage.TeamManager)returns(brower_backstage.ErrMessage);                                  //解封群
+	rpc RpcTeamMemCloseAndOpen(brower_backstage.TeamManager)returns(brower_backstage.ErrMessage);                               //解封群成员
+	rpc RpcWarnLord(brower_backstage.QueryDataByIds)returns(base.Empty);														//警告群主 int64 群id
+	//支付
+	rpc RpcQuerySouceType(brower_backstage.SourceTypeRequest)returns(brower_backstage.SourceTypeResponse);					//查询现金源类型
+	rpc RpcQueryGeneralQuota(base.Empty)returns(share_message.GeneralQuota);												//查询通用支付额度设置
+	rpc RpcEditGeneralQuota(share_message.GeneralQuota)returns(base.Empty);													//修改通用支付额度设置
+	rpc RpcQueryPaymentSetting(brower_backstage.ListRequest)returns(brower_backstage.PaymentSettingResponse);				//查询支付设定列表
+	rpc RpcEditPaymentSetting(share_message.PaymentSetting)returns(base.Empty);												//修改支付设定
+	rpc RpcDelPaymentSetting(brower_backstage.QueryDataByIds)returns(base.Empty);											//删除支付设定
+	rpc RpcQueryPayType(brower_backstage.QueryDataById)returns(brower_backstage.PayTypeResponse);							//查询支付方式列表 (查全部不传值，查出入款类型传Id32值)
+	rpc RpcEditPayType(share_message.PayType)returns(base.Empty);															//修改支付方式
+	rpc RpcDelPayType(brower_backstage.QueryDataByIds)returns(base.Empty);													//删除支付方式
+	rpc RpcQueryPayScene(base.Empty)returns(brower_backstage.PaySceneResponse);												//查询支付场景列表
+	rpc RpcEditPayScene(share_message.PayScene)returns(base.Empty);															//修改支付场景
+	rpc RpcDelPayScene(brower_backstage.QueryDataByIds)returns(base.Empty);													//删除支付场景
+	rpc RpcQueryPaymentPlatform(brower_backstage.PlatformChannelRequest)returns(brower_backstage.PaymentPlatformResponse);	//查询支付平台列表
+	rpc RpcEditPaymentPlatform(share_message.PaymentPlatform)returns(base.Empty);											//修改支付平台
+	rpc RpcDelPaymentPlatform(brower_backstage.QueryDataByIds)returns(base.Empty);											//删除支付平台
+	rpc RpcQueryPlatformChannel(brower_backstage.PlatformChannelRequest)returns(brower_backstage.PlatformChannelResponse);	//查询支付平台通道列表
+	rpc RpcEditPlatformChannel(share_message.PlatformChannel)returns(base.Empty);											//修改支付平台通道
+	rpc RpcDelPlatformChannel(brower_backstage.QueryDataByIds)returns(base.Empty);											//删除支付平台通道
+	rpc RpcBatchClosePlatformChannel(brower_backstage.QueryDataByIds)returns(base.Empty);									//批量关闭通道
+	rpc RpcAddGold(brower_backstage.AddGoldResult)returns(base.Empty); 														//人工出入款
+	rpc RpcQueryGoldLog(brower_backstage.QueryGoldLogRequest)returns(brower_backstage.QueryGoldLogResponse); 				//金币流水Log表各种查询
+	rpc RpcQueryOrderList(brower_backstage.QueryOrderRequest)returns(brower_backstage.QueryOrderResponse);					//充值订单列表查询
+	rpc RpcOptOrder(brower_backstage.OptOrderRequest)returns(base.Empty);													//订单操作
+	rpc RpcUpdateOrderList(base.Empty)returns(base.Empty);																	//更新订单列表
+	rpc RpcCheckOrder(brower_backstage.OptOrderRequest)returns(base.Empty);													//人工补单(查询完成订单)	
+	//财务报表
+	rpc RpcMakePlayerKeepReport(brower_backstage.ListRequest)returns(brower_backstage.PlayerKeepReportResponse);			//重置指定时间范围的用户留存报表
+	rpc RpcPlayerKeepReport(brower_backstage.ListRequest)returns(brower_backstage.PlayerKeepReportResponse);				//查询用户留存报表
+	rpc RpcPlayerActiveReport(brower_backstage.ListRequest)returns(brower_backstage.PlayerActiveReportResponse);			//查询日活跃报表
+	rpc RpcPlayerWeekActiveReport(brower_backstage.ListRequest)returns(brower_backstage.PlayerActiveReportResponse);		//查询周活跃报表
+	rpc RpcPlayerMonthActiveReport(brower_backstage.ListRequest)returns(brower_backstage.PlayerActiveReportResponse);		//查询月活跃报表
+	rpc RpcPlayerBehaviorReport(brower_backstage.ListRequest)returns(brower_backstage.PlayerBehaviorReportResponse);		//查询用户行为报表
+	rpc RpcInOutCashSumReport(brower_backstage.ListRequest)returns(brower_backstage.InOutCashSumReportResponse);			//查询出入款汇总报表
+	rpc RpcRegisterLoginReport(brower_backstage.ListRequest)returns(brower_backstage.RegisterLoginReportResponse);			//查询埋点注册登录报表
+	rpc RpcOperationChannelReport(brower_backstage.ListRequest)returns(brower_backstage.OperationChannelReportResponse);	//查询运营渠道汇总报表
+	rpc RpcChannelReport(brower_backstage.ListRequest)returns(brower_backstage.ChannelReportResponse);						//查询渠道报表
+	rpc RpcOperationChannelLine(brower_backstage.ListRequest)returns(brower_backstage.OperationChannelReportLineResponse);	//查询运营渠道汇总报表曲线图
+	rpc RpcArticleReport(brower_backstage.ListRequest)returns(brower_backstage.ArticleReportResponse);						//查询文章报表
+	rpc RpcNoticeReport(brower_backstage.ListRequest)returns(brower_backstage.ArticleReportResponse);						//查询推送通知报表
+	rpc RpcSquareReport(brower_backstage.ListRequest)returns(brower_backstage.SquareReportResponse);						//查询社交广场报表
+	rpc RpcQueryActivityReport(brower_backstage.ListRequest)returns(brower_backstage.ActivityReportResponse);				//活动报表查询
+	rpc RpcAdvReport(brower_backstage.ListRequest)returns(brower_backstage.AdvReportResponse);								//查询广告报表
+	rpc RpcEditRegisterLoginReport(share_message.RegisterLoginReport)returns(base.Empty);									//修改埋点注册登录报表
+	rpc RpcEditPlayerKeepReport(share_message.PlayerKeepReport)returns(base.Empty);											//修改用户留存报表
+	rpc RpcEditOperationChannelReport(share_message.OperationChannelReport)returns(base.Empty);								//修改运营渠道汇总报表
+	rpc RpcQueryRecallReport(brower_backstage.ListRequest)returns(brower_backstage.RecallReportResponse);					//查询用户回归报表
+	rpc RpcQueryRecallPlayerLog(brower_backstage.ListRequest)returns(brower_backstage.RecallplayerLogResponse);				//查询用户回归日志 (开始时间和结束时间传同一个即报表时间戳)
+	rpc RpcCoinProductReport(brower_backstage.ListRequest)returns(brower_backstage.CoinProductReportResponse);				//查询虚拟商城日统计报表
+	rpc RpcCoinProductDetailReport(brower_backstage.ListRequest)returns(brower_backstage.CoinProductReportResponse);		//查询虚拟商城日明细报表 Id=CreateTime
+	rpc RpcNearbyAdvReport(brower_backstage.ListRequest)returns(brower_backstage.NearReportResponse);						//查询附近的人引导项报表
+	rpc RpcButtonClickReport(brower_backstage.ListRequest)returns(brower_backstage.ButtonClickReportResponse); 				//按钮点击行为报表
+	rpc RpcPageRegLogReport(brower_backstage.ListRequest)returns(brower_backstage.PageRegLogReportResponse); 				//注册登录页面埋点报表 SrtType-渠道号,Type-设备
+	//功能相关
+	rpc RpcQueryAppPushMessage(brower_backstage.QueryFeaturesRequest)returns(brower_backstage.QueryFeaturesResponse);				//查询推送通知
+	rpc RpcEditAppPushMessage(share_message.AppPushMessage)returns(base.Empty);														//修改推送通知
+	rpc RpcQuerySystemNoticeMessage(brower_backstage.QueryFeaturesRequest)returns(brower_backstage.QuerySystemNoticeResponse);		//查询小助手消息
+	rpc RpcEditSystemNoticeMessage(share_message.SystemNotice)returns(base.Empty);												    //修改小助手消息
+	rpc RpcDelSystemNoticeMessage(brower_backstage.QueryDataByIds)returns(base.Empty);											    //删除小助手消息
+	rpc RpcQueryTweets(brower_backstage.QueryArticleOrTweetsRequest)returns(brower_backstage.QueryTweetsResponse);                  //查询柠檬团队推文列表
+	rpc RpcAddTweets(share_message.Tweets)returns(base.Empty);                                                                      //添加、修改柠檬团队推文
+	rpc RpcDelTweets(brower_backstage.QueryDataByIds)returns(base.Empty);                                                           //删除柠檬团队推文消息
+	rpc RpcSendTweets(share_message.Tweets)returns(base.Empty);                                                                     //推送柠檬团队推文消息
+	rpc RpcQueryArticle(brower_backstage.QueryArticleOrTweetsRequest)returns(brower_backstage.QueryArticleResponse);                //图文库列表
+	rpc RpcEditArticle(share_message.Article)returns(base.Empty);                                                                   //添加、修改小助手文章消息
+	rpc RpcDelArticle(brower_backstage.QueryDataByIds)returns(base.Empty);                                                         	//删除小助手文章消息
+	//limit_parameter转账参数, avatar_parameter头像参数,interest_parameter兴趣参数,obj_moderations屏蔽词参数,squarehot_parameter动态热门参数,warning_parameter 预警参数,topichot_parameter话题热门参数,极光推送管理push_parameter,通用参数common_parameter
+	rpc RpcQuerySysParameterById(brower_backstage.QueryDataById)returns(share_message.SysParameter);								//ID查询系统参数设置
+	rpc RpcEditSysParameter(share_message.SysParameter)returns(base.Empty);															//修改系统参数设置
+	rpc RpcCheckShieldScore(brower_backstage.CheckScoreRequest)returns(brower_backstage.CheckScoreResponse);						//查询屏蔽分数
+	rpc RpcAddRegisterPush(share_message.RegisterPush)returns(base.Empty);                                                          //添加、修改注册推文
+	rpc RpcQueryRegisterPush(brower_backstage.QueryArticleOrTweetsRequest)returns(brower_backstage.QueryRegisterPushResponse);      //查询注册推文
+	rpc RpcQueryArticleComment(brower_backstage.ListRequest)returns(brower_backstage.ArticleCommentResponse);						//查询文章评论
+	rpc RpcDelArticleComment(brower_backstage.QueryDataByIds)returns(base.Empty);                                                   //删除文章评论
+	rpc RpcQueryNearLead(brower_backstage.ListRequest)returns(brower_backstage.QueryNearSetResponse);								//附近的人引导列表
+	rpc RpcSaveNearLead(share_message.NearSet)returns(base.Empty);																	//附近的人引导保存
+	rpc RpcDelNearLead(brower_backstage.QueryDataByIds)returns(base.Empty);                                                  		//删除附近的人引导
+	rpc RpcQueryNearFastTerm(brower_backstage.ListRequest)returns(brower_backstage.QueryNearSetResponse);							//附近的人快捷打招呼列表
+	rpc RpcSaveNearFastTerm(share_message.NearSet)returns(base.Empty);																//附近的人快捷打招呼保存
+
+	//运营渠道管理 	合作方式 ListType：-1暂无, 1 cpa,2 cps,3 cpc,4 cpd 	下拉选项 Type：1 渠道名称，2 渠道号，3 公司名称，4 渠道类型
+	rpc RpcOperationChannelList(brower_backstage.ListRequest)returns(brower_backstage.OperationListResponse);			//查询运营渠道列表
+	rpc RpcEditOperationChannel(share_message.OperationChannel)returns(base.Empty);										//修改运营渠道
+	rpc RpGetChannelList(base.Empty)returns(brower_backstage.KeyValueResponse);											//渠道列表下拉
+	rpc RpcQueryDirtyWords(brower_backstage.ListRequest)returns(brower_backstage.DirtyWordsResponse);					//查询屏蔽词
+	rpc RpcDelDirtyWords(brower_backstage.QueryDataByIds)returns(base.Empty);											//批量删除
+	rpc RpcAddDirtyWords(brower_backstage.QueryDataByIds)returns(base.Empty);											//批量添加
+	rpc RpcQuerySignature(brower_backstage.ListRequest)returns(brower_backstage.SignatureResponse);						//查询个性签名
+	rpc RpcDelSignature(brower_backstage.QueryDataByIds)returns(base.Empty);											//批量删除
+	rpc RpcAddSignature(brower_backstage.QueryDataByIds)returns(base.Empty);											//批量添加
+
+	//商城管理
+	rpc RpcQueryShopItem(brower_backstage.QueryShopItemRequest)returns(brower_backstage.QueryShopItemResponse);			 							//后台导航跳转以及查询商城商品列表
+	rpc RpcQueryShopItemDetailById(brower_backstage.QueryDataById)returns(brower_backstage.QueryShopItemDetailResponse); 							//点击列表中的商品id跳转商品详情页面   Id64：商品ID
+	rpc RpcShopSoldOut(brower_backstage.QueryDataById)returns(base.Empty);												 							//操作中下架按钮的确定   Id64：商品ID
+    rpc RpcGetShopItemTypeDropDown(base.Empty)returns(brower_backstage.GetShopItemTypeDropDownResponse);                 							//商品发布页面和修改页面上 商品分类和品类标签的下拉内容取得
+	rpc RpcReleaseShopItem(brower_backstage.ReleaseEditShopItemObject)returns(base.Empty);                               							//发布商品确定按钮
+    rpc RpcGetEditShopItemDetailById(brower_backstage.QueryDataById)returns(brower_backstage.ReleaseEditShopItemObject);   							//点击修改按钮跳转取得的商品的数据    Id64：商品ID
+    rpc RpcEditShopItem(brower_backstage.ReleaseEditShopItemObject)returns(base.Empty);                                    							//修改商品确定按钮
+    rpc RpcQueryShopComment(brower_backstage.QueryShopCommentRequest)returns(brower_backstage.QueryShopCommentResponse);   							//商品列表点击留言查看跳转到查询留言列表
+	rpc RpcEditShopComment(brower_backstage.EditShopCommentRequest)returns(base.Empty);                                    							//留言修改点赞数页面的确定按钮
+    rpc RpcDeleteShopComment(brower_backstage.QueryDataById)returns(base.Empty);                                    	        					//删除留言  Id64：留言ID
+	rpc RpcQueryShopOrder(brower_backstage.QueryShopOrderRequest)returns(brower_backstage.QueryShopOrderResponse);									//后台导航跳转以及查询商城订单列表
+	rpc RpcGetExpressComDropDown(base.Empty)returns(brower_backstage.GetExpressComDropDownResponse);                    							//待发货的订单 发货页面取得快递公司下拉列表的内容
+	rpc RpcSendShopOrder(brower_backstage.SendShopOrderRequest)returns(base.Empty);																	//确认发货商城订单
+	rpc RpcQueryShopOrderExpress(brower_backstage.QueryDataById)returns(base.Empty);                                     							//取得物流信息 Id64：商品ID
+    rpc RpcQueryShopReceiveAddress(brower_backstage.QueryDataById)returns(brower_backstage.QueryShopReceiveAddressResponse);    					//查询商城用户收货地址 Id64：用户ID
+    rpc RpcQueryShopDeliverAddress(brower_backstage.QueryDataById)returns(brower_backstage.QueryShopDeliverAddressResponse);    					//查询商城用户发货地址 Id64：用户ID
+    rpc RpcImportShopPointCard(brower_backstage.ImportShopPointCardRequest)returns(brower_backstage.ImportShopPointCardResponse);    				//商城点卡导入
+	rpc RpcQueryShopPointCard(brower_backstage.QueryShopPointCardRequest)returns(brower_backstage.QueryShopPointCardResponse);						//后台导航跳转以及查询商城点卡列表
+    rpc RpcGetShopPointCardDropDown(brower_backstage.GetShopPointCardDropDownRequest)returns(brower_backstage.GetShopPointCardDropDownResponse);  	//商品发布页面 通过卖家帐号取得点卡名称的下拉内容
+	//商城后台以下三种状态取消各自设置一个接口为了判断重复操作以及状态是否发生变化(网络环境差的情况下，以及并发操作)
+	rpc RpcCancelShopOrder(brower_backstage.CancelShopOrderRequest)returns(base.Empty);					//待付款取消商城订单确定按钮(待付款取消)
+	rpc RpcCancelShopOrderForWaitSend(brower_backstage.CancelShopOrderRequest)returns(base.Empty);		//待发货取消商城订单确定按钮(待发货取消 备用)
+	rpc RpcCancelShopOrderForWaitReceive(brower_backstage.CancelShopOrderRequest)returns(base.Empty);	//待收货取消商城订单确定按钮(待收货取消 备用)
+	//客服系统
+	rpc RpcGetIMmessageCount(base.Empty)returns(brower_backstage.IMmessageResponse);									//登录获取未读消息条数
+	rpc RpcGetWaiterMsg(base.Empty)returns(brower_backstage.IMmessageNopageResponse);									//客服查询正在沟通的消息列表
+	rpc RpcGetWaiterMsgByMid(brower_backstage.ListRequest)returns(share_message.IMmessage);								//查询新消息 type=1 只查新消息， type=0 查全部，id=消息ID
+	rpc RpcWaiterSendMsgToPlayer(share_message.IMmessage)returns(base.Empty);											//客服发消息给玩家
+	rpc RpcWaiterOverMsgToPlayer(share_message.IMmessage)returns(share_message.IMmessage);								//客服发送结束消息给玩家 结束只发消息ID
+	rpc RpcWaiterPerformanceList(brower_backstage.ListRequest)returns(brower_backstage.WaiterPerformanceResponse);		//客服管理列表
+	rpc RpcWaiterPerformance(brower_backstage.QueryDataById)returns(share_message.WaiterPerformance);					//客服绩效查询
+	rpc RpcWaiterReception(brower_backstage.QueryDataById)returns(base.Empty);											//客服设置接待状态
+	rpc RpcWaiterRest(brower_backstage.QueryDataById)returns(base.Empty);												//客服设置休息状态
+	rpc RpcWaiterChatLogList(brower_backstage.ListRequest)returns(brower_backstage.IMmessageResponse);					//客服聊天记录列表 Id 客服Id
+	rpc RpcWaiterFAQList(brower_backstage.ListRequest)returns(brower_backstage.WaiterFAQResponse);						//客服常见问题列表 Type 1标题，2关键词 ，ListType 1开启，2关闭
+	rpc RpcEditWaiterFAQ(share_message.WaiterFAQ)returns(base.Empty);													//客服常见问题修改
+	rpc RpcWaiterFastReply(brower_backstage.ListRequest)returns(brower_backstage.WaiterFastReplyResponse);				//客服常用语列表 ListType 1开启，2关闭
+	rpc RpcWaiterFastReplyNopage(base.Empty)returns(brower_backstage.WaiterFastReplyResponse);							//客服常用语不分页
+	rpc RpcEditWaiterFastReply(share_message.WaiterFastReply)returns(base.Empty);										//客服常用语修改
+	rpc RpcDelWaiterFastReply(brower_backstage.QueryDataByIds)returns(base.Empty);										//删除常用语
+	//社交广场
+    rpc RpcQueryDynamic(brower_backstage.DynamicListRequest)returns(brower_backstage.DynamicListResponse);   //查询社交动态 Type 1柠檬号 8动态ID 9话题
+    rpc RpcQueryDynamicDetails(brower_backstage.QueryDataById)returns(share_message.DynamicData);            //查询动态详情
+    rpc RpcQueryCommentDetails(brower_backstage.DynamicListRequest)returns(brower_backstage.CommentList);    //查询动态评论
+    rpc RpcUpdateDynamic(share_message.DynamicData)returns(base.Empty);                                      //修改发布动态 IsHot=true 设置热门
+	rpc RpcDeleteDynamic(brower_backstage.DelDynamicRequest)returns(base.Empty);                             //删除发布动态
+	rpc RpcDeleteUnDynamic(brower_backstage.DelDynamicRequest)returns(base.Empty);                           //删除未发布动态
+	rpc RpcShieldDynamic(brower_backstage.QueryDataByIds)returns(base.Empty);								 //屏蔽社交动态 ids64(logid),ids32(1屏蔽，2解除) 
+	rpc RpcDeleteCommentDatas(brower_backstage.QueryDataByIds)returns(base.Empty);                           //删除评论 ids64(评论Ids),IdsStr(logid),Note(原因)
+	rpc RpcReviewDynamic(brower_backstage.QueryDataById)returns(base.Empty);								 //审核动态 id64(logid),id32(1通过，2拒绝)
+	//话题相关
+	rpc RpcGetTopicByIds(brower_backstage.QueryDataByIds)returns(brower_backstage.TopicResponse);	//Ids查询话题列表,ids64-话题id数组
+	rpc RpcQueryTopicTypeList(brower_backstage.ListRequest)returns(brower_backstage.TopicTypeResponse);	//话题类别列表
+	rpc RpcUpdateTopicType(share_message.TopicType)returns(base.Empty);                                 //修改话题类别
+	rpc RpcQueryTopicList(brower_backstage.ListRequest)returns(brower_backstage.TopicResponse);			//话题列表 DownType 1热门，2推荐，3无标签；Type 1话题名称,2用户管理员,3后台管理员；listType 类型id；sort 排序字段，SrtType=asc正序
+	rpc RpcUpdateTopic(share_message.Topic)returns(base.Empty);                                         //修改话题
+	rpc RpcQueryTopicApplyList(brower_backstage.ListRequest)returns(brower_backstage.TopicApplyListRes);	//话题修改审核列表 Status:0-待审核,1已通过,2已拒绝 Type:1-话题名称,2-申请人柠檬号 TimeType:1-提交时间,2-审核时间
+	rpc RpcQueryTopicApply(brower_backstage.QueryDataById)returns(brower_backstage.QueryTopicApplyRes);		//Id查询修改话题 IdStr-id
+	rpc RpcAuditTopicApply(brower_backstage.AuditTopicApplyReq)returns(base.Empty);							//审核话题申请
+	rpc RpcApplyTopicMasterList(brower_backstage.ListRequest)returns(brower_backstage.ApplyTopicMasterRes); //话题主申请列表 Status:0-待审核,1已通过,2已拒绝 Type:1-话题名称,2-申请人柠檬号 TimeType:1-申请时间,2-审核时间
+	rpc RpcApplyTopicMaster(brower_backstage.QueryDataById)returns(base.Empty); 						//话题主申请审核 Id64:ID,Id32:1-已通过,2-已拒绝
+	//广告系统
+	rpc RpcQueryAdvList(brower_backstage.ListRequest)returns(brower_backstage.AdvListResponse);   	//查询广告列表 Type:1ID查询，2标题查询, ListType:1信息流,2启动页,3banner广场,4banner个人,5banner硬币页
+	rpc RpcEditAdvData(share_message.AdvSetting)returns(base.Empty);								//修改广告
+	rpc RpcAdvOnShelf(brower_backstage.QueryDataByIds)returns(base.Empty); 							//广告上架
+	rpc RpcAdvOffShelf(brower_backstage.QueryDataByIds)returns(base.Empty); 						//广告下架
+	rpc RpcUpdateAdvSort(brower_backstage.QueryDataByIds)returns(base.Empty);						//修改广告排序 只用传Id,Location,Weights(新的排序号)
+	rpc RpcDelAdvData(brower_backstage.QueryDataByIds)returns(base.Empty);							//删除广告
+	rpc RpcIndexTipsList(brower_backstage.ListRequest)returns(brower_backstage.IndexTipsResponse);						//匹配首页Tips配置列表
+	rpc RpcSaveIndexTips(share_message.IndexTips)returns(base.Empty);													//保存首页Tips配置
+	rpc RpcDelIndexTips(brower_backstage.QueryDataByIds)returns(base.Empty);											//批量删除首页Tips配置 传Ids32
+	rpc RpcPopSuspendList(brower_backstage.ListRequest)returns(brower_backstage.PopSuspendResponse);					//弹窗悬浮球配置列表
+	rpc RpcSavePopSuspendList(brower_backstage.PopSuspendResponse)returns(base.Empty);									//批量保存弹窗悬浮球配置
+	rpc RpcQueryAdvDownList(brower_backstage.ListRequest)returns(brower_backstage.KeyValueResponseTag);					//广告列表下拉 Type-Location位置类型,Status-状态
+
+	//虚拟商城
+	rpc RpcCoinItemList(brower_backstage.ListRequest)returns(brower_backstage.CoinItemListResponse);					//硬币管理列表
+	rpc RpcSaveCoinItem(share_message.CoinRecharge)returns(base.Empty);													//硬币保存
+	rpc RpcGiveCoin(brower_backstage.QueryDataById)returns(base.Empty);													//系统赠送硬币 Note参数:give-赠送,back-回收。ObjId参数:1-回收个人兑换,2-回收平台赠送。
+	rpc RpcQueryCoinChangeLog(brower_backstage.ListRequest)returns(brower_backstage.CoinChangeLogResponse);				//硬币流水日志 ListType(1收入,2支出) DownType(明细项目ID) Type(1订单号,2用户柠檬号) 
+	rpc RpcQueryPropsItemList(brower_backstage.ListRequest)returns(brower_backstage.PropsItemResponse);					//道具库列表
+	rpc RpcSavePropsItem(share_message.PropsItem)returns(base.Empty);													//道具保存
+	rpc RpcQueryPropsItemByIds(brower_backstage.QueryDataByIds)returns(brower_backstage.PropsItemResponse);				//道具Ids查询道具列表
+	rpc RpcCoinProductList(brower_backstage.ListRequest)returns(brower_backstage.CoinProductResponse);					//商城商品管理列表 ListType(商品类型) Type(1商品名,2商品id)
+	rpc RpcSaveCoinProduct(share_message.CoinProduct)returns(base.Empty);												//商品保存
+	rpc RpcPlayerBagItem(brower_backstage.ListRequest)returns(brower_backstage.PlayerBagItemResponse);					//玩家背包列表
+	rpc RpcPlayerGetPropsLogList(brower_backstage.ListRequest)returns(brower_backstage.PlayerGetPropsLogResponse);		//用户道具获得日志列表
+	rpc RpcRecycleProps(brower_backstage.QueryDataByIds)returns(base.Empty);											//用日志回收用户道具
+	rpc RpcSysGiveProps(brower_backstage.QueryDataById)returns(base.Empty);												//系统赠送商品内的道具给用户 Id64 传玩家Id，ObjId 传商品Id
+	rpc RpcQueryCoinProductArry(brower_backstage.ListRequest)returns(brower_backstage.KeyValueResponse);				//查询商品名数组
+	rpc RpcBagRecycleProps(brower_backstage.QueryDataById)returns(base.Empty);											//用户背包回收用户道具 Id64-id，Id32-回收天数
+//+++++++++++++++++++++++++++++++++++++++++++++++++++许愿池++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	//许愿池工具
+	rpc RpcToolWishBoxItemList(brower_backstage.QueryDataById)returns(brower_backstage.ToolWishBoxItemListRes);	//商品基础数据
+	rpc RpcToolSaveWishBoxItem(brower_backstage.ToolSaveWishBoxItemReq)returns(base.Empty);	//保存商品基础数据
+	rpc RpcToolDelWishBoxItem(brower_backstage.QueryDataByIds)returns(base.Empty);			//删除商品基础数据
+	rpc RpcToolRateList(brower_backstage.ToolRateReq)returns(brower_backstage.ToolRateRes);	//概率参数计算表
+	rpc RpcToolLucky(brower_backstage.ToolLuckyReq)returns(brower_backstage.ToolLuckyRes);	//抽奖
+	rpc RpcToolOutputData(brower_backstage.QueryDataById)returns(brower_backstage.ToolOutputDataRes);			//输出数据
+	rpc RpcToolOutputitemList(brower_backstage.QueryDataById)returns(brower_backstage.ToolOutputitemRes);		//产出物品
+	rpc RpcToolToolPumping(brower_backstage.QueryDataById)returns(brower_backstage.ToolPumping);				//抽水表
+	rpc RpcToolResetWishPool(brower_backstage.QueryDataById)returns(base.Empty);        		// 重置水池Id64-id： 水池id
+	rpc RpcToolGetWishPool(brower_backstage.QueryDataById)returns(brower_backstage.WishPool);   // 获取水池Id64-id： 水池id
+	rpc RpcToolWishBoxList(brower_backstage.ListRequest)returns(brower_backstage.WishBoxList);	//工具盲盒列表
+	rpc RpcToolWishBoxSave(share_message.WishBox)returns(base.Empty);							//工具添加盲盒
+
+
+	// 盲盒管理
+	rpc RpcQueryWishBoxList(brower_backstage.WishBoxListRequest)returns(brower_backstage.WishBoxList);    			// 获取盲盒列表
+	rpc RpcUpdateWishBox(brower_backstage.WishBox)returns(base.Empty);    											// 新增/更新盲盒
+	rpc RpcGetWishBoxDetail(brower_backstage.QueryDataById)returns(brower_backstage.WishBox);    					// 查看盲盒详情 Id64-id： 盲盒id
+	rpc RpcQueryWishBoxGoodsItemList(brower_backstage.ListRequest)returns(brower_backstage.WishBoxGoodsItemList);   // 获取盲盒包含的商品列表 盲盒id:int64  ListType:0全部 1普通款，2典藏款，3梦幻款，4超凡款
+	rpc RpcQueryWishBoxWinCfgList(brower_backstage.ListRequest)returns(brower_backstage.WishBoxWinCfgList); 		// 获取盲盒中奖配置列表 盲盒id:int64  ListType:0全部 1普通款，2典藏款，3梦幻款，4超凡款
+	rpc RpcGetWishBoxKvs(base.Empty)returns(brower_backstage.KeyValueResponseTag); 									// 获取盲盒列表键值对
+	rpc RpcWishBoxLottery(brower_backstage.WishBoxLotteryReq)returns(brower_backstage.WishBoxLotteryResp); 			// 盲盒抽奖
+	rpc RpcGetGoodsListByBoxId(brower_backstage.QueryDataById)returns(brower_backstage.WishBoxGoodsSelectedList); 	// 盲盒下的商品列表（下拉框）
+	// 商品管理
+	rpc RpcQueryWishGoodsList(brower_backstage.WishBoxGoodsListRequest)returns(brower_backstage.WishBoxGoodsList);  // 获取商品列表
+	rpc RpcUpdateWishGoods(brower_backstage.WishBoxGoods)returns(base.Empty);    									// 新增/更新商品
+	rpc RpcGetWishGoodsDetail(brower_backstage.QueryDataById)returns(brower_backstage.WishBoxGoods);    			// 查看商品详情 Id64-id： 盲盒id
+	rpc RpcQueryWishGoodsBrandList(brower_backstage.ListRequest)returns(brower_backstage.WishGoodsBrandList);    	// 获取商品品牌列表 Type-关键字:1、品牌id 2、品牌名称,Status-1000、全部 0、关闭 1、开启
+	rpc RpcUpdateWishGoodsBrand(brower_backstage.WishGoodsBrand)returns(base.Empty);    							// 新增/更新商品品牌
+	rpc RpcGetWishGoodsBrandKvs(brower_backstage.ListRequest)returns(brower_backstage.KeyValueResponseTag); 		// 获取商品品牌列表键值对
+	rpc RpcQueryWishGoodsTypeList(brower_backstage.ListRequest)returns(brower_backstage.WishGoodsTypeList);    		// 获取商品类型列表 Type-关键字: 1、分类id 2、分类名称,Status-1000、全部 0、关闭 1、开启
+	rpc RpcUpdateWishGoodsType(brower_backstage.WishGoodsType)returns(base.Empty);    								// 新增/更新商品类型
+	rpc RpcGetWishGoodsTypeKvs(brower_backstage.ListRequest)returns(brower_backstage.KeyValueResponseTag); 			// 获取商品类型列表键值对
+	// 订单管理
+	// TimeType 查询时间类型： 1、创建时间 2、发货时间
+	// Type  关键字: 1、订单id 2、商品id 3、中奖柠檬号
+	// Status 状态： 1000、全部 0、待发货 1、已发货 2、已取消 3、已拒绝
+	rpc RpcQueryWishDeliveryOrderList(brower_backstage.ListRequest)returns(brower_backstage.WishDeliveryOrderList);     		// 获取发货订单列表
+	rpc RpcUpdateDeliveryOrderCourierInfo(brower_backstage.UpdateDeliveryOrderCourierInfo)returns(base.Empty);    				// 填写发货信息
+	rpc RpcUpdateDeliveryOrderStatus(brower_backstage.UpdateStatusRequest)returns(base.Empty);    								// 更新订单状态 Id-订单id,Note-原因（status: 2-已取消）
+	// Type 关键字: 1、回收订单id 2、商品id 3、中奖柠檬号
+	// ListType 回收方式： 1000、全部 0、待审核 1、已回收 2、已拒绝
+	rpc RpcQueryWishRecycleOrderList(brower_backstage.ListRequest)returns(brower_backstage.WishRecycleOrderList);    		// 获取回收订单列表
+	rpc RpcGetWishRecycleOrderDetail(brower_backstage.QueryDataById)returns(brower_backstage.WishRecycleOrderDetailList);   // 回收订单详情 Id64-id： 订单id
+	rpc RpcUpdateWishRecycleOrderStatus(brower_backstage.UpdateStatusRequest)returns(base.Empty);    						// 更新订单状态 Id-订单id,Note-原因（status: 2-已取消 3-已拒绝）
+	rpc RpcGetWishRecycleOrderUserInfo(brower_backstage.QueryDataById)returns(brower_backstage.WishRecycleOrderUserInfo);   // 回收订单用户审核详情 Id64-id：订单id
+	rpc RpcQueryWishOrderList(brower_backstage.QueryWishOrderRequest)returns(brower_backstage.QueryOrderResponse);    		// 出款订单查询
+	rpc RpcOptWishOrder(brower_backstage.OptOrderRequest)returns(base.Empty);												// 订单操作 opt 1-完成,2-审核通过,3-取消,4-拒绝
+	rpc RpcWishPlayerList(brower_backstage.ListRequest)returns(brower_backstage.WishPlayerListResponse);					// 许愿池用户管理 Type下拉查询项,ListType渠道类型:1001-柠檬im 1002-语音渠道 1003-其他渠道,Status状态:1-冻结 2解冻
+	rpc RpcWishPlayerFreezeDiamond(brower_backstage.QueryDataByIds)returns(base.Empty);										// 冻结钻石帐户 Ids64-冻结帐户， ObjIds[0]-冻结到期时间 永久冻结传-1 单位秒
+	rpc RpcWishPlayerUnFreezeDiamond(brower_backstage.QueryDataByIds)returns(base.Empty); 									// 解冻钻石帐户
+	// 统计报表
+	rpc RpcQueryWishPoolReportList(brower_backstage.ListRequest)returns(brower_backstage.WishPoolReportList);    		// 许愿池报表列表 CreateTime即是ID
+	rpc RpcQueryWishBoxReportList(brower_backstage.ListRequest)returns(brower_backstage.WishBoxReportList);    			// 盲盒报表列表 Id-许愿池报表的ID
+	rpc RpcQueryWishBoxDetailReportList(brower_backstage.ListRequest)returns(brower_backstage.WishBoxDetailReportList); // 盲盒详情报表列表 Type-关键字: 1、盲盒id（必传）
+	rpc RpcQueryWishItemReportList(brower_backstage.ListRequest)returns(brower_backstage.WishItemReportList);    		// 商品报表列表 Id-许愿池报表的ID
+	// 盲盒详情导出测试数据  筛选范围数据，全是用时间戳
+	rpc RpcQueryTestPlayerWishItemList(brower_backstage.ListRequest)returns(brower_backstage.TestPlayerWishItemList);    		// 导出测试数据-玩家物品列表 Id 盲盒ID
+	rpc RpcQueryTestWishPoolLogList(brower_backstage.ListRequest)returns(brower_backstage.TestWishPoolLogList);    				// 导出测试数据-水池流水日志 Id 盲盒ID
+	rpc RpcQueryTestWishPoolPumpLogList(brower_backstage.ListRequest)returns(brower_backstage.TestWishPoolPumpLogList);    		// 导出测试数据-水池抽水日志 Id 盲盒ID
+	rpc RpcQueryTestWishPoolBoxPoolInfoList(brower_backstage.ListRequest)returns(brower_backstage.TestWishPoolBoxPoolInfoList); // 导出测试数据-盲盒水池信息 Id 盲盒ID
+	// 抽奖记录
+	rpc RpcQueryDrawRecordList(brower_backstage.ListRequest)returns(brower_backstage.DrawRecordList);    		//抽奖记录列表 TimeType-查询时间类型：1、最后抽奖时间,Type-关键字: 1、柠檬号 2、用户昵称 3、手机号码
+	rpc RpcQueryAddBoxRecordList(brower_backstage.ListRequest)returns(brower_backstage.AddBoxRecordList);    	//收藏盲盒记录列表 Id-用户id
+	rpc RpcQueryWishGoodsRecordList(brower_backstage.ListRequest)returns(brower_backstage.WishGoodsRecordList); //许愿物品记录列表 Id-用户id
+	rpc RpcQueryDrawBoxRecordList(brower_backstage.ListRequest)returns(brower_backstage.DrawBoxRecordList);   	//抽奖盲盒记录列表 Id-用户id
+	rpc RpcQueryHaveItemList(brower_backstage.ListRequest)returns(brower_backstage.HaveItemList);    			//现有物品列表 Id-用户id
+	rpc RpcDeleteHaveItem(brower_backstage.QueryDataByIds)returns(brower_backstage.HaveItemList);    			//扣除用户现有物品 Ids64-PlayerItemId要删除的ids(扣除所有物品的时候不传ids64),ObjIds-PlayerId(必传)
+	rpc RpcQueryWinRecordList(brower_backstage.ListRequest)returns(brower_backstage.WinRecordList);  			//中奖记录记录列表 Id-用户id,Type-盲盒id（必传）
+	rpc RpcQueryWishDelItemList(brower_backstage.ListRequest)returns(brower_backstage.HaveItemList);    		//扣除物品列表 Id-用户id
+	// 水池管理
+	rpc RpcQueryWishPoolList(brower_backstage.ListRequest)returns(brower_backstage.WishPoolList);   			// 获取水池列表 Type关键字: 1-水池id 2-水池名称
+	rpc RpcUpdateWishPool(brower_backstage.WishPool)returns(base.Empty);    									// 新增/更新水池
+	rpc RpcDeleteWishPool(brower_backstage.QueryDataById)returns(base.Empty);        							// 删除水池Id64-id： 水池id
+	rpc RpcGetWishPoolKvs(base.Empty)returns(brower_backstage.KeyValueResponseTag); 							// 获取水池列表键值对
+	rpc RpcUpdateDefaultWish(brower_backstage.QueryDataById)returns(base.Empty);  								// 更新默认水池水池 int64:新的 int32 旧的
+	rpc RpcGetWishPool(brower_backstage.QueryDataById)returns(brower_backstage.WishPool);        				// 获取水池Id64-id： 水池id
+	rpc RpcResetWishPool(brower_backstage.QueryDataById)returns(base.Empty);        							// 重置水池Id64-id： 水池id
+	// 钻石管理
+	rpc RpcDiamondItemList(brower_backstage.ListRequest)returns(brower_backstage.DiamondItemListResponse);			//钻石管理列表
+	rpc RpcSaveDiamondItem(share_message.DiamondRecharge)returns(base.Empty);										//钻石保存
+	rpc RpcGiveDiamond(brower_backstage.QueryDataById)returns(base.Empty);											//系统赠送钻石 Note参数:give-赠送,back-回收,freeze-冻结
+	rpc RpcQueryDiamondChangeLog(brower_backstage.ListRequest)returns(brower_backstage.DiamondChangeLogResponse);	//钻石流水日志 ListType(1收入,2支出) DownType(明细项目ID) Type(1订单号,2用户柠檬号) UserType(0-总流水,1-用户流水,2-运营流水)
+	// 参数设置
+	rpc RpcGetPriceSection(base.Empty)returns(brower_backstage.PriceSection); 								// 获取价格参数设置
+	rpc RpcUpdatePriceSection(brower_backstage.PriceSection)returns(base.Empty); 							// 更新价格参数设置
+	rpc RpcGetMailSection(base.Empty)returns(brower_backstage.WishMailSection); 							// 获取邮寄参数设置
+	rpc RpcUpdateMailSection(brower_backstage.WishMailSection)returns(base.Empty); 							// 更新邮寄参数设置
+	rpc RpcGetWishRecycleSection(base.Empty)returns(brower_backstage.WishRecycleSection); 					// 获取物品回收参数设置
+	rpc RpcUpdateWishRecycleSection(brower_backstage.WishRecycleSection)returns(base.Empty); 				// 更新物品回收参数设置
+	rpc RpcGetWishPayWarnCfg(base.Empty)returns(brower_backstage.WishPayWarnCfg); 							// 获取支付预警
+	rpc RpcUpdateWishPayWarnCfg(brower_backstage.WishPayWarnCfg)returns(base.Empty); 						// 更新支付预警
+	rpc RpcGetWishCoolDownConfig(base.Empty)returns(brower_backstage.WishCoolDownConfig); 					// 获取冷却期参数设置
+	rpc RpcUpdateWishCoolDownConfig(brower_backstage.WishCoolDownConfig)returns(base.Empty); 				// 更新冷却期参数设置
+	rpc RpcGetWishCurrencyConversionCfg(base.Empty)returns(brower_backstage.WishCurrencyConversionCfg); 	// 获取货币换算参数设置
+	rpc RpcUpdateWishCurrencyConversionCfg(brower_backstage.WishCurrencyConversionCfg)returns(base.Empty); 	// 更新货币换算参数设置
+	rpc RpcGetWishGuardianCfg(base.Empty)returns(brower_backstage.WishGuardianCfg); 						// 获取守护者收益设置
+	rpc RpcUpdateWishGuardianCfg(brower_backstage.WishGuardianCfg)returns(base.Empty); 						// 更新守护者收益设置
+	rpc RpcSaveRecycleNoteCfg(brower_backstage.RecycleNoteCfg)returns(base.Empty); 						//保存回收说明
+	rpc RpcGetRecycleNoteCfg(base.Empty)returns(brower_backstage.RecycleNoteCfg); 		//查看回收说明
+	//许愿池活动
+	rpc RpcPayPlayerLocation(brower_backstage.ListRequest)returns(brower_backstage.NameValueResponseTag); //付费用户地理位置分布图 ListType (设备分类 1 IOS，2 Android，3 other) Type (0 全部 1国内 2国外)
+	rpc RpcWishCoinRechargeActivityCfgList(brower_backstage.ListRequest)returns(brower_backstage.WishCoinRechargeActivityCfgRes);	//充值活动配置列表
+	rpc RpcWishCoinRechargeActivityCfgUpdate(share_message.WishCoinRechargeActivityCfg)returns(base.Empty); 						//充值活动配置修改新增
+	rpc RpcWishCoinRechargeActivityCfgDel(brower_backstage.QueryDataByIds)returns(base.Empty); 										//充值活动配置删除 Ids64
+	// 许愿池活动奖池管理
+	rpc RpcQueryWishActPool(brower_backstage.ListRequest)returns(brower_backstage.WishActPoolList); 		//获取活动奖池管理
+	rpc RpcUpdateWishActPool(share_message.WishActPool)returns(base.Empty); 								//新增/更新活动奖池
+	rpc RpcDeleteWishActPool(brower_backstage.QueryDataByIds)returns(base.Empty); 							//删除活动奖池
+	rpc RpcAddWishAllowList(brower_backstage.AddWishAllowListReq)returns(base.Empty); 						//添加白名单
+	rpc RpcDeleteWishAllowList(brower_backstage.QueryDataByIds)returns(base.Empty); 						//删除白名单
+	rpc RpcWishAllowList(base.Empty)returns(brower_backstage.WishAllowListResp); 							//白名单列表
+	rpc RpcQueryWishActPoolDetail(brower_backstage.ListRequest)returns(brower_backstage.WishActPoolDetail); //获取活动奖池详情 Id-活动奖池id,Type-关键字: 1、盲盒ID
+	rpc RpcGetWishActPoolTypeKvs(base.Empty)returns(brower_backstage.KeyValueResponseTag); 					//获取活动奖池列表键值对
+	// 活动设置
+	rpc RpcGetWishActCfg(brower_backstage.ListRequest)returns(share_message.Activity); 	//获取活动设置 ListType 所属活动：  3 、累计次数活动 4、累计天数活动 5、累计金额活动
+	rpc RpcUpdateWishActCfg(share_message.Activity)returns(base.Empty); 				//更新活动设置
+
+	//活动报表
+	rpc RpcWishPoolActivityReportList(brower_backstage.ListRequest) returns(brower_backstage.WishPoolActivityReportResp);	//许愿池活动报表
+
+	// 许愿池活动规则管理
+	rpc RpcQueryWishActPoolRuleDay(brower_backstage.ListRequest)returns(brower_backstage.WishActPoolRuleList); 					//获取累计天数规则 ListType- 所属奖池：0、全部 奖池id
+	rpc RpcAddWishActPoolRuleDay(brower_backstage.AddWishActPoolRuleRequest)returns(base.Empty); 								//新增累计天数规则
+	rpc RpcUpdateWishActPoolRuleDay(brower_backstage.WishActPoolRule)returns(base.Empty); 										//更新累计天数规则
+	rpc RpcDeleteWishActPoolRuleDay(brower_backstage.QueryDataByIds)returns(base.Empty); 										//删除累计天数规则
+	rpc RpcQueryWishActPoolRuleCount(brower_backstage.ListRequest)returns(brower_backstage.WishActPoolRuleList); 				//获取累计次数规则
+	rpc RpcAddWishActPoolRuleCount(brower_backstage.AddWishActPoolRuleRequest)returns(base.Empty); 								//新增累计次数规则
+	rpc RpcUpdateWishActPoolRuleCount(brower_backstage.WishActPoolRule)returns(base.Empty); 									//更新累计次数规则
+	rpc RpcDeleteWishActPoolRuleCount(brower_backstage.QueryDataByIds)returns(base.Empty); 										//删除累计次数规则
+	rpc RpcQueryWishActPoolRuleWeekMonth(brower_backstage.ListRequest)returns(brower_backstage.WishActPoolRuleList); 			//获取累计金额规则  ListType- 回收方式：1、周榜排名 2、月榜排名,Type- (0 全部 1钻石奖励 2实物奖励)
+	rpc RpcAddWishActPoolRuleWeekMonth(brower_backstage.AddWishActPoolRuleRequest)returns(base.Empty); 							//新增累计金额规则
+	rpc RpcUpdateWishActPoolRuleItemWeekMonth(brower_backstage.WishActPoolAwardItem)returns(base.Empty); 						//更新累计金额规则-钻石奖励/实物奖励
+	rpc RpcDeleteWishActPoolRuleItemWeekMonth(brower_backstage.QueryDataByIds)returns(base.Empty); 								//删除累计金额规则
+	rpc RpcQueryWishActPlayerRecordList(brower_backstage.ListRequest)returns(brower_backstage.WishActPlayerRecordList);    		//活动用户记录列表 Type,关键字: 1、用户柠檬号或手机号
+	rpc RpcQueryWishActPlayerWinRecordList(brower_backstage.ListRequest)returns(brower_backstage.WishActPlayerWinRecordList);   //获奖记录列表 Id 用户id,ListType 1000、全部 0、否 1、是
+	rpc RpcQueryWishActPlayerDrawRecordList(brower_backstage.ListRequest)returns(brower_backstage.WishActPlayerDrawRecordList); //抽取记录列表 Id 用户id,Type  关键字: 1、盲盒id
+	rpc RpcQueryWishLogReport(brower_backstage.ListRequest)returns(brower_backstage.QueryWishLogReportRes);						//许愿池埋点报表查询
+	rpc RpcQueryWishActivityPrizeLog(brower_backstage.ListRequest)returns(brower_backstage.QueryWishActivityPrizeLogRes);		//许愿池活动日志查询
+//+++++++++++++++++++++++++++++++++++++++++++++++++++许愿池++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*****恋爱交友匹配管理******************************************************************************************************************************/
+	rpc RpcPlayerCardList(brower_backstage.ListRequest)returns(brower_backstage.InterestTagResponse);			//名片管理列表
+	rpc RpcUpdatePlayerCard(brower_backstage.QueryDataById)returns(base.Empty);									//名片保存
+	rpc RpcCharacterTagList(brower_backstage.ListRequest)returns(brower_backstage.InterestTagResponse);			//个性标签列表 Status=100查全部
+	rpc RpcSaveCharacterTag(share_message.InterestTag)returns(base.Empty);										//个性标签保存
+	rpc RpcPlayerVoiceWorkList(brower_backstage.ListRequest)returns(brower_backstage.VoiceWorkListResponse);	//用户作品管理列表 DownType作品类型,ListType用户类型,Type下拉搜索类型
+	rpc RpcReviewePlayerVoiceWork(brower_backstage.QueryDataById)returns(base.Empty);							//用户作品审核
+	rpc RpcDelPlayerVoiceWork(brower_backstage.QueryDataByIds)returns(base.Empty);								//删除用户作品
+	rpc RpcUploadPlayerVoiceWork(share_message.PlayerMixVoiceVideo)returns(base.Empty);							//上传用户作品
+	rpc RpcGetPlayerVoiceWorkUse(brower_backstage.QueryDataById)returns(share_message.PlayerMixVoiceVideo);		//Id查询用户作品
+	rpc RpcBgTagList(brower_backstage.ListRequest)returns(brower_backstage.InterestTagResponse);				//背景资源类型管理 ListType 1-独白，2-配音，3 唱一唱
+	rpc RpcUpdateBgTag(share_message.InterestTag)returns(base.Empty);											//背景资源类型保存 InterestType 1-独白，2-配音，3 唱一唱
+	rpc RpcBgVoiceVideoList(brower_backstage.ListRequest)returns(brower_backstage.BgVoiceVideoListResponse);	//背景资源管理列表 ListType-用户类型 Type-大类 DownType-小类 Status=1000全部 Id-资源id
+	rpc RpcUpdateBgVoiceVideo(share_message.BgVoiceVideo)returns(base.Empty);									//背景资源保存
+	rpc RpcRevieweBgVoiceVideo(brower_backstage.QueryDataById)returns(base.Empty);								//背景资源审核
+	rpc RpcDelBgVoiceVideo(brower_backstage.QueryDataByIds)returns(base.Empty);									//背景资源删除
+	rpc RpcMatchGuideList(brower_backstage.ListRequest)returns(brower_backstage.MatchGuideListResponse);		//匹配文案列表
+	rpc RpcUpdateMatchGuide(brower_backstage.QueryDataByIds)returns(base.Empty);								//匹配文案更新 Note-修改前的内容(新增不传) IdsStr-内容数组
+	rpc RpcDelMatchGuide(brower_backstage.QueryDataByIds)returns(base.Empty);									//匹配文案删除 IdsStr-内容数组
+	rpc RpcSayHiList(brower_backstage.ListRequest)returns(brower_backstage.MatchGuideListResponse);				//SayHi文案列表
+	rpc RpcUpdateSayHi(brower_backstage.QueryDataByIds)returns(base.Empty);										//SayHi文案更新 Note-修改前的内容(新增不传) IdsStr-内容数组
+	rpc RpcDelSayHi(brower_backstage.QueryDataByIds)returns(base.Empty);										//SayHi文案删除 IdsStr-内容数组
+	rpc RpcSystemBgImageList(brower_backstage.ListRequest)returns(brower_backstage.SystemBgImageListResponse);	//查询系统背景资源图									
+	rpc RpcSaveSystemBgImage(brower_backstage.QueryDataByIds)returns(base.Empty);								//保存系统背景资源图
+	rpc RpcDelSystemBgImage(brower_backstage.QueryDataByIds)returns(base.Empty);								//删除系统背景资源图
+	rpc RpcQueryIntimacyConfig(base.Empty)returns(brower_backstage.IntimacyConfigRes);							//查询亲密度分值配置
+	rpc RpcUpdateIntimacyConfig(brower_backstage.IntimacyConfigRes)returns(base.Empty);							//修改亲密度分值配置
+	rpc RpcVCBuryingPointReport(brower_backstage.ListRequest)returns(brower_backstage.VCBuryingPointReportRes);	//匹配埋点报表
+/*****恋爱交友匹配管理******************************************************************************************************************************/
+//========电竞=====================================================================================================================================>
+	rpc RpcCrawlPull(brower_backstage.QueryDataById)returns(base.Empty);							//手动爬取数据
+	rpc RpcCrawlJobList(brower_backstage.ListRequest)returns(brower_backstage.CrawlJobResponse);	//爬虫进度
+	rpc RpcNewsSource(brower_backstage.ListRequest)returns(brower_backstage.NewsSourceResponse);  	//获取新闻资源列表
+	rpc RpcVideoSource(brower_backstage.ListRequest)returns(brower_backstage.VideoSourceResponse);  //获取视频资源列表
+	rpc RpcNewsList(brower_backstage.ListRequest)returns(brower_backstage.NewsSourceResponse);  	//获取新闻列表
+	rpc RpcSaveNews(share_message.TableESPortsRealTimeInfo)returns(base.Empty);						//发布修改新闻资讯
+	rpc RpcDelNewsSource(brower_backstage.QueryDataById)returns(base.Empty);						//删除新闻资讯资源
+	rpc RpcDelNews(brower_backstage.QueryDataByIds)returns(base.Empty);								//删除新闻资讯
+	rpc RpcVideoList(brower_backstage.ListRequest)returns(brower_backstage.VideoSourceResponse);  	//获取视频或直播列表 Type 1-视频,2-直播(放映厅),DownType:用户类型
+	rpc RpcSaveVideo(share_message.TableESPortsVideoInfo)returns(base.Empty);						//发布修改视频
+	rpc RpcDelVideoSource(brower_backstage.QueryDataById)returns(base.Empty);						//删除新闻资讯资源
+	rpc RpcDelVideo(brower_backstage.QueryDataByIds)returns(base.Empty);							//删除视频
+	rpc RpcChekVideo(brower_backstage.QueryDataById)returns(base.Empty);							//审核直播(放映厅) Id64-直播ID,Id32(1-通过,2-拒绝)
+	rpc RpcBanVideo(brower_backstage.QueryDataByIds)returns(base.Empty);							//封禁直播(放映厅) Ids64-直播IDs ,Ids32(1-封禁,2-解除封禁),Note-备注
+	rpc RpcGetGameList(brower_backstage.ListRequest)returns(brower_backstage.GameListResponse);		//获取赛事列表 ListType(游戏ID),Status(1:未发布 2:已发布),Type 0-未开始 1-进行中 2-已结束 100-未结束 SrtType:1-比赛时间,2-获取时间 DownTYpe:搜索下来
+	// rpc RpcReleaseGame(brower_backstage.QueryDataById)returns(base.Empty);										//发布赛事
+	rpc RpcGetGameGuess(brower_backstage.GameGuessRequest)returns(brower_backstage.GameGuessResponse);				//查询赛事竞猜项目 
+	rpc RpcEditGameGuess(brower_backstage.EditGameGuessRequest)returns(base.Empty);									//发布更新赛事和竞猜状态
+	rpc RpcGetGameTeamInfo(brower_backstage.GameGuessRequest)returns(brower_backstage.GameTeamInfoResponse);		//查询比赛队伍信息
+	rpc RpcGetGameRealTimeData(brower_backstage.GameGuessRequest)returns(brower_backstage.GameRealTimeResponse);	//查询比赛实时数据 必传参数：LabelId GameId ApiOrigin
+	rpc RpcEditGameRealTimeData(brower_backstage.EditGameRealTimeRequest)returns(base.Empty);					    //修改比赛实时数据
+	rpc RpcCommentList(brower_backstage.ListRequest)returns(brower_backstage.CommentListResponse);  		//评论查询 Type(1资讯评论,2资讯回复3视频评论4视频回复) Id(文章视频主体id) ListType(父评论id) 
+	rpc RpcDelComment(brower_backstage.CommentDelRequest)returns(base.Empty);								//评论删除
+	rpc RpcUploadComment(brower_backstage.CommentUploadRequest)returns(base.Empty);							//批量上传评论
+	rpc RpcGetAppLabel(brower_backstage.ListRequest)returns(brower_backstage.SysLabelResponse);				//查询APP内游戏标签
+	rpc RpcSaveAppLabel(share_message.TableESPortsLabel)returns(base.Empty);								//修改发布app内游戏标签
+	rpc RpcGetSysLabel(brower_backstage.ListRequest)returns(brower_backstage.SysLabelResponse);				//查询自定义标签
+	rpc RpcSaveSysLabel(share_message.TableESPortsLabel)returns(base.Empty);								//修改发布自定义标签
+	rpc RpcGetCarouselList(brower_backstage.ListRequest)returns(brower_backstage.CarouselResponse); 		//引导项(轮播图)列表 Type-位置:1-资讯 2-娱乐 3-商城兑换, Status-状态：1-正常 2-禁用
+	rpc RpcSaveCarousel(share_message.TableESPortsCarousel)returns(base.Empty);								//修改引导项(轮播图)
+	rpc RpcSportSysNotice(brower_backstage.ListRequest)returns(brower_backstage.SportSysNoticeResponse);	//电竞系统消息(推送管理) 查全部状态(Status >=1000) 0-未推送,1-已推送，2-已过期 ,ListType 推送对象0 全体，1 IOS,2 Android
+	rpc RpcSendSportSysNotice(share_message.TableESPortsSysMsg)returns(base.Empty);							//发送电竞系统消息
+	rpc RpcBetSlipList(brower_backstage.ListRequest)returns(brower_backstage.BetSlipListResponse);					//注单明细列表 ListType-游戏标签,Type-投注结果,SrtType-投注目标,DownType 搜索项目下来项
+	rpc RpcBetWinLosStatistics(brower_backstage.ListRequest)returns(brower_backstage.BetSlipStatisticsResponse); 	//注单输赢统计列表
+	rpc RpcBetGameStatistics(brower_backstage.ListRequest)returns(brower_backstage.BetSlipStatisticsResponse); 		//注单赛事统计列表 ListType-游戏标签,Type-1比赛id,2比赛名称
+	rpc RpcBetSlipReportLine(brower_backstage.ListRequest)returns(brower_backstage.LineChartsResponse);				//注单报表折线图
+	rpc RpcBetSlipReportBar(brower_backstage.ListRequest)returns(brower_backstage.LineChartsResponse);				//注单报表柱状图
+	rpc RpcBetSlipOperate(brower_backstage.RpcBetSlipOperateRequest)returns(base.Empty);							//注单操作
+	rpc RpcGiveWhiteList(brower_backstage.ListRequest)returns(brower_backstage.GiveWhiteListRes);					//充值赠送白名单
+	rpc RpcAddGiveWhiteList(brower_backstage.QueryDataByIds)returns(base.Empty);									//添加充值赠送白名单
+	rpc RpcDelGiveWhiteList(brower_backstage.QueryDataByIds)returns(base.Empty);									//删除充值赠送白名单
+	rpc RpcQueryRechargeEsAct(base.Empty)returns(share_message.Activity);											//查询兑换电竞币活动
+	rpc RpcUpdateRechargeEsAct(share_message.Activity)returns(base.Empty);											//更新兑换电竞币活动
+	rpc RpcRechargeEsCfg(base.Empty)returns(brower_backstage.RechargeEsCfgRes);										//查询电竞币兑换配置列表
+	rpc RpcSaveRechargeEsCfg(share_message.TableESportsExchangeCfg)returns(base.Empty);								//保存电竞币兑换配置
+	rpc RpcDelRechargeEsCfg(brower_backstage.QueryDataByIds)returns(base.Empty);									//删除电竞币兑换配置
+	rpc RpcPointsReportList(brower_backstage.ListRequest)returns(brower_backstage.PointsReportRes);					//电竞埋点报表列表 ListType:1-日,2-周,3-月 SrtType:"Basis"报表list字段名称 Type=301菜单id
+	rpc RpcQueryeSportCoinLog(brower_backstage.ListRequest)returns(brower_backstage.SportCoinLogResponse); 			//电竞币流水表各种查询 ListType:1-收入,2-支出 DownType:明细项目ID Type:下来搜索选项1,2,3
+//========电竞=====================================================================================================================================>
+
+}
+
+// 后台主动发起
+service Backstage2Brower {
+	rpc RpcTestPush(brower_backstage.PushRequest)returns(brower_backstage.PushResponse); 					//测试rpc
+	rpc RpcNewPush(base.Empty)returns(base.NoReturn);														//你有新数据推送 通用刷新通知 后台的主要更新推送 勿动
+	rpc RpcReplacePush(brower_backstage.ErrMessage)returns(base.NoReturn);									//顶号通知
+	rpc RpcPushIMmessage(share_message.IMmessage)returns(brower_backstage.QueryDataById);					//推送消息给指定客服 返回已读消息的ID int64字段
+	rpc RpcSendShopOrderExpress(brower_backstage.QueryShopOrderExpressResponse)returns(base.NoReturn);		//推送取得物流信息
+	rpc RpcCrawlPush(share_message.TableCrawlJob)returns(base.NoReturn);									//手动爬取数据
+	rpc RpcToolLuckyPush(base.Empty)returns(base.NoReturn);													//模拟抽奖工具通知抽奖结果
+}

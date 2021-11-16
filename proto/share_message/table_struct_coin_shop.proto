@@ -1,0 +1,96 @@
+package share_message;
+import "ggotag.proto";
+// 硬币商城.
+//硬币购买 coin_recharge
+
+
+// 硬币商城.
+//硬币购买 coin_recharge
+message CoinRecharge{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 Coin  = 2; 			//数量 给用户增加的硬币数量,范围1-1000000
+    optional int64 Price  = 3; 			//价格  单位:分 范围1-10000000
+    optional int64 MonthFirst  = 4; 	//月首次购买赠送,范围1-100，前端收到有值则表示有赠送，0表示已经赠送过了
+	optional int32 Rebate  = 5; 		//折扣 售价折扣  范围1-99整数,使用时除100
+	optional int32 Platform = 6;		//平台 1 IOS，2 Android
+	optional int64 StartTime = 7;		//活动开始时间 折扣活动开始时间
+	optional int64 EndTime = 8;			//活动结束时间 折扣活动结束时间
+	optional int32 Status = 9;			//状态 1上架,2下架
+    optional int32 Sort = 10;			//排序权重 值越大越靠前
+    optional int64 DisPrice=11;         //折扣价
+}
+
+// 商品 coin_product
+message CoinProduct{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];         //
+    optional string Name = 2;           // 道具名字 预留查询使用
+    optional int64 PropsId = 3;         // 道具id
+    optional string PropsIcon = 4;      // 道具图标预留查询使用qp
+    optional int64 EffectiveTime  = 5;  // 有效时间 按天计算,-1为永久
+    optional int64 Coin  = 6;           // 硬币 安卓硬币价
+    optional int64 CoinRebate  = 7;     // 硬币折扣,,8折存80,取出来除100, 如果10个硬币,实际支付时只需要8个硬币
+    optional int64 Price  = 8;          // 价格  单位:分，-1表示不能用零钱或者充值购买
+    optional int64 ProductNum  = 9;     // 数量,扩展的字段,-1为无限卖 10
+    optional int32 Status = 10;			// 状态; 1-上架;2-下架;3-删除
+    optional int64 CreateTime = 11;		// 创建时间
+    optional int64 UpdateTime = 12;		// 修改时间
+    optional int32 Sort = 13;			// 排序权重 值越大越靠前
+    optional int32 PropsType  = 14;     // 道具类型 1-礼包，2-挂件;3-气泡;4-铭牌;,5-进群特效,6-名字变色
+    optional int64 StartTime = 15;	    // 活动开始时间戳
+    optional int64 EndTime = 16;	    // 活动结束时间戳
+    optional int64 DisCoin=17;          // 硬币折扣价
+    optional int64 SaleStartTime=18;    // 开始售卖时间
+    optional int64 SaleEndTime=19;      // 结束售卖时间
+    optional int64 IosCoin  = 20;       // 硬币 IOS硬币价
+}
+// 道具 props_item
+message PropsItem{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];         // 商品唯一ID:1001,2001
+    optional string Name = 2;           //道具名字 预留查询使用
+    optional string PropsIcon = 3;      //道具图标预留查询使用
+    optional int32 PropsType  = 4;      //道具类型 1-礼包，2-挂件;3-气泡;4-铭牌;,5-进群特效,6-名字变色
+    optional string Desc = 5;           //道具描述
+    optional int32 UseType = 6;         //使用类型:1-消耗，2-装备
+    optional string UseValue = 7;       //使用效果  颜色值{"FF00FF00","CC0000CC"},道具ID值{10001,20001}
+    optional int64 UpdateTime = 8;      //更新时间
+    optional string Version=9;          //道具版本号 276
+    optional string Config=10;          //资源配置 多行文本框
+}
+
+// 玩家背包表 player_bag_item
+message PlayerBagItem{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];         // 背包表唯一ID
+    optional int64 PlayerId = 2;        // 玩家id
+    optional int64 PropsId = 3;         // 道具id
+    optional int32 Status = 4;			// 状态; 1-待使用;2-使用中;3-已过期;
+    optional int32 GetType = 5;			// 获得类型;1-购买;2-系统赠送(做任务获得);3-玩家赠送;4-活动获得
+    optional int64 OverTime = 6;		// 道具过期时间
+    optional bool IsSave = 7;           //是否存储
+    optional string PropsName = 8 ;		//道具名称
+    optional int32 PropsType = 9 ;      //道具类型 1-礼包，2-挂件;3-气泡;4-铭牌;,5-进群特效,6-名字变色
+    optional int64 CreateTime = 10;      //进入背包时间
+    optional bool IsNew = 11;            //是否新道具
+}
+
+// 用户道具获得日志 log_player_get_props  //回收传bagId 要回收的时长
+message PlayerGetPropsLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 PlayerId = 2;        // 获得道具的玩家id
+    optional int64 GivePlayerId=3;      // 赠送道具的玩家id(玩家赠送道具时使用)
+    optional int64 PropsId = 4;         // 道具id
+    optional int64 PropsNum=5;          // 获得数量
+    optional string PropsName=6 [(gogoproto.jsontag) = "-"];		//道具名称
+    optional int32 PropsType  = 7 [(gogoproto.jsontag) = "-"];      //道具类型 1-礼包，2-挂件;3-气泡;4-铭牌;,5-进群特效,6-名字变色
+    optional int32 GetType = 8;			// 获得类型;1-购买;2-系统赠送;3-玩家赠送;4-活动获得;5系统回收
+    optional int64 CreateTime = 9;		// 获得时间
+    optional int64 EffectiveTime = 10;	// 有效时间 按天计算,-1为永久
+    optional int64 RecycleTime = 11;	// 回收时间(只有回收时才写回收时间)
+    optional string Operator = 12; 		// 回收操作人
+    optional string Note=13;            // 备注(回收理由)
+    optional string Account=14 [(gogoproto.jsontag) = "-"];         // 获取道具的柠檬号
+    optional string GiveAccount=15 [(gogoproto.jsontag) = "-"];     // 赠送道具的柠檬号
+    optional int64 BagId=16;            // 道具背包ID
+    optional int32 BuyWay=17;           // 1-硬币购买,2-现金购买
+    optional string OrderId=18;         // 流水ID
+    optional int64 ProductId=19;        //商品id
+}

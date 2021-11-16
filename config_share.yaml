@@ -1,0 +1,24 @@
+# 若要加配置、改配置名,请一定在打包脚本 build_linux_yaml_template.py 的模板上也同时加上
+
+EDITION: "common" # 发行版本.有 common,yicai 等
+IS_FORMAL_SERVER: False # 是否正式服
+SERVER_CENTER_ADDR: "127.0.0.1:2379"        #etcd服务器中心地址
+REDIS_SERVER_ADDR: "127.0.0.1:6379"        #redis服务器地址
+REDIS_SERVER_PASS: "redis2020"             #redis服务器密码
+IS_TFSERVER: false    #是否走转发
+# MongoDB 数据库的链接配置
+# 可以为每个站点配置不同的数据库信息，否则都用 share 相同的数据库信息
+MONGODB_MASTER:
+  ningmeng:
+    user: "root"
+    password: "MongoDB.2019"
+    host: "127.0.0.1"
+    port: "27017"
+    max_pool_size: "512" # 最大连接数。mgo driver 代码里面的默认值是 4096
+MONGODB_SLAVE:
+  ningmeng_log:
+    user: "root"
+    password: "MongoDB.2019"
+    host: "127.0.0.1"
+    port: "27017"
+    max_pool_size: "512" # 最大连接数。mgo driver 代码里面的默认值是 4096

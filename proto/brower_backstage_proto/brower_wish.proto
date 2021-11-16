@@ -1,0 +1,944 @@
+package brower_backstage;
+import "ggotag.proto";
+import "base.proto";
+import "common.proto";
+import "game_server/proto/share_message/table_struct_wish.proto";
+import "game_server/proto/share_message/table_struct_wish_activity.proto";
+
+
+//==tool======================================>
+message ToolWishBoxItemListRes{
+    repeated share_message.WishBoxItem List= 1;
+}
+message ToolSaveWishBoxItemReq{
+  repeated share_message.WishBoxItem List=1;
+}
+message ToolOutputDataRes{
+  optional int64 DareDiamond=1;//消耗钻石数
+  optional int64 WishItemDiamond=2;//抽中物品价格
+}
+message ToolOutputitemRes{
+  repeated ToolOutputitem List=1;
+}
+message ToolOutputitem{
+  optional int64 Id=1;
+  optional string Name=2;
+  optional int64 PtC=3; //普通关闭次数
+  optional int64 XyC=4; //小盈关闭次数
+  optional int64 DyC=5; //大盈关闭次数
+  optional int64 DyO=6; //大盈开启次数
+  optional int64 XyO=7; //小盈开启次数
+  optional int64 PtO=8; //普通开启次数
+}
+message ToolPumping{
+    optional int64 PumpingTimes=1;      //抽水总次数
+    optional int64 PumpingSumDiamond=2; //抽水钻石总和
+    optional int64 PumpingAvgDiamond=3; //抽水单次钻石数
+}
+message ToolRate{
+  optional int64 Id=100;
+  optional string Name=1;
+  optional int64 Price=2;//商品价格
+  optional double ValueSum=3;//价值累计数
+  optional double Pool=4;//水池
+  optional double Weights=5;//权重
+  optional double PtWeights=6;//普通权重
+  optional double PtRate=7;//普通概率
+  optional double PtAppend=8;//普通附加
+  optional double PtAppendRate=9;//普通附加概率
+  optional double XyWeights=11;//小盈权重
+  optional double XyRate=12;//小盈概率
+  optional double XyAppend=13;//小盈附加
+  optional double XyAppendRate=14;//小盈附加概率
+  optional double DyWeights=21;//大盈权重
+  optional double DyRate=22;//大盈概率
+  optional double DyAppend=23;//大盈附加
+  optional double DyAppendRate=24;//大盈附加概率
+}
+message ToolRateReq{
+    optional int64 ChallengeDiamond=1;  //挑战钻石
+    optional int64 ChallengeRmb=2;      //挑战人民币
+    optional double PoolPat=3;          //水池浮动参数
+    optional int64 WeightsPat=4;        //权重参数
+    optional int64 WishBoxId=5;//盲盒ID
+}
+message ToolRateRes{
+    repeated ToolRate List=1;
+}
+message ToolLuckyReq{
+  optional int64 PoolId=1;    //水池ID
+  optional int64 RunTimes=2;  //抽奖次数
+  optional int64 ChallengeDiamond=3;//单次抽奖的钻石
+  optional int64 WishBoxId=4;//盲盒ID
+}
+message ToolLuckyRes{
+  optional string Result=1;
+}
+//==tool=======================================<
+
+// 更新状态
+message UpdateStatusRequest {
+  optional int32 Status = 1 ; // 0：不变 1：通过（是、开启、解冻、确认） 2：拒绝（否、关闭、冻结、取消）
+  optional string Note = 2; // 备注
+  repeated int64 Ids = 3; // 操作对象id数组
+  repeated string StrIds = 4; // 操作对象id数组
+  optional int64 Id = 5; // 操作对象id
+  optional string StrId = 6; // 操作对象字符串id
+}
+
+message QueryWishOrderRequest {
+  optional int64 BeginTimestamp = 1;
+  optional int64 EndTimestamp = 2;
+  optional int32 CurPage = 3;							//当前页
+  optional int32 PageSize = 4;						//每页多少条
+  optional string Keyword = 6;						//搜索关键词
+  optional int32 Types = 7;							//搜索类型 1订单号，2柠檬号，3操作人 4、出款账号
+  optional int32 Status = 8;							//状态 lg：0未处理，1已完成，3已取消
+  optional int32 SourceType=9;						//源类型
+  optional int32 PayType=10;							//支付方式 lg：1通联微信，2快付微信
+  optional int32 ChangeType=11;						//变化类型(交易类型) lg：1 入款，2 出款
+  optional int32 PayStatus=12;						//订单支付状态查询 lg：0待支付，1已支付，2已取消，4已超时
+  optional int32 TimeType = 20; // 1、 回收时间 2、操作时间
+}
+
+//盲盒列表列表请求
+message WishBoxListRequest {
+  optional int32 CurPage = 1;                //当前页
+  optional int32 PageSize = 2;              //每页多少条
+  optional string Keyword = 3;                //关键词
+  optional int32 Type = 4;                  //查询条件 1、盲盒ID 2、盲盒名称 3、守护者柠檬号
+  optional int64 BeginTimestamp = 5;            //开始时间戳
+  optional int64 EndTimestamp = 6;            //结束时间戳
+  optional bool IsRecommend = 10; // 是否推荐
+  optional bool IsChallenge = 11; // 是否挑战赛
+  repeated int32 Attribute = 12; // 属性 1、最新上线 2、人气盲盒 3、欧气爆棚 4、其他
+  optional int32 Status = 13; // 状态 1000、全部 0、下架 1、上架 2、补货
+  optional bool IsHasUser = 14 ;// 是否有守护者
+  optional string Sort = 15; // 排序
+  optional bool IsAutoUpload = 17 ;// 是否自动补货
+  repeated int64 LocalStatus=18; // 当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+  optional bool HaveIsWin = 19;    //是否包含必中
+}
+
+// 盲盒列表
+message WishBoxList {
+  repeated WishBox List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 盲盒
+message WishBox {
+  optional int64 Id = 1;
+  optional string Name = 2;   //名称
+  optional string Icon = 3;   //图标
+  optional int32 GoodsAmount = 4; // 商品数
+  optional bool IsChallenge = 5; // 是否挑战赛
+  repeated int32 Attribute = 6; // 属性 1、最新上线 2、人气盲盒 3、欧气爆棚 4、普通 0综合
+  optional string UserAccount = 7 ;// 守护者账号
+  optional int64 UserId = 8 ;// 守护者ID
+  optional int64 Price = 9;       // 价格
+  optional int32 Status = 10; // 状态 0、下架 1、上架 2、补货
+  optional bool IsRecommend = 18; // 是否推荐
+  optional int64 SortWeight = 19;  // 排序权重.
+  optional int64 UploadTime = 20; // 上架时间
+  optional int64 CreateTime = 21; // 创建时间
+  optional int64 UpdateTime = 22; // 更新时间
+
+  repeated WishBoxGoodsWin ItemList = 23; // 盲盒包含的商品以及中奖列表
+
+  optional int64 WishPoolId = 30 ; // 水池id
+  optional int64 LocalStatus= 31; // 当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+  optional bool IsOpenAward = 32; // 是否开启放奖 true 放奖 false 关闭
+  optional bool HaveIsWin = 33;    //是否包含必中
+
+
+
+  repeated int64 Brands = 34;      //包含品牌列表(临时)
+  repeated int64 Types = 35;       //包含类型列表(临时)
+  repeated int32 Styles = 36;       //包含款式列表(临时)
+  repeated int64 Items = 37;        //盲盒物品id(临时)
+  repeated int64 WishItems = 38;        // 商品id数组(临时)
+  optional int32 RareNum = 39;     //稀有个数(临时)
+  optional int32 ProductStatus =46;   //0待售，1在售，2预售(临时)
+  optional int64  GuardianOverTime =47;     // 守护的到期时间.(临时)
+  optional bool IsGuardian = 48; // 是否在守护中 true 为正在守护中
+  optional int64  GuardianId =49;     //守护者玩家id
+  optional int64 BoxPoolId = 50; // 盲盒水池id (查询盲盒水池信息时候需要)
+}
+
+// 盲盒包含的商品以及中奖
+message WishBoxGoodsWin {
+  optional int64 Id = 1; // 盲盒出售商品Id
+  optional int64 GoodsId = 2; // 商品Id
+  optional string Name = 3;   //名称
+  optional int64 Price = 4;       // 价格
+  optional bool IsInfallible = 5;  // 是否许愿必中
+  optional int32 ReplenishAmount = 6; // 单次补货量
+  optional int32 ReplenishIntervalTime = 7; // 补货时间间隔 (分钟)
+  optional int64 Diamond = 8; // 钻石价格
+
+  optional int32 PerRate = 11; //权重
+  optional int32 GoodsType = 14; // 类型:1普通款，2典藏款，3梦幻款，4超凡款
+
+  optional int64 WishBoxId = 15 ; // 盲盒Id
+
+  optional int32 BigLoss = 16; // 大亏
+  optional int32 SmallLoss = 17; // 小亏
+  optional int32 Common = 18; // 普通
+  optional int32 BigWin = 19; // 大盈
+  optional int32 SmallWin = 20; // 小盈
+
+  optional int32 CommonAddWeight = 21; // 普通 附加权重
+  optional int32 BigWinAddWeight = 22; // 大盈 附加权重
+  optional int32 SmallWinAddWeight = 23; // 小盈 附加权重
+
+  optional int32 RewardLv = 30 ; //商品级别 1、小奖 2、大奖
+  optional int64 ArrivalTime = 31; // 到货时间
+
+  optional int64 BoxItemId = 35; // 盲盒商品id
+  optional int64 CreateTime = 36; // 创建时间
+}
+
+
+// 盲盒包含的商品列表
+message WishBoxGoodsItemList {
+  repeated WishBoxGoodsItem List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 盲盒包含的商品
+message WishBoxGoodsItem {
+  optional int64 Id = 1; // 盲盒出售商品Id
+  optional int64 GoodsId = 2; // 商品Id
+  optional string Name = 3;   //名称
+  optional int64 Price = 4;       // 价格
+  optional bool IsInfallible = 5;  // 是否许愿必中
+  optional int32 ReplenishAmount = 6; // 单次补货量
+  optional int32 ReplenishIntervalTime = 7; // 补货时间间隔 (分钟)
+  optional int32 GoodsType = 14; // 类型:1普通款，2典藏款，3梦幻款，4超凡款
+
+}
+
+// 盲盒中奖配置列表
+message WishBoxWinCfgList {
+  repeated WishBoxWinCfg List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 盲盒中奖配置
+message WishBoxWinCfg {
+  optional int64 WishBoxId = 1 ; // 盲盒Id
+  optional int64 GoodsId = 2; // 商品Id
+  optional string Name = 3;   //名称
+  optional int64 Price = 4;       // 价格
+  optional int32 GoodsType = 5; // 类型:1普通款，2典藏款，3梦幻款，4超凡款
+  optional int32 BigLoss = 6; // 大亏
+  optional int32 SmallLoss = 7; // 小亏
+  optional int32 Common = 8; // 普通
+  optional int32 BigWin = 9; // 大盈
+  optional int32 SmallWin = 10; // 小盈
+
+  optional int64 WishBoxItemId = 13; // 盲盒出售商品Id
+}
+
+//盲盒商品列表列表请求
+message WishBoxGoodsListRequest {
+  optional int32 CurPage = 1;                //当前页
+  optional int32 PageSize = 2;              //每页多少条
+  optional string Keyword = 3;                //关键词
+  optional int32 Type = 4;                  //查询条件 1、商品id 2、商品名称
+  optional int64 BeginTimestamp = 5;            //开始时间戳
+  optional int64 EndTimestamp = 6;            //结束时间戳
+  optional string Sort = 7; // 排序
+  optional int64 Diamond = 8; // 钻石价格
+
+
+  optional bool IsPreSale = 11; // 是否预售
+  repeated int64 WishBrandId = 12; // 品牌id
+  repeated int64 WishItemTypeId = 13 ;// 分类id
+  optional int32 Status = 10; // 状态  1000、全部 0、下架 1、上架
+
+  optional int32 TimeType = 15; // 查询时间类型： 1、上架时间 2、预计到货时间
+
+}
+
+message  WishBoxLotteryReq{
+    optional int64 BoxId = 1; //盲盒Id
+    optional int64 ProductId = 2; //wishBoxItem.Id 中间表Id
+    optional string Account = 3; //柠檬号
+    optional int32 Count = 4; //抽奖次数
+}
+
+message WishBoxLotteryResp{
+  //optional int32 SuccessCount = 1; //成功的次数
+  optional int32 Result = 1; //1成功 2失败
+  optional string Msg = 3; //说明
+}
+// 盲盒商品列表
+message WishBoxGoodsList {
+  repeated WishBoxGoods  List = 1;
+  optional int32 PageCount = 2;          //总条数
+
+}
+
+//盲盒商品下拉列表
+message WishBoxGoodsSelectedList {
+  repeated WishBoxGoodsWin  List = 1;
+}
+
+// 盲盒商品
+message WishBoxGoods {
+  optional int64 Id = 1; // 商品Id
+  optional int64 WishBoxId = 2; // 所属盲盒ID
+  optional string Name = 3;   //名称
+  optional string Icon = 4;   //图标
+  optional bool IsPreSale = 5; // 是否预售
+  optional int32 WishBrandId = 6; // 品牌id
+  optional int32 WishItemTypeId = 7 ;// 分类id
+  optional string UserId = 8 ;// 守护者ID
+  optional int64 Price = 9;       // 价格
+  optional int32 Status = 10; // 状态 0、下架 1、上架
+  optional int32 Type = 11; // 类型 1、普通款 2、典藏款，3、超凡款，4、典藏款
+  optional int32 StockAmount = 12; // 库存
+  optional string Describe = 13; // 描述
+  optional int64 ArrivalTime = 14; // 到货时间
+  optional int64 UploadTime = 15; // 上架时间
+  optional int64 SoldOutTime = 16; // 下架时间
+
+  optional int64 Diamond = 18; // 钻石价格
+
+  optional int64 CreateTime = 21; // 创建时间
+  optional int64 UpdateTime = 22; // 更新时间
+}
+
+
+// 商品品牌管理列表
+message WishGoodsBrandList {
+  repeated WishGoodsBrand  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 商品品牌管理
+message WishGoodsBrand {
+  optional int32 Id = 1;
+  optional string Name = 2;   //名称
+  optional int32 Status=3;		// 状态 0关闭，1开启
+  optional bool IsHot = 4; // 是否热门
+  optional int32 HotWeight = 5; // 排序权重
+  optional string Initial = 6; // 首字母
+
+  optional int32 ClickCount = 10; // 点击次数
+  optional int64 CreateTime = 11; // 创建时间
+  optional int64 UpdateTime = 12; // 更新时间
+}
+
+// 商品类型管理列表
+message WishGoodsTypeList {
+  repeated WishGoodsType  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 商品类型管理
+message WishGoodsType {
+  optional int32 Id = 1;
+  optional string Name = 2;   //名称
+  optional int32 Status=3;		// 状态 0关闭，1开启
+  optional bool IsHot = 4; // 是否热门
+  optional bool IsRecommend = 5; // 是否推荐
+  optional string Initial = 6; // 首字母
+  optional int32 HotWeight = 7; // 排序权重
+  optional int32 ClickCount = 10; // 点击次数
+  optional int64 CreateTime = 11; // 创建时间
+  optional int64 UpdateTime = 12; // 更新时间
+}
+
+
+
+// 发货订单列表
+message WishDeliveryOrderList {
+  repeated WishDeliveryOrder  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 发货订单详情列表
+message WishDeliveryOrderDetailList {
+  repeated share_message.PlayerExchangeItem  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 发货订单
+message WishDeliveryOrder {
+  optional int64 OrderId = 1;   // 订单ID
+  optional int64 GoodsId = 2;   // 商品id
+  optional int64 GoodsPrice = 3;   // 商品单价
+  optional int64 PriceTotal = 4;   // 订单总额
+  optional int64 CreateTime = 5; // 创建时间
+  optional int64 DeliveryTime = 6; // 发货时间
+  optional int32 Status = 7; // 订单状态 0、待发货 1、已发货 2、已取消 3、已回收
+  required string DeliverName = 8;                   // 收货人
+  required string DeliverPhone = 9;                  // 收货人手机号
+  required string DeliverAddress = 10;         // 收货人地址
+  optional string UserAccount = 11;   // 中奖发货账号
+  optional int64 UserId = 12; // 用户id
+  optional string Note = 13; // 取消原因
+  optional int64 UpdateTime = 14; // 操作时间
+
+  optional string Company = 22; // 快递公司
+  optional string CompanyCode = 23; // 快递公司代码
+  optional string Odd = 24; // 快递单号
+  optional string Operator = 25; // 操作人
+
+  optional string GoodsName = 30; // 商品名称
+
+}
+
+// 填写发货信息
+message UpdateDeliveryOrderCourierInfo {
+  optional int64 OrderId = 1;   // 订单ID
+  optional string Company = 2; // 快递公司
+  optional string CompanyCode = 3; // 快递公司代码
+  optional string Odd = 4; // 快递单号
+}
+
+// 回收订单列表
+message WishRecycleOrderList {
+  repeated WishRecycleOrder  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 回收订单
+message WishRecycleOrder {
+  optional int64 OrderId = 1;   // 回收订单ID
+  optional int64 GoodsId = 2;   // 商品id
+  optional int64 DrawPrice = 3;   // 抽奖价格
+
+  optional int64 RecycleTime = 5;   // 回收时间0
+  optional string UserAccount = 6;   // 回收账号
+  optional int64 GoodsPrice = 7;   // 商品单价
+  optional int64 UserId = 11; // 用户id
+  optional int32 Type = 12; // 回收方式 1、用户回收 2、平台回收 3、人工审核（触发回收阈值，无论是用户回收还是平台回收）
+  optional int32 Status = 40; // 回收状态 0、待审核 1、已回收 2、已拒绝
+  optional int64 InitTime = 41; // 发起时间
+  optional string RefusalNote = 48; // 拒绝理由-备注2
+  optional string Note = 49;// 备注1
+
+  optional int64 UpdateTime = 50; // 更新时间(后台操作)
+
+
+  optional int64 RecyclePrice = 54;   // 【回收订单总额】-人民币-元
+  optional int64 RecycleDiamond = 55;   // 【回收订单总额】-钻石
+
+  optional string Operator = 52; // 操作人
+
+  optional string UserReason = 53; // 用户回收理由
+}
+
+
+// 审核大额出款订单信息
+message WishRecycleOrderUserInfo {
+  optional int64 PlayerId = 1; // 用户id
+  optional string Account = 2; // 用户账号（IM柠檬号）
+  optional string Nickname = 3; // 用户昵称
+  optional string RealName = 4; // 真实姓名
+  optional int32 Diamond = 5; // 回收钻石
+  optional int64 PlayerType = 6; // 用户类型 1普通用户,2营销运营,3商城账号,4管理运营,5官方运营,6运营测试
+  optional string LoginAddr = 7; // 登录地址
+  optional int64 CurDiamond = 8; // 钻石余额
+  optional int64 RegisterTime = 9; // 注册时间
+  optional int64 OrderId = 10; // 回收订单id
+
+  // 出款订单的补充内容
+  optional string BankCode = 11; // 银行卡号
+  optional int64 GoldTotal = 12; // 出款金额
+  optional int64 TaxGold = 13; // 手续费
+  optional int64 PlatformGold = 14; // 平台服务费
+  optional int64 OwnGold = 15; // 我方服务费
+}
+
+// 回收订单详情列表
+message WishRecycleOrderDetailList {
+  repeated share_message.WishRecycleItem  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+
+// +++++++++++++++++++++ 许愿水池
+
+// 许愿水池列表
+message WishPoolList {
+  repeated WishPool  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 许愿水池
+message WishPool{
+  optional int64 Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //id
+  optional int32 PoolLimit=2; //水池上限
+  optional int32 InitialValue =3; // 水池初始值(存库)
+  optional int32 IncomeValue=4; //水池当前收入值
+  optional string Name = 15; // 名称
+  optional int64 CreateTime=16; //水池创建时间
+
+  optional int32 Recycle=5; //回收阀值(存库)
+  optional int32 Commission=6; //官方抽水(回收比例)(存库)
+  optional int32 StartAward=7; //开启放奖金额(存库)
+  optional int32 CloseAward=8; //关闭放奖金额(存库)
+
+  optional int32 ShowInitialValue=33; // 水池初始值(百分比%，后台展示)
+  optional int32 ShowRecycle=35; // 回收阀值(百分比%，后台展示)
+  optional int32 ShowCommission=36; // 官方抽水(回收比例)(百分比%，后台展示)
+  optional int32 ShowStartAward=37; // 开启放奖金额(百分比%，后台展示)
+  optional int32 ShowCloseAward=38; // 关闭放奖金额(百分比%，后台展示)
+  optional bool IsOpenAward = 39; // 是否开启放奖 true 放奖 false 关闭
+  optional bool IsDefault = 40; // 是否默认水池 true 默认 false 非默认
+
+  optional WishPoolStatus BigLoss = 46; // 大亏
+  optional WishPoolStatus SmallLoss = 47; // 小亏
+  optional WishPoolStatus Common = 48; // 普通
+  optional WishPoolStatus BigWin = 49; // 大盈
+  optional WishPoolStatus SmallWin = 50; // 小盈
+
+  optional int64 LocalStatus=51; // 当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+
+
+  optional int64 PoolCfgId = 52; // (临时使用)
+}
+
+//  水池状态
+message WishPoolStatus {
+  optional int32 MaxValue = 2;// 上限值大于等于(%)(存库)
+  optional int32 MinValue = 3;// 下限值大于等于(%)(存库)
+  optional int32 ShowMaxValue = 12;// 上限值大于等于(%)(百分比%，后台展示)
+  optional int32 ShowMinValue = 13;// 下限值大于等于(%)(百分比%，后台展示)
+  // optional int32 AddWeight=1; // 附加权
+}
+
+// +++++++++++++++++++++ 统计报表
+// 许愿池报表列表
+message WishPoolReportList {
+  repeated share_message.WishPoolReport  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+//盲盒报表列表
+message WishBoxReportList {
+  repeated share_message.WishBoxReport  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+//盲盒详情报表列表
+message WishBoxDetailReportList {
+  repeated share_message.WishBoxDetailReport  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 商品报表列表
+message WishItemReportList {
+  repeated share_message.WishItemReport  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+
+// 导出测试数据-玩家物品列表
+message TestPlayerWishItemList {
+  repeated share_message.PlayerWishItem  List = 1;  //玩家物品列表(挑战产生物品):player_wish_item
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 导出测试数据-水池流水日志
+message TestWishPoolLogList {
+  repeated share_message.WishPoolLog  List = 1;  // 水池流水日志 wish_pool_log
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 导出测试数据-水池抽水日志
+message TestWishPoolPumpLogList {
+  repeated share_message.WishPoolPumpLog  List = 1;  // 水池抽水日志 wish_pool_pump_log
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 导出测试数据-水池抽水日志
+message TestWishPoolBoxPoolInfoList {
+  repeated share_message.WishPool  List = 1;  // 水池信息 wish_pool_pump_log
+  optional int32 PageCount = 2;          //总条数
+}
+
+// +++++++++++++++++++++ 抽奖记录
+// 抽奖记录列表
+message DrawRecordList {
+  repeated DrawRecord  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 抽奖记录
+message DrawRecord {
+  optional string UserAccount = 1;   // 用户柠檬号
+  optional int64 UserId = 2; // 用户id
+  optional string Phone = 3;   // 手机号码
+  optional int32 AddBoxCount = 4; // 收藏盲盒数量
+  optional int32 WishItemCount = 5; // 许愿物品数量
+  optional int32 DrawCount = 6; // 抽奖次数
+  optional int64 DrawGoldTotal = 7; // 抽消费硬币总数
+  optional int64 LastDrawTime = 8; // 最后抽奖时间
+  optional int32 HaveItemCount = 9; // 现有物品数量
+  optional int32 DelItemCount = 10; //扣除物品数量
+
+  optional string UserNickname = 11;   // 用户昵称
+  optional int32 UserType = 12;   // 账号性质 1普通用户 2运营号 3白名单
+}
+
+// 收藏盲盒记录列表
+message AddBoxRecordList {
+  repeated AddBoxRecord  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 收藏盲盒记录
+message AddBoxRecord {
+  optional int64 UserId = 2; // 用户id
+  optional int64 BoxId = 3;   // 盲盒ID
+  optional string BoxName = 4; // 盲盒名称
+  optional int64 CreateTime = 5; // 收藏时间
+}
+
+// 许愿物品记录列表
+message WishGoodsRecordList {
+  repeated WishGoodsRecord  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 许愿物品记录
+message WishGoodsRecord {
+  optional int64 UserId = 2; // 用户id
+  optional int64 GoodsId = 3;   // 商品ID
+  optional string BoxName = 4; // 盲盒名称
+  optional string GoodsName = 5; // 商品名称
+  optional int64 CreateTime = 6; // 许愿时间
+  optional int64 BoxId = 7; // 盲盒id
+}
+
+// 抽奖盲盒记录列表
+message DrawBoxRecordList {
+  repeated DrawBoxRecord  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 中奖记录记录
+message DrawBoxRecord {
+  optional int64 UserId = 2; // 用户id
+  optional int64 BoxId = 3;   // 盲盒ID
+  optional string BoxName = 5; // 盲盒名称
+  optional int32 DrawCount = 6; // 抽奖次数
+  optional int64 LastTime = 7; // 最后抽奖时间
+}
+
+// 中奖记录记录列表
+message WinRecordList {
+  repeated WinRecord  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 中奖记录记录
+message WinRecord {
+  optional int64 UserId = 2; // 用户id
+  optional int64 GoodsId = 3;   // 商品ID
+  optional string GoodsName = 5; // 商品名称
+  optional bool HasWish = 6; // 是否许愿款
+  optional int64 CreateTime = 7; // 中奖时间
+  optional int64 BoxItemId = 13;   // 盲盒商品ID
+}
+
+
+// 现有物品列表
+message HaveItemList {
+  repeated HaveItem  List = 1;
+  optional int32 PageCount = 2;          //总条数
+}
+
+// 现有物品
+message HaveItem {
+  optional int64 GoodsId = 3;   // 商品ID
+  optional string GoodsName = 5; // 商品名称
+  optional int64 CreateTime = 7; // 获得时间
+  optional int64 BoxId = 8;   // 盲盒名称
+  optional string BoxName = 9; // 盲盒id
+
+  optional int64 PlayerItemId = 10; // 用户物品id (唯一id)
+  optional int64 UpdateTime=11;       //更新时间 扣除时间
+  optional string Operator = 12; 			//操作人
+}
+
+// 参数设置
+message PriceSection {
+  optional int32 OneMin = 1; // 第一区间 最小值
+  optional int32 OneMax = 2; // 第一区间 最大值
+  optional int32 TwoMin = 3; // 第二区间 最小值
+  optional int32 TwoMax = 4; // 第二区间 最大值
+  optional int32 ThreeMin = 5; // 第三区间 以上
+}
+
+// 邮寄参数设置
+message WishMailSection {
+  optional string Id = 1;  //id
+  optional int32 Postage1 = 2; // 江浙沪 邮寄费用
+  optional int32 Postage2 = 4; // 江浙沪以外非偏远地区 邮寄费用
+  optional int32 Postage3 = 5; // 江浙沪以外偏远地区 邮寄费用
+  repeated string RemoteAreaList = 10; // 江浙沪以外偏远地区 列表
+
+  optional int32 FreeNumber = 12; // 包邮起始件数
+}
+
+// 物品回收参数设置
+message WishRecycleSection {
+  optional string Id = 1;  // id
+  optional int32 Platform = 4; // 平台回收  物品回收比例
+  optional int32 DayTopCount = 6; // 单日回收订单笔数上限
+
+
+
+  // 新版
+  // 回收公功能
+  optional int32 Player = 9; // 用户回收   物品回收比例
+  optional bool Status = 10; // 回收功能开关 true：开 false：关
+  optional int32 DayMoneyTopCount = 11; // 单日出款最大数(次)
+  optional int64 DayMoneyTop = 12; // 单日出款最大额(分)
+  optional int64 OrderThresholdMoney = 13; // 回收订单安全阈值(人民币-元)-单次出款风控(元)
+  optional int32 DayDiamondTopCount = 15; // 单日回收钻石最大数(次)
+  optional int64 DayDiamondTop = 16; // 单日累计回收最大额(个/钻石)
+  optional int64 OrderThreshold = 17; // 回收订单安全阈值(钻石)-单次出款风控(个/钻石)
+
+
+  // 回收支付设置
+  optional int32 FeeRate=22;		//手续费千分比(必须大于0的正整数)
+  optional int64 PlatformTax = 25;  //平台手续费
+  optional int64 RealTax=26;		//总服务费
+}
+
+// 支付预警
+message WishPayWarnCfg {
+  //支付预警配置
+  optional int64  WithdrawalTime=59;		// 回收预警频次时间
+  optional int64 	WithdrawalTimes=60;		// 回收预警频次次数
+  optional int64  WithdrawalGoldRate=61;	//人民币回收预警金额时间
+  optional int64  WithdrawalGold=62;		//人民币回收预警总金额
+  optional int64  WithdrawalDiamondRate= 63;	//钻石提现预警金额时间
+  optional int64  WithdrawalDiamond= 64;		//钻石提现预警总金额
+  repeated string PhoneList=65;			//接收预警电话
+}
+
+// 守护者收益设置
+message WishGuardianCfg {
+  optional string Id = 1;  //
+  optional int64 DayDiamondTop = 2; // 当日收益上限（钻石）
+  optional int64 OnceDiamondRebate = 3; // 守护者单次返利（钻石）
+}
+
+//回收说明
+message RecycleNoteCfg {
+  repeated string Text = 1;
+}
+
+// 冷却期设置表 wish_cool_down_config
+message WishCoolDownConfig{
+  optional string Id = 1;
+  optional bool IsOpen = 2; // 是否开启,true-开启
+  optional int64 ContinuousTime = 3;// 连续抽奖的时间间隔  单位:秒
+  optional int64 ContinuousTimes = 4;// 连续抽奖次数
+  optional int64 CoolDownTime = 5;// 冷却时间  单位:秒
+  optional int64 DayLimit = 6;// 单日抽奖次数,0点清零
+  optional int64 CreateTime = 7;// 创建时间
+}
+
+// 货币换算参数设置
+message WishCurrencyConversionCfg {
+  optional string Id = 1;  //
+  optional int32 Coin = 4; // 硬币
+  optional int32 Diamond = 5; // 钻石
+}
+
+// 钻石管理列表
+message DiamondItemListResponse{
+  repeated share_message.DiamondRecharge List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+// 钻石流水列表
+message DiamondChangeLogResponse{
+  repeated share_message.DiamondChangeLog List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+//许愿池用户列表
+message WishPlayerListResponse{
+    repeated share_message.WishPlayer List=1;
+    optional int32 PageCount = 2; 					//总条数
+}
+
+// +++++++++++++++++许愿池活动
+// 活动奖池管理列表
+message WishActPoolList{
+  repeated share_message.WishActPool List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+// 新增活动奖池
+message UpdateWishActPoolListRequest{
+  optional int64 Id = 1;// 奖池id
+  optional string Name = 5; // 名称
+  repeated int64 BoxIds = 8; // 盲盒列表ids
+}
+
+// 活动奖池详情
+message WishActPoolDetail{
+  repeated WishActPoolItem List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+message WishActPoolItem {
+  optional int64 BoxId = 1;// 盲盒id
+  optional string Name = 2; // 盲盒名称
+  optional int64 Price = 3; // 抽查盲盒钻石价格
+  optional bool IsHave = 4; // 是否已选中（包含）
+}
+
+// 累计规则列表
+message WishActPoolRuleList{
+  repeated WishActPoolRule List=1;
+  optional int32 PageCount = 2; 					//总条数
+  optional int32 AwardType = 14; // 奖励类型：1、钻石奖励 2、实物奖励
+  repeated WishActPoolAwardItem ItemList= 15; // 实物奖励规则列表
+}
+
+
+// 新增累计规则
+message AddWishActPoolRuleRequest{
+  repeated WishActPoolRule List=2; // 钻石奖励规则列表
+  // 累计金额规则
+  optional int32 RuleType = 5; // 1、周榜 2、月榜
+  optional int32 AwardType = 14; // 奖励类型：1、钻石奖励 2、实物奖励
+  repeated WishActPoolAwardItem WeekMonthList=15; // 累计金额规则列表
+}
+
+// 累计规则
+message WishActPoolRule {
+  optional int64 Id = 1; // 规则id
+  optional int64 WishActPoolId = 2;// 奖池id
+  optional string Name = 5; // 名称
+  optional int32 Key = 11; // 累计次数/天数/周排名/月排名
+  optional int64 Diamond = 12; // 赠送钻石数
+}
+
+// 新增累计规则
+message WishActPoolRuleWeekMonthList{
+  repeated WishActPoolAwardItem List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+
+// 累计规则-实物奖励
+message WishActPoolAwardItem {
+  optional int64 Id = 1; // 规则id
+  optional int64 WishItemId =2 ; // 实物奖励ID
+  optional int64 WishActPoolId = 3;// 奖池id
+  optional int32 Key = 11; // 周排名/月排名
+  optional string Name = 5; // 名称
+  optional int64 Diamond = 12; // 所值钻石数
+  optional int64 Money = 13; // 所值人民币
+  optional string Icon = 14; // 图片
+  optional int32 RuleType = 15; // 1、周榜 2、月榜
+
+  optional int32 AwardType = 16; // 奖励类型：1、钻石奖励 2、实物奖励
+  optional int64 AwardDiamond = 17; // 赠送钻石
+}
+
+// 许愿池活动用户记录列表
+message WishActPlayerRecordList{
+  repeated WishActPlayerRecord List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+//许愿池活动用户记录
+message WishActPlayerRecord {
+  optional string UserAccount = 1;   // 用户柠檬号
+  optional int64 UserId = 2; // 用户id
+  //optional int32 DayTotal = 4; // 累计天数
+  //optional int32 DrawTotal = 5; // 累计抽奖次数
+  optional int64 DrawDiamondTotal = 7; // 累计抽奖花费钻石数
+  optional int32 AwardTotal = 8; // 领奖次数
+  repeated PoolData Data = 9; //
+}
+
+//活动奖池统计数据
+message PoolData{
+  optional int64 Id = 1;  //活动奖池Id
+  optional string Name = 2; //奖池名称
+  optional int32 DayTotal = 3; // 累计天数
+  optional int32 DrawTotal = 4; // 累计抽奖次数
+}
+// 获奖记录列表
+message WishActPlayerWinRecordList{
+  repeated WishActPlayerWinRecord List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+// 获奖记录
+message WishActPlayerWinRecord {
+  optional int64 Id = 1; // 记录id
+  optional int64 CreateTime = 6; // 达到奖励时间
+  optional int32 Status = 7; // 0、未领奖 1、已领奖
+  optional int64 WinTime = 8; // 领教时间
+  optional string TypeName = 9; // 获奖类型名称
+  optional string Note = 10; // 备注
+
+  optional string UserAccount = 11;   // 用户柠檬号
+  optional int64 UserId = 12; // 用户id
+}
+
+// 抽奖记录列表
+message WishActPlayerDrawRecordList{
+  repeated WishActPlayerDrawRecord List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+// 抽奖记录
+message WishActPlayerDrawRecord {
+  optional int64 Id = 1; // 记录id
+  optional int64 CreateTime = 6; // 抽奖时间
+  optional int64 BoxId = 7; // 盲盒id
+  optional string ActPoolName = 8; // 所属活动奖池
+  optional string ActBoxName = 9; // 抽奖盲盒名称
+  optional int64 Price = 10; // 花费钻石数
+}
+
+// 许愿池活动日志列表
+message WishActRecordList{
+  repeated WishActRecord List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+// 许愿池活动日志
+message WishActRecord {
+  optional int64 Id = 1; // 记录id
+  optional int64 CreateTime = 6; // 抽奖时间
+  optional int64 BoxId = 7; // 盲盒id
+  optional string ActPoolName = 8; // 抽奖盲盒名称
+  optional int64 Price = 9; // 花费钻石数
+}
+
+//充值活动配置返回
+message WishCoinRechargeActivityCfgRes{
+  repeated share_message.WishCoinRechargeActivityCfg List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+//许愿池埋点报表查询返回
+message QueryWishLogReportRes{
+  repeated share_message.WishLogReport List=1;
+  optional int32 PageCount = 2; 					//总条数
+}
+
+//许愿池活动日志查询
+message QueryWishActivityPrizeLogRes{
+  repeated share_message.WishActivityPrizeLog List=1;
+  optional int32 PageCount = 2; 					//总条数
+}

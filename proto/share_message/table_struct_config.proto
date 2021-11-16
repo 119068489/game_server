@@ -1,0 +1,88 @@
+// 如果仅仅用于通讯的 message,别放在这里
+package share_message;
+import "ggotag.proto";
+
+
+
+//游戏列表 game_list
+message GameList {
+    required int32 Id = 1;  //游戏编号
+    optional string Title=2;         //游戏名称
+    optional string Icon=3;          //游戏图标
+    repeated int32  H5OpenPos=4;       //开放终端 1pc，2苹果，3安卓
+    repeated int32 OpenVip=5;        //开放VIP等级
+    optional bool H5Status=6;         //H5状态开关
+    optional bool H5MaintainStatus=7; //H5维护开关
+    optional int32 H5Sort=12;          //H5排序  1开始序号越小越靠前
+    optional int32 H5Recommend=15;     //H5推荐状态 lg：0无，1最热 2最新
+    optional bool RobotStatus=8;    //机器人状态
+    optional int32 CreateTime=11;    //添加时间
+    optional string GameId=13;       //游戏配置Id
+    optional string Operator=14;     //操作者
+    optional int32 Type = 16;       // 1:APP  2:H5
+    optional bool AppStatus=17;         //APP状态开关
+    optional bool AppMaintainStatus=18; //APP维护开关
+    optional int32 AppSort=19;          //APP排序  1开始序号越小越靠前
+    optional int32 AppRecommend=20;     //APP推荐状态 lg：0无，1最热 2最新
+    repeated int32 AppOpenPos=21;       //开放终端 1pc，2苹果，3安卓
+}
+
+////游戏配置列表结构
+message GameConfig {
+	required string Id = 1 [(gogoproto.jsontag) = "_id,omitempty"];			//配置Id
+	optional string Name=2 ;
+}
+//每日分享设置
+message ShareDay{
+    optional int32  ShareDayId=1 [(gogoproto.jsontag) = "_id,omitempty"];
+    optional string KeyName=2;                                      //键名                        
+    optional int32  KeyValue=3;                                     //键值
+    optional string Name=4;                                         //名称
+    optional string Remarks=5;                                      //备注
+    optional string Description=6;                                  //描述
+}
+//保险箱设置
+message SetSafe{
+    optional int32 SetSafeId=1 [(gogoproto.jsontag) = "_id,omitempty"];
+    optional int32 MinDeposit=2;                                   //最低存款
+    optional int32 MinWithdrawal=3;                                //最低取款
+    optional int32 MinTransfer=4;                                  //最低转账额
+    optional float TurnMoney=5;                                    //转账手续费
+    optional float TakeMoney=6;                                    //取款手续费
+    optional int32 SlidingLength=7;                                //步长
+}
+//盈利税收
+message ProfitTax{
+    optional int32  ProfitTaxId=1 [(gogoproto.jsontag) = "_id,omitempty"];                    //ID id默认为1
+    optional float  SystemTaxRate=2;                                                          //系统税率
+    optional string Remarks=3;                                                                //备注
+}
+//系统消息设置
+message SystemFastMsg{
+    required int64  MsgId=1[(gogoproto.jsontag) = "_id,omitempty"];        //ID 默认为1
+    optional int32 ReceiverType=2;                                        //账号类型 ：全部用户	-2,代理用户	-1,普通用户	0,苹果用户1,安卓用户	2
+    optional int32  PushTime=3;                                            //推送时间
+    optional int32  PushStatus=4;                                          //推送状态
+    optional string Content=5;                                             //推送内容
+    optional string Operator=6;                                            //推送人(操作者)
+    optional int32 CreateTime=7;                                           //操作时间
+    optional string Site = 8;                                              //站点
+    optional int32 IsPush = 9;                                                 //是否已经推送: 1 是，0 否
+}
+//系统邮件设置
+message SystemMailRule{
+    required int64 SystemMailID=1[(gogoproto.jsontag) = "_id,omitempty"];    //系统邮件ID
+    optional string Management=2;                                             //操作
+    optional int32  Recipient=3;                                              //收件人   0:全部用户 1：苹果 2：安卓
+    optional string MailTitle=4;                                              //邮件标题
+    optional int32 PushStatus=5;                                             //是否是定时推送   1：是 0：否
+    optional int64  PushTime=6;                                               //发送时间
+    optional string Content=7;                                                //邮件内容
+    optional string PushPeople=8;                                             //推送人
+    optional int32  Status=9;                                                 //状态  1：开启 0：禁用
+    optional int64  StartTime=10;                                             //创建时间
+    optional int64  UpdateTime=11;                                             //更新时间
+    optional string  UpdateAccount=12;                                             //更新操作人
+    optional string Site = 13;                                                  //站点
+    optional int32 IsPush = 14;                                                 //是否已经推送: 1 是，0 否
+}

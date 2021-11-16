@@ -1,0 +1,223 @@
+package brower_backstage; 
+
+//====================================================================================================以下是通用请求和返回结构===>
+message PushRequest {
+	optional string TestField1 = 1; //
+	optional string TestField2 = 2; //
+}
+
+message PushResponse {
+	optional string TestField1 = 1; //
+	optional string TestField2 = 2; //
+}
+message CommonResponse {
+	optional bool BoolField = 1; //
+	optional string StringField = 2; //
+	optional int32 Int32Field = 3; //
+	optional int64 Int64Field = 4; //
+}
+//谷歌验证器请求
+message GoogleCodeRequest {
+	optional int32 Type=1;		//类型 1获取设置信息，2重置生成秘钥,3开关
+	optional bool Status=2;		//开关
+}
+//谷歌验证器返回
+message GoogleCodeResponse {
+	optional bool Status=1;			//开关
+	optional string Secret=2;		//秘钥
+	optional string QrcodeUrl=3;	//common *base.Common地址
+
+}
+
+//客户端版本管理
+message VersionData{
+	optional DeviceData Android=1;				//安卓
+	optional DeviceData Ios=2;					//ios
+	optional bool NeedForceUpdate=3;   			//是否强制更新
+	optional string BuildUpdateDescription=4;	//更新日志 base64字符串
+	optional bool IosTest=5;					//过审开关 过审开关不用修改
+	optional bool IosTestVer=6;					//过审开关 永远为true 过审开关不用修改
+	optional bool AndroidTestVer=7;				//过审开关 永远为true 过审开关不用修改
+	optional bool isPayTest=8;					//零钱开关 false就是开启零钱
+	optional string TestShortUrl=9;				//测试服短网址生成api
+	optional string ShortUrl=10;				//正式服短网址生成api
+	optional bool Debugmode=11;					//调试模式
+	optional string LastForceVer=12;			//最新强制更新版本号
+	optional bool IsExcludeUnionPay=13;			//过审屏蔽银联支付 ture 屏蔽
+	optional string Banner=14;					//广告配置
+	optional bool IsCoin=15;					//是否开启硬币购买
+	optional string AppletsId=16;				//小程序Id
+	optional bool IsOpenWish=17;				//是否开启许愿池入口
+	optional string WishUrl=18;					//许愿池访问地址
+}
+
+//转发服务器列表
+message Tfserver{
+	repeated brower_backstage.Hostlist Hostlist=1;
+}
+
+message Hostlist{
+	optional string Ip=1;
+}
+
+message DeviceData{
+	optional string Version=1;			//正式服版本号
+	optional string Url=2;				//正式服前端下载包地址
+	optional string Appid=3;			//ios appid
+	optional string TestVersion=4;		//ios过审版本号
+	repeated DownloadList Urls=5;		//安卓渠道下载地址
+}
+
+message DownloadList{
+	optional string Channel=1;		//渠道号
+	optional string Url=2;			//下载地址
+}
+
+//登录请求
+message LoginRequest {
+	required string UserAccount = 1;  // 用户名
+	required string Password = 2; 	  // 密码
+	optional string Code=3;			  // goolge验证码
+}
+
+//验证码返回
+message CodeResponse {
+	optional string Code = 1;
+}
+
+//err消息返回
+message ErrMessage {
+	optional string Err=1;
+}
+
+//通用键值对结构
+message KeyValue {
+	optional string Key=1;
+	optional string Value=2;
+}
+
+message KeyValueStr {
+	optional string key=1;
+	optional string value=2;
+}
+
+//查询通用键值对列表返回
+message KeyValueResponse {
+	repeated KeyValue List=1;
+	repeated KeyValueStr ListStr=2;
+}
+
+//通用键值对结构
+message KeyValueTag {
+	optional int32 Key=1;
+	optional string Value=2;
+}
+
+//查询通用键值对列表返回
+message KeyValueResponseTag {
+	repeated KeyValueTag List=1;
+}
+
+//通用键值对结构
+message NameValueTag {
+	optional string name=1;
+	optional int64 value=2;
+	optional int64 extend=3;
+}
+
+//查询通用键值对列表返回
+message NameValueResponseTag {
+	repeated NameValueTag List=1;
+	optional int64 Total=2;
+}
+
+//通用分页列表请求
+message ListRequest {
+	optional string Keyword = 1;				//关键字
+	optional int32 Type = 2;					//查询下拉类型
+	optional int64 BeginTimestamp = 3;			//开始时间戳
+	optional int64 EndTimestamp = 4;			//结束时间戳
+	required int32 CurPage = 5;					//当前页码
+	required int32 PageSize=6;					//每页条数
+	optional int32 ListType=7;					//列表类型
+	optional int32 DownType = 8;				//查询下拉类型2
+	repeated int32 CustomTag=9;					//自定义标签
+	optional int64 Id=10;						//通用ID
+	optional string Sort=11;					//排序
+	optional int32 Status=13;		            //状态
+	optional string SrtType=14;					//字符串类型
+	optional int32 TimeType = 15; // 时间查询类型
+	optional int32 UserType = 16; //1普通用户 2运营号 3白名单
+}
+
+//根据id数组查询数据  共用
+message QueryDataByIds{
+	repeated int64 Ids64=1;
+	repeated int32 Ids32=2;
+	repeated string IdsStr=3;
+	optional string Note=4;
+	repeated int64 ObjIds=5;
+}
+
+//根据id查询数据
+message QueryDataById{
+	optional int64 Id64=1;
+	optional int32 Id32=2;
+	optional string IdStr=3;
+	optional string Note=4;
+	optional int64 ObjId=5;
+}
+
+//后台首页数据概况
+message DataOverview{
+	optional int64 RegCount=1;//昨日注册人数
+	optional int64 LoginCount=2;//昨日登录人数
+	optional int64 RegSumCount=3;//注册总人数
+	optional int64 LoginSumCount=4;//登录总人数
+	optional int64 PvCount=5;//昨日pv数
+	optional int64 UvCount=6;//昨日uv数
+}
+
+//折线数据
+message LineData{
+	repeated int64 TimeData=1;
+	repeated int64 VelueData=2;
+	repeated string StrData=3;
+	repeated string Name=4;
+	optional string DataName=5;
+	optional int64 LabelId=6;
+	optional int64 Total=7; //总数量
+}
+
+//折线图数据
+message LineChartResponse{
+	optional LineData Line=1;
+}
+
+//多线折线图数据
+message LineChartsResponse{
+	repeated LineData Line=1;
+}
+
+message UploadRequest{
+	optional string FileName=1; //保存的文件名 test.jpg
+	optional string Path=2;		//保存路径 upload
+	optional bytes File=3;		//文件[]byte
+	optional string FileUrl=4;	//网络文件地址
+	optional bool IsBucket=5;	//是否保存到存储桶
+	optional int32 Type=6;		//上传类型 1-本地文件上传,2-网络文件上传
+}
+
+message UploadResponse{
+	optional string Url=1;
+}
+
+message UploadList{
+	optional string Title=1; // https://im-resource-1253887233.file.myqcloud.com/backstage/upload/wlt.jpg
+	optional string Time=2;
+	optional int64 Size=3; //单位 Byte
+}
+
+message UploadListResponse{
+	repeated UploadList list=1;
+}

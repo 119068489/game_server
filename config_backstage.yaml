@@ -1,0 +1,20 @@
+# 若要加配置、改配置名,请一定在打包脚本 build_linux_yaml_template.py 的模板上也同时加上
+
+INCLUDE: ["config_share.yaml","config_hall_secret.yaml"] # 可以包含多个其他 *.yaml 文件
+SERVER_TYPE: 3     #服务器类型
+SERVER_ID: 4001     #服务器编号:4000开头
+SERVER_NAME: "后台1"  #服务器名称
+SERVER_ADDR: "127.0.0.1"  #服务器外部地址
+SERVER_ADDR_INTERNAL: "127.0.0.1"  #服务器内部地址
+LISTEN_PORT_FOR_CLIENT: 4001  #监听浏览器客户端连接端口
+LISTEN_PORT_FOR_BACKSTAGE_API: 4501 # WebAPI 地址,外部请求
+LISTEN_PORT_FOR_WEB_API_CLIENT: 4511  #监听 http对外客户端请求
+LISTEN_PORT_FOR_WEB_API_SERVER: 4611  #监听 http对内服务器间请求
+
+# 超级帐户谷歌验证器配置
+IS_GOOGLE_AUTH: False # 是否开启超级帐户谷歌验证器
+GOOGLE_SECRET: "MQE3RYVEOI6GYMSBA3MDI2OXQKP27JUH" # 谷歌验证器秘钥
+
+# 客户端版本管理JSON位置
+CLIENT_VERSION_DATA: "./backstage/version.json"
+CLIENT_TFSERVER_ADDR: "./backstage/tfserver.json"

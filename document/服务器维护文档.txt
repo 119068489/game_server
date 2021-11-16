@@ -1,0 +1,30 @@
+公司外网服务器:
+ip:54.92.13.178
+用户名centos
+密码有需要找:anson
+
+ip: 18.162.42.166
+用户名centos
+密码有需要找:anson
+
+内网服务器：
+ip:192.168.18.253
+用户名:jingyu
+密码:jyshouyou@999.
+
+ftp地址：192.168.18.253
+程序ftp账号:test
+程序ftp密码:jysy1206
+
+测试ftp账号:tester
+测试ftp密码:jysy1206
+
+
+步骤:
+1.在项目文件夹下打开cmd界面，运行python build_linux_server.py，脚本会提示是否处于master分支，按需求自己选择打包分支。
+2.按需输入外网地址以及服务端口号末尾数，打包压缩zip文件。（这里通过输入参数动态改动服务端口号）
+3.把zip文件提交到外网服务器上。
+4.进入外网服务器项目路径下，运行python stop_by_pid_file.py all 关闭服务器进程，接着运行备份脚本 python backup.py备份日志信息。
+5.解压刚刚上传的zip文件，运行命令 unzip xxx.zip,解压出文件夹，进入文件夹，运行python deploy.py xxx 命令，把当前文件夹名字改为xxx。
+6.运行python start.py all xx （xx代表之前打包服务器输入的端口号末尾数字）启动服务器进程。
+7.运行命令 ps -aux | grep ak_server查看进程是否存在。登陆游戏客户端确保服务端没有报错，没有问题则完成维护工作。

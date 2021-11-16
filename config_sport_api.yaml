@@ -1,0 +1,28 @@
+INCLUDE: ["config_share.yaml"] # 可以包含多个其他 *.yaml 文件
+
+SERVER_TYPE: 10     #服务器类型
+SERVER_ID: 10001     #服务器编号:10000开头
+SERVER_NAME: "电竞对接三方接口服务器"  #服务器名称
+SERVER_ADDR: "127.0.0.1"  #服务器外部地址
+SERVER_ADDR_INTERNAL: "127.0.0.1"  #服务器内部地址
+LISTEN_PORT_FOR_WEB_API_CLIENT: 10511  #监听 http对外客户端请求
+LISTEN_PORT_FOR_WEB_API_SERVER: 10611  #监听 http对内服务器间请求
+
+YEZI_API_TEST_URL: "http://47.91.198.97:8082/"  #野子科技测试URL
+YEZI_API_FORMAL_URL: "https://api.xxe.io/"  #野子科技正式URL
+YEZI_APP_KEY: "pS8vq5uw"  #野子科技app_key
+YEZI_APP_SECRET: "ejeGhQ8Qu28Maol2QoIHKUSAPFsfjLfE"  #野子科技app_secret
+
+YEZI_HERO_LOL_DATA_TEST: "/home/projim/Publish/json/game_hero_lol_test.json" #野子科技测试LOL英雄数据
+YEZI_HERO_WZRY_DATA_TEST: "/home/projim/Publish/json/game_hero_wzry_test.json" #野子科技测试WZRY英雄数据
+YEZI_EQUIP_LOL_DATA_TEST: "/home/projim/Publish/json/game_equip_lol_test.json" #野子科技测试LOL英雄装备
+YEZI_EQUIP_WZRY_DATA_TEST: "/home/projim/Publish/json/game_equip_wzry_test.json" #野子科技测试WZRY英雄装备
+
+YEZI_HERO_LOL_DATA_FORMAL: "/home/projim/Publish/json/game_hero_lol_formal.json" #野子科技正式LOL英雄数据
+YEZI_HERO_WZRY_DATA_FORMAL: "/home/projim/Publish/json/game_hero_wzry_formal.json" #野子科技正式WZRY英雄数据
+YEZI_EQUIP_LOL_DATA_FORMAL: "/home/projim/Publish/json/game_equip_lol_formal.json" #野子科技正式LOL英雄装备
+YEZI_EQUIP_WZRY_DATA_FORMAL: "/home/projim/Publish/json/game_equip_wzry_formal.json" #野子科技正式WZRY英雄装备
+
+LISTEN_ADDR_FOR_WEB_API: 10711 # 野子科技回调用
+
+

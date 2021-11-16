@@ -1,0 +1,88 @@
+package client_shop; //
+import "base.proto";
+import "common.proto";
+import "ShopCommon.proto";
+
+message LoginMsg {
+	required string Account = 1;           // 玩家账号
+	optional string Token = 2;              //登陆token
+}
+
+
+// 上行(客户端主动发起)
+service Client2Shop { // 登录注册账号相关
+	rpc RpcLogin(client_shop.LoginMsg)returns(base.Empty); // 登录
+	rpc RpcLogOut(base.Empty)returns(base.Empty); // 退出商场
+
+	rpc RpcShopItemUpload(share_message.ShopItemUploadInfo)returns(share_message.ShopItemUploadResult);    // 商品上架
+    rpc RpcShopItemEdit(share_message.ShopItemEditInfo)returns(share_message.ShopItemUploadResult);    // 商品编辑
+    rpc RpcShopItemDelete(share_message.ShopItemID)returns(share_message.ShopItemDeleteResult);    // 商品删除
+    rpc RpcShopItemSoldOut(share_message.ShopItemID)returns(share_message.ShopItemSoldOutResult);    // 商品下架
+
+    rpc RpcShopItemList(share_message.ShopInfo)returns(share_message.ItemList);             // 请求商品列表
+
+    rpc RpcShopItemInfo(share_message.ShopItemInfo)returns(share_message.ShopItemShowDetail);     // 请求商品详情
+
+    rpc RpcReceiveAddressList(base.Empty)returns(share_message.ReceiveAddressList);                                     // 请求收货地址
+    rpc RpcReceiveAddressEdit(share_message.ReceiveAddressInfo)returns(share_message.ReceiveAddressEditResult);         // 编辑收货地址
+    rpc RpcReceiveAddressAdd(share_message.ReceiveAddress)returns(share_message.ReceiveAddressAddResult);               // 添加收货地址
+    rpc RpcReceiveAddressDelete(share_message.ReceiveAddressID)returns(share_message.ReceiveAddressRemoveResult);       // 减少收货地址
+
+    rpc RpcDeliverAddressList(base.Empty)returns(share_message.DeliverAddressList);                                     // 请求发货地址
+    rpc RpcDeliverAddressEdit(share_message.DeliverAddressInfo)returns(share_message.DeliverAddressEditResult);         // 编辑发货地址
+    rpc RpcDeliverAddressAdd(share_message.DeliverAddress)returns(share_message.DeliverAddressAddResult);               // 添加发货地址
+    rpc RpcDeliverAddressDelete(share_message.DeliverAddressID)returns(share_message.DeliverAddressRemoveResult);       // 减少发货地址
+
+    rpc RpcShopItemCommentUpload(share_message.UploadComment)returns(share_message.UploadCommentResult);     // 商品留言
+    rpc RpcShopItemCommentList(share_message.ShopCommentList)returns(share_message.ShopCommentListResult);     // 留言列表
+    rpc RpcLikeComment(share_message.LikeCommentInfo)returns(share_message.LikeCommentResult);     // 留言点赞
+
+    rpc RpcCartInfo(base.Empty)returns(share_message.CartItemInfoList);         // 请求购物车信息
+    rpc RpcAddItemToCart(share_message.ShopItemID)returns(share_message.AddCartResult);     // 加物品进购物车以及加号添加
+    rpc RpcSubItemToCart(share_message.ShopItemID)returns(share_message.SubCartResult);     // 购物车列表页面的减号
+    rpc RpcRemoveItemFromCart(share_message.ItemIdList)returns(share_message.RemoveCartResult);     // 从购物车移出物品
+
+    rpc RpcStoreInfo(base.Empty)returns(share_message.StoreItemList);         // 请求收藏信息
+    rpc RpcAddItemToStore(share_message.ShopItemID)returns(share_message.AddStoreResult);     // 添加收藏
+    rpc RpcRemoveItemFromStore(share_message.ShopItemID)returns(share_message.RemoveStoreResult);     // 取消收藏
+    rpc RpcBatchAddItemToStore(share_message.ItemIdList)returns(share_message.BatchAddStoreResult);     // 从购物车页面批量收藏商品
+
+    rpc RpcCreateOrder(share_message.BuyItemInfo)returns(share_message.BuyItemResult);      // 生成订单
+    rpc RpcOrderList(share_message.OrderInfo)returns(share_message.OrderItemList);        // 订单列表
+    rpc RpcOrderInfo(share_message.OrderDetailInfoPara)returns(share_message.OrderDetailInfoShow);        // 订单信息
+    rpc RpcCancelOrder(share_message.OrderID)returns(share_message.CancelOrderResult);      // 取消订单
+    rpc RpcDeleteOrder(share_message.OrderID)returns(share_message.DeleteOrderResult);      // 删除订单
+    rpc RpcSettlementBtn(share_message.SettlementInfo)returns(share_message.SettlementResult);          // 结算按钮
+
+    rpc RpcItemListForMyReleaseOnline(share_message.MyReleaseInfo)returns(share_message.ItemListForMyRelease); // 我的发布在架宝贝商品列表
+    rpc RpcItemListForMyReleaseOffline(share_message.MyReleaseInfo)returns(share_message.ItemListForMyRelease); // 我的发布下架宝贝商品列表
+
+    rpc RpcItemSearch(share_message.SearchInfo)returns(share_message.SearchResult);             // 搜索
+
+    rpc RpcDelayReceiveItem(share_message.OrderID)returns(share_message.DelayReceiveResult);              // 延长收货
+    rpc RpcEditOrderAddress(share_message.EditOrderAddress)returns(share_message.EditOrderAddressResult);    // 修改物流中的收货地址
+    rpc RpcEditDeliverAddress(share_message.EditDeliverAddress)returns(share_message.EditDeliverAddressResult);    // 修改订单和商品中的发货地址
+
+    rpc RpcConfirmReceive(share_message.OrderID)returns(share_message.ConfirmReceiveResult);              // 确认收货
+    rpc RpcShopItemEvaluteUpload(share_message.UploadEvalute)returns(share_message.UploadCommentResult);     // 商品评价
+
+    rpc RpcExpressCodeUpload(share_message.ExpressInfo)returns(share_message.ExpressCodeResult);     // 提交物流即确认提交
+    rpc RpcExpressComInfos(base.Empty)returns(share_message.ExpressComInfosResult);     // 快递公司一栏表
+    rpc RpcExpressInfos(share_message.QueryExpressInfo)returns(share_message.QueryExpressInfosResult);     // 取得物流信息
+
+    rpc RpcNotifySendItem(share_message.OrderID)returns(share_message.NotifySendItemResult);              // 通知发货
+    rpc RpcShopItemMessage(share_message.ShopItemMessageListInfo)returns(share_message.ShopItemMessageList);     // 活动商店消息
+    rpc RpcShopMessageFlgUpd(share_message.MessageIdList)returns(base.NoReturn);     // 批量更新消息是否读过
+    rpc RpcGetShopOrderNotifyInfos(share_message.PlayerID)returns(share_message.ShopOrderIdList);     // 订单红点通知取得
+    rpc RpcShopOrderNotifyFlgUpd(share_message.ShopOrderNotifyFlgUpdInfo)returns(base.NoReturn);     // 批量更新订单红点状态读取状态
+
+    rpc RpcShopUploadAuth(share_message.PlayerID)returns(share_message.UploadAuthResult);         // 上架商品验证是同意协议(点击页面的上架图标时候调用)
+    rpc RpcShopUploadAuthConfirm(share_message.PlayerID)returns(base.Empty);         // 确认上架验证同意协议
+
+}
+
+// 下行(服务端主动发起)
+service Shop2Client {
+    rpc RpcPlayerLoginResponse(client_server.AllPlayerMsg)returns(base.NoReturn); // 玩家登录之后返回内容
+    //rpc RpcReLogin(base.Empty)returns(base.NoReturn);   	// 顶号通知
+}

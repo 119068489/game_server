@@ -1,0 +1,1126 @@
+package h5_wish;
+import "base.proto";
+//import "game_server/proto/share_message/table_struct_wish.proto";
+// 推送小助手
+message WishNoticeAssistantReq{
+	optional int64 PlayerId = 1;  // 柠檬用户id
+	optional int64 WishPlayerId = 3;  // 许愿池用户id
+	optional string ProductName = 2;  // 抽到物品的名字
+}
+// 推送小助手
+message WishNoticeAssistantResp{
+	optional int32 Result = 1; //结果1成功，其他失败
+}
+
+
+// 许愿池首页查询
+message QueryBoxReq{
+	optional int64 Id = 1;  // 商品或者盲盒的id
+	optional int32 Type=2;   // 1-商品,2-盲盒
+}
+
+message BoxProductName{
+	optional int64 Id = 1;  // 商品或者盲盒的id
+	optional string Name=2;   // 商品或者盲盒的名字
+	optional int32 Type=3;   // 1-商品,2-盲盒
+}
+
+message BoxProductNameResp{
+	repeated BoxProductName BoxProductNames = 1;
+}
+
+// 类型
+message WishItemType {
+	optional int64 Id = 1;
+	optional string Name = 2;
+	optional bool IsRecommend = 4; // 是否推荐
+}
+
+message SearchFoundResp{
+	repeated WishItemType WishItemTypes = 1;
+}
+
+message CollectBox{
+	optional int64 _id = 1;
+	optional string Name = 2;        //名称
+	optional string Icon = 3;        //图标
+	optional string Desc = 4;        //盲盒描述
+	optional int32 TotalNum = 5;     //物品总数
+	optional int32 RareNum = 6;     //稀有个数
+	optional int64 Price = 7;       //许愿价格
+	optional int64 WishBoxItemId = 8;
+	optional int64 WishBoxId = 9;	//盲盒Id(值和_id一样)
+	optional int32 Status = 10; //状态:0下架，1上架;2-积极补货中
+	optional bool IsPreSale = 11; //是否预售
+	optional int32 Match = 12 ;        //0普通赛，1挑战赛
+}
+message QueryBox{
+	optional int64 Id = 1;			// 盲盒唯一ID
+	optional string Name = 2;		// 盲盒的名称
+	optional string Image = 3;	// 盲盒封面
+	optional string Desc = 4;		// 描述,简介
+	repeated int64 Items = 5;		// 盲盒物品id列表,款的总数量可以根据这个数组长度来获取
+	optional int64 Price = 6;		// 盲盒的价格
+	optional int64 WishFishCount = 7; // 心愿达成数.
+	optional int32 label = 8; // 0-非挑战赛;1-挑战赛
+	optional int32 ProductType = 9; // 0-普通款;1-稀有款(藏款、超凡款、梦幻款这些)
+	optional int32 ProductStatus = 10; // 1-在售;2-预售
+	optional int64 ArrivalTime = 11; // 预计到货时间
+	optional int32 BoxType = 12; // 盲盒类别.
+	optional string Protector = 13;	 // 守护者名字
+	optional string ProtectorHeadUrl = 14;// 守护者头像
+	optional int64 ProtectorTime = 15;// 守护时间
+	optional int64 GetCoin = 16; // 守护者获得的硬币
+	optional int32 TotalNum = 17;     //物品总数
+	optional int32 RareNum = 18;     //稀有个数
+
+}
+//响应数据
+message QueryBoxResp{
+	repeated QueryBox Boxes=1;  // 盲盒列表
+}
+
+// 我的愿望盒子请求
+message MyWishReq{
+	optional int32 Page = 1; // 当前页
+	optional int32 PageSize = 2; // 页面大小
+	optional int32 Type = 3; // 0-待兑换;1-已兑换;2-已回收;3-回收审核中;4-待兑换与审核中
+
+}
+// 我的愿望盒子响应
+message MyWishResp{
+	repeated QueryBox Boxes=1;// 盲盒列表
+	optional int32 Count = 2; // 总条数
+}
+
+// 商品展示区列表
+message Product{
+	optional int64 Id = 1;			// 盲盒boxItem的id(中间表)
+	optional int32 ProductType = 2; // 1普通款，2典藏款，3梦幻款，4超凡款
+	optional string Icon = 3; // 商品的图片
+	optional string Name = 4; // 名字
+	optional int64 BoxId = 5; // 这个商品对应的盒子
+	optional int64 Price =6; // 物品对应的价格
+	optional int64 ProductId = 8;			// 真正物品的id
+	optional int64 PreHaveTime =9;  // 预计到货时间
+	optional bool IsPreSale = 10;			//是否预售
+	optional string BoxName = 11; // 盲盒名字
+	optional int64 PlayerWishItemId = 12;			// 玩家物品的id
+	optional bool IsWish = 13;			// 是否许愿款
+	optional int64 ExpireTime = 14;			// 到期时间
+	optional bool IsSaleOut = 15;			//是否下架
+	optional bool IsMakeWish = 31 ; // 是否许愿必中,true-是,false-否
+	optional int32 Match = 16 ;  //0普通赛，1挑战赛
+	optional int64 RecyclePrice =17; // 物品对应的回收价格
+	optional int32 CtrlStatus = 18 ; //用户操作状态 0待兑换，1已兑换，2已回收, 3回收审核中
+	optional int64 Diamond = 19 ; //钻石价格
+	optional int32 RecycleType = 20 ; //回收类型 0-钻石 1-金额
+	optional int64 GiveType = 21; // 0或者空表示发起挑战得到的,1-表示许愿池活动
+}
+message ProductShowResp{
+	repeated Product Products = 1; // 商品展示区列表
+}
+
+
+
+// 盲盒展示区列表(商品展示列表区)
+message BoxShow {
+	optional int64 Id = 1;			// 盲盒唯一ID
+	optional string Name = 2;		// 盲盒的名称
+	optional string Image = 3;	// 盲盒封面
+	optional string Desc = 4;		// 描述,简介
+	optional int64 Price = 6;		// 盲盒的价格
+	optional int64 WishFishCount = 7; // 心愿达成数.
+	optional int32 Label = 8; // 0-非挑战赛;1-挑战赛
+	optional int32 ProductType = 9; // 0-普通款;1-稀有款(藏款、超凡款、梦幻款这些)
+	optional int32 ProductStatus = 10; //  0待售，1在售，2预售
+	optional int32 TotalNum = 17;     //物品总数
+	optional int32 RareNum = 18;     //稀有个数
+
+	optional int64 OccupiedTime = 19; // 占领时长（秒）
+	optional int32 CoinNum = 20;   //占领期间受到的硬币
+	optional string HeadUrl = 21;   // 玩家头像
+	optional int64 GuardianPlayerId = 22; // 守护者的id
+	optional bool HaveIsWin = 34;    //是否包含必中
+}
+
+
+
+message GetCoin{
+	optional int64 PlayerId = 1; // 用户唯一id
+	optional string Name = 2; // 用户名
+	optional string HeadUrl = 3; // 头像
+	optional int64 Coin = 4; // 获得硬币数量
+}
+// xxx 已获得8888硬币
+message GetCoinResp{
+	repeated GetCoin GetCoins = 1; // 默认10条数据给前端,前端自己轮播显示,显示完了重新拉去.
+}
+
+// 挑战成功文案消息
+message DareMessage{
+	optional int64 PlayerId = 1; // 用户唯一id
+	optional string Name = 2; // 用户昵称
+	optional string HeadUrl = 3; // 头像
+}
+//用户信息请求
+message UserInfoReq{
+    optional int64 UserId = 1; // app中的playerId
+}
+//用户信息请求响应
+message UserInfoResp{
+    optional int64 UserId = 1; //用户id
+    optional string Name = 2;   //名称
+    optional int32 Sex = 3;    //性别
+    optional string HeadUrl = 4; //头像
+    optional int64 Coin = 5;    //硬币数量
+    optional bool IsTryOne = 6;    // 是否试玩
+	optional int64 Diamond = 7;    // 钻石数量
+	optional string Account = 8;    //账号
+	optional bool IsFirst = 13; // 是否首次充值.,true-月首充,false-不是月首充
+	optional int32 Types=36; //用户类型 0普通用户,1-假用户，2营销运营,3商城账号,4管理运营,5官方运营,6运营测试
+}
+//修改硬币
+message AddCoinReq{
+    optional int64 UserId = 1; //用户id
+    optional int64 Coin = 2;    //修改值
+    optional int32 SourceType = 3;    //
+    optional int64 Diamond = 4;  //变化后钻石
+}
+message AddCoinResp{
+    optional int32 Result = 1; //结果1成功，其他失败
+    optional int64 UserId = 2; //用户id
+    optional int64 Coin = 3;    //修改后的值
+}
+//修改零钱
+message AddGoldReq{
+    optional int64 UserId = 1; //用户id
+    optional int64 Coin = 2;    //修改值
+    optional int32 SourceType = 3;    //
+}
+message AddGoldResp{
+    optional int32 Result = 1; //结果1成功，其他失败
+    optional int64 UserId = 2; //用户id
+    optional int64 Coin = 3;    //修改后的值
+}
+// 获得的商品
+message GetProduct{
+	optional int64 PlayerId = 1; // 用户id
+	optional string PlayerName = 2; // 用户昵称
+	optional string HeadUrl = 3; // 用户头像
+	optional int64 ProductId = 4; // 商品唯一id
+	optional string ProductName = 5; // 商品名字
+	optional string Image = 6; // 商品图片
+}
+
+// 首页消息播放区
+message HomeMessageResp{
+	repeated DareMessage DareMessages =  1; // 挑战的消息  默认十条, 前端轮播显示
+	repeated GetProduct GetProducts =  2; // 获得的商品信息 默认十条,前端轮播显示
+}
+
+//获取随机十条商品信息
+message RandProductResp{
+	repeated GetProduct GetProducts =  1; // 获得的商品信息  默认十条, 前端轮播显示
+}
+
+//获取十条挑战信息
+message DareMessageResp{
+	repeated DareMessage DareMessages =  1; // 挑战的消息  默认十条, 前端轮播显示
+}
+
+// 挑战守护者快捷入口的轮播展示.
+message  Protector{
+	optional int64 PlayerId = 1; // 用户id
+	optional string PlayerName = 2; // 用户昵称
+	optional string HeadUrl = 3; // 用户头像
+	repeated int64 BoxIds = 4; // 盲盒id列表
+	optional int64 ProtectorTime = 5; // 守护者守护的时间
+	optional int64 Coin = 6; // 守护者守护的时间
+}
+// 挑战守护者快捷入口的轮播展示入口.
+message ProtectorResp{
+	repeated Protector Protectors = 1; // 轮播展示列表
+}
+// 挑战守护者快捷入口的轮播展示.
+message ProtectorData{
+		optional int64 BoxId = 1; // 用户id
+		optional string HeadUrl = 3; // 用户头像
+
+}
+// 挑战守护者快捷入口的轮播展示入口.
+message ProtectorDataResp{
+	repeated ProtectorData Protectors = 1; // 轮播展示列表
+}
+
+
+// 最新上线,人气盲盒,欧气爆棚 菜单栏
+message Menu{
+	optional int64 Id = 1; //1最新上线，2人气盲盒，3欧气爆棚
+	optional string Name = 2;   //描述
+}
+
+message MenuResp{
+	repeated Menu Menus  = 1 ;// 菜单栏列表.
+}
+
+// 商品品牌
+message ProductBrand{
+	optional int64 Id = 1;
+	optional string Name = 2;
+	optional bool IsHot = 4; // 是否热门
+}
+
+message ProductBrandListResp{
+	repeated ProductBrand  ProductBrandList = 1; // 默认10条,前3条是热门
+}
+
+// 盲盒(商品)筛选区
+message SearchBoxReq{
+	optional int32 Complex = 1; // 0-综合;1-价格降序;2-价格升序(叠加条件,综合的优先.)
+	optional int32 Condition = 2; //  1-最新上线;2-人气盲盒;3-欧气爆棚
+	optional int32 ProductStatus = 3; // 1-现货;2-预售
+	optional int64 MinPrice = 4; // 最低价
+	optional int64 MaxPrice = 5; // 最高价
+	repeated int64 WishBrandId = 6; // 品牌id.
+	repeated int64 WishItemTypeId = 7; // 分类id.
+	optional int32 Label = 10; // 1-非挑战赛;2-挑战赛
+	optional int32 Page = 8; // 当前页
+	optional int32 PageSize = 9; // 页面大小
+}
+// 盲盒区列表
+message SearchBoxResp{
+	repeated BoxShow BoxShowList = 1; // 商品展示列表区
+	optional int32 Count = 2; // 总条数
+}
+
+// 品牌列表返回
+message BrandListResp{
+	optional string BrandList = 1; // 排好序的json字符串   {"A":["apple"],"H":["华为"],"L":["联想","两张"],"X":["小米","小鸡"]}
+}
+
+// 商品类别
+message TypeListResp{
+	optional string TypeList = 1; // 排好序的json字符串   {"A":["apple"],"H":["华为"],"L":["联想","两张"],"X":["小米","小鸡"]}
+}
+
+
+
+
+// ====================挑战赛主界面==========================
+// 挑战赛主界面-消息播放区
+message DareRecommendResp{
+	repeated Protector Protectors = 1; // 默认10条,用完在调用.
+}
+
+
+// 排行榜数据
+message Ranking{
+	optional int64 PlayerId = 1; // 用户id
+	optional string Name = 2; // 用户名
+	optional string HeadUrl = 3; // 头像
+	optional int64 ProtectorCount = 4;// 成功守护愿望数量
+	optional int64	CoinCount = 5;// 得到的硬币数量
+}
+
+// 排行榜列表
+message RankingResp{
+	repeated Ranking Rankings = 1;// 排行榜数据列表
+}
+
+
+// 我的战绩成功数和获得总硬币数
+message MyRecordResp{
+	optional int32 DareCount = 1; // 挑战数量
+	optional int64 TotalCoinCount = 2; // 硬币总数量
+}
+
+
+// 我的战绩
+message MyDare{
+	optional int64 BoxId = 1; // 盲盒id
+	optional string Image = 2; // 盲盒id列表
+	optional int64 ProtectorTime = 3; // 守护者守护的时间 单位:秒
+	optional int64 CoinCount = 4; // 硬币数量
+}
+//我的战绩请求
+message MyDareReq{
+	optional int32 Page = 1; // 当前页
+	optional int32 PageSize = 2; // 页面大小
+}
+//我的战绩响应
+message MyDareResp{
+	repeated MyDare Dares = 1;// 我的战绩
+	optional int32 Count = 2; // 总条数
+}
+
+// ====================抽奖界面==========================
+// 盲盒信息
+message BoxReq{
+	optional int64 BoxId = 1; // 盲盒 id
+	optional int32 Type = 2; // 请求类型 1-挑战赛 2-非挑战赛
+}
+
+message BoxResp{
+	optional int64 BoxId = 1; // 盲盒 id
+	optional int64 ProtectorId = 2;	 // 守护者Id
+	optional string Protector = 3;	 // 守护者名字
+	optional string ProtectorHeadUrl = 4;// 守护者头像
+	optional int64 ProtectorTime = 5;// 守护时间
+	repeated Product ProductList = 6; // 商品列表
+	optional int32 Status = 12;      //状态:0下架，1上架;2-积极补货中
+	optional bool IsCollection = 13;      // 是否收藏了,true-已收藏
+	optional int64 BoxPrice = 14;      //  盲盒价格
+	optional string BoxIcon = 15;// 盲盒头像
+    optional int32 ProductStatus =16;   //0待售，1在售，2预售
+	optional int64 CreateTime = 17;//  守护者创建时间
+}
+
+message DareReq{
+	optional int64 BoxId = 1; // 盲盒 id
+}
+// xxx发起了挑战
+message WhoDare{
+	optional int64 PlayerId = 1; // 用户id
+	optional string Name = 2; // 用户名
+	optional bool IsSuccess = 3; // 是否挑战成功
+	optional string HeadIcon = 4; // 头像
+	optional int64 ProtectorTime = 5;// 守护时间
+}
+message DareResp{
+	repeated WhoDare Dares = 1; // 发起挑战的列表
+}
+// 挑战记录
+message DareRecordReq{
+	optional int64 BoxId = 1; // 盲盒id
+	optional int32 Type = 2; // 查询类型;1-挑战记录;2-占领时长
+	optional int32 Page = 3; // 当前页
+	optional int32 PageSize = 4; // 页面大小
+}
+
+//盲盒挑战记录 wish_log
+message WishLog{
+	optional int64 Id =1;
+	optional int64 WishBoxId = 2;   //盲盒id
+	optional int64 DareId = 3;     // 挑战者id
+	optional string DareName = 4;   // 挑战者名字
+	optional int64 BeDareId = 5;   // 被挑战者id
+	optional string BeDareName = 6; // 被挑战者名字
+	optional int64 CreateTime = 7; // 挑战时间
+	optional bool Result = 8; // 挑战结果;true-成功;false-失败
+	optional int64 ChallengeItemId =9;  //挑战抽到道具id(中间表ID)
+	optional string DareHeadIcon = 10;  // 挑战者的头像
+	optional int64 DefendTime =11;  // 总共守护的时间(只有被别人挑战下台后才会有这个值,否则需要通过计算).
+}
+//盲盒挑战占领时长表 wish_occupied
+message WishOccupied{
+	optional int64 Id = 1;
+	optional int64 WishBoxId = 2;   //盲盒id
+	optional string NickName = 4; //昵称
+	optional string HeadUrl = 5;  //头像
+	optional int64 PlayerId =6; //玩家id
+	optional int64 CreateTime = 7; // 挑战成功时间
+	optional int64 EndTime = 8; // 被挑战成功时间
+	optional int64 OccupiedTime = 9; // 占领时长（秒）
+	optional int32 Status = 10;   //占领状态 1：占领中， 2：占领结束
+	optional int32 CoinNum = 11;   //占领期间受到的硬币
+}
+
+//盲盒守护者固定区信息
+message DefenderMsg{
+	optional string HeadUrl = 1;  //头像
+	optional int64 OccupiedTime = 2; // 占领时长（秒）
+	optional int32 CoinNum = 3;   //占领期间受到的硬币
+	optional int64 CreateTime = 4;   //挑战成功时间
+}
+
+//盲盒守护者固定区信息响应
+message DefenderMsgResp{
+	repeated DefenderMsg Msg = 1; //默认十条
+}
+
+//获取许愿款用户数据
+message GotWishPlayer{
+	optional string HeadUrl = 1;  //头像
+	optional string NickName = 2; //昵称
+	optional string ProductIcon = 3;   //商品图片
+}
+
+//获取许愿款用户响应
+message GotWishPlayerResp{
+	repeated GotWishPlayer Msg = 1; //默认十条
+}
+
+
+// 挑战记录返回
+message DareRecordResp{
+	repeated WishLog WishLogList = 1;
+	repeated WishOccupied WishOccupiedList = 2;
+	optional int32 WishLogCount = 3; // 挑战记录总条数
+	optional int32 WishOccupiedCount = 4; // 占领时长总条数
+}
+
+
+// 商品详情请求
+message ProductDetailReq{
+	optional int64 ProductId = 1; // 商品唯一id
+}
+// 商品详情
+message ProductDetail{
+	optional int64 ProductId = 1; // 商品唯一id
+	optional string ProductName = 2; // 商品名字
+	optional string Image = 3; // 商品图片
+	optional int32 ProductType = 4; // 0-普通款;1-稀有款(藏款、超凡款、梦幻款这些)
+	optional string Desc = 5; // 描述(收藏款:初音未来手办系列)
+	optional string material = 6; // 材料(PVC)
+	optional int64 Long = 7; // 长
+	optional int64 Width = 8; // 宽
+	optional int64 High = 9; // 高
+	optional int64 Price = 10; // 价格(单位分,前端自己转换.)
+}
+
+// 盲盒商品详情响应
+message BoxProductResp{
+	repeated ProductDetail ProductList = 1; //商品信息
+}
+
+
+// 许愿/修改愿望
+message WishReq{
+	optional int64 BoxId = 1; // 盲盒唯一id
+	optional int64 ProductId = 2; // 商品唯一id
+	optional int32 OpType = 3; // 1-许愿;2-修改愿望
+}
+message WishResp{
+    optional int32 Result = 1;//结果:1成功，2失败`
+}
+
+message PostageResp{
+	optional int32 Postage1 = 1; // 江浙沪 邮寄费用
+	optional int32 Postage2 = 2; // 江浙沪以外非偏远地区 邮寄费用
+	optional int32 Postage3 = 3; // 江浙沪以外偏远地区 邮寄费用
+	repeated string RemoteAreaList = 4; // 江浙沪以外偏远地区 列表
+	optional int32 FreeNumber = 5; // 包邮起始件数
+}
+// 发起挑战
+message DoDareReq{
+	optional int32 DareType = 2; // 1-挑战赛;2-非挑战赛
+	optional int64 WishBoxId = 3; // 盲盒ID
+}
+message DoDareResp{
+	optional int64 ProductId = 1; // 商品唯一id
+	optional string ProductName = 2; // 商品名字
+	optional string Image = 3; // 商品图片
+	optional int32 ProductType = 4; // 1普通款，2典藏款，3梦幻款，4超凡款
+	optional bool IsLucky = 5; // 是否中奖
+	optional bool IsOnce = 6; // 是否一击即中 true：是
+	optional int32 Status =7;   //0待售，1在售，2预售
+	optional int64 ForecastTime = 8; // 预计到货时间
+	optional int64 PlayerWishItemId = 9; // 用户得到物品表中的id,回收用这个
+	optional int64 ProductPrice = 10; // 物品实际价格,人民币:单位:分
+	optional int64 ProductDiamond = 11; // 物品的钻石
+}
+
+
+// 更多挑战
+message BoxListResp{
+	repeated QueryBox BoxList = 1; // 盲盒列表
+}
+
+// ==========================我的愿望盒==========================
+// 我的盒子请求请求
+message DataPageReq{
+	optional int32 Page = 1; // 当前页
+	optional int32 PageSize = 2; // 页面大小
+	optional int32 ReqType = 3; // 请求类型 0-下架, 1-上架
+}
+
+//收藏盲盒数据
+message CollectionBox{
+	optional QueryBox Box = 1;
+	optional int64 CollectionTime = 2; //收藏时间
+}
+
+//我的愿望盒-已收藏
+message MyCollectedBoxResp{
+	repeated CollectBox Boxes = 1; //盲盒
+	optional int32 OnSaleCount = 2; // 上架盲盒总条数
+	optional int32 SaleOutCount = 3; // 下架盲盒总条数
+	optional int32 ToExchangeCount = 4; // 待兑换盲盒个数
+	optional int32 ExchangedCount = 5; // 已兑换盲盒个数
+	optional int32 RecycleCount = 6; // 已回收盲盒个数
+}
+
+//处理盲盒或物品请求
+message DealBoxReq{
+	repeated int64 IdList = 1; //处理盲盒ID列表
+	optional int32 OpType = 2; //1-添加;2-删除
+}
+
+message DefaultResp{
+	optional int32 Result = 1; //0-成功;1-失败
+	optional string Msg = 2; //失败提示
+}
+
+//盲盒物品响应数据
+message ProductResp{
+	repeated Product ItemList = 1;
+	optional int32 ToExchangeCount = 2; // 待兑换盲盒个数
+	optional int32 ExchangedCount = 3; // 已兑换盲盒个数
+	optional int32 RecycleCount = 4; // 已回收盲盒个数
+}
+
+//盲盒物品回收数据
+message RecycleReq{
+	repeated int64 IdList = 1;			//回收盲盒物品ID列表
+	optional int32 Price = 2; 		  //回收总价格
+	optional string CardId = 3; 		  //银行卡ID
+}
+
+//批量处理盲盒请求
+message WishBoxReq{
+	repeated int64 IdList = 1; //处理盲盒物品ID列表,收藏时只传单个id的数组
+	optional string BankCardId = 2; //银行卡ID
+	optional int32 RecycleNote = 3; //回收理由
+	optional int64 AddressId = 4; //兑换的收货地址id（仅兑换使用）
+
+}
+
+message CollectionBoxReq{
+	repeated int64 IdList = 1; //处理盲盒物品ID列表,收藏时只传单个id的数组
+	optional int32 OpType = 2; // 1-收藏;2-删除
+}
+
+
+message WishAddress{
+	optional string Name = 1;       //地址名称
+	optional string Phone = 2;      //电话号码
+	optional string Detail = 3;      //详细地址
+	optional bool IfDefault = 4;      //是否是默认地址
+	optional int64 AddressId = 5;  //用创建时间作为id
+	optional string Province = 6;    //地址省份
+	optional string City = 7;    //地址城市
+	optional string Area = 8;    //地址区域
+	//需要字段自行补足
+}
+
+message RemoveAddressReq{
+	optional int64 AddressId = 5;  //创建时间
+}
+
+//收货人信息列表响应
+message AddressListResp{
+	repeated WishAddress List = 1;       // 地址列表
+	optional int32 Count = 2; // 总条数(分页使用的)
+}
+
+// ==========================其他==========================
+//盲盒物品预售请求
+message PresaleReq{
+	optional int64 Id = 1; //盲盒物品ID
+	optional int32 ArrivalTime = 2; //预计到货时间
+}
+
+//设置盲盒物流信息请求
+message SetExpressInfoReq{
+	optional int64 PlayId = 1; 		// 兑换者ID
+	optional string ExpressNum = 2;    // 物流单号
+	optional int64 ProductId = 3; 		// 盲盒物品ID
+	optional int64 ReceiveId = 4;     // 收货人ID
+}
+
+//盲盒物流信息响应
+message GetExpressInfoReq{
+	optional int64 PlayId = 1; 		// 兑换者ID
+	optional int64 ProductId = 2; 		// 盲盒物品ID
+}
+
+//盲盒物流信息响应
+message GetExpressInfoResp{
+	optional string ExpressNum = 1;    // 物流单号
+}
+//进入许愿池请求
+message LoginReq{
+    optional string Account = 1;  //账号
+    optional int32 Channel = 2;  //渠道:1 im渠道，2语音渠道
+    optional string NickName = 3; //昵称
+    optional string HeadUrl = 4;  //头像
+    optional int64 PlayerId =5; //渠道方玩家唯一id
+    optional string Token = 6;  //登录渠道token，用来校验是否有效登录用户
+	optional int32 Types=36; //用户类型 0普通用户,1-假用户，2营销运营,3商城账号,4管理运营,5官方运营,6运营测试
+}
+//进入许愿池响应
+message LoginResp{
+    optional int32 Result = 1;  //1进入成功，2失败
+    optional string Token = 2;  //新的token
+    optional int32 HallSid = 3; //所在大厅id
+	optional bool NotOneWish = 13; // false-首次许愿,true-不是首次许愿
+	optional bool IsTryOne = 14; // true-已试玩,false-未试玩.
+	optional int64 UserId = 15;  //用户在许愿池的唯一Id
+	optional string Reason =16;  // 错误原因,只有账号冻结的时候才会有.
+	optional int32 UserRole =17;  // 用户角色 0普通用户,1-假用户，2营销运营,3商城账号,4管理运营,5官方运营,6运营测试,7白名单
+}
+
+//返回数值响应
+message JustNumberResp{
+	optional int32 Result = 1;  //结果数值
+}
+//兑换钻石
+message CoinToDiamondReq{
+    optional int64 Coin = 1;    //兑换硬币数
+    optional int64 Id = 2;      //指定面值兑换
+}
+//兑换响应
+message CoinToDiamondResq{
+    optional int32 Result = 1;  //兑换结果:1成功，其他失败
+    optional int64 Coin = 2;    //硬币
+    optional int64 Diamond = 3; //钻石
+    optional int64 DiamondCount = 4; // 变化的钻石数量
+}
+
+//银行卡信息
+message BankCardInfo{
+	optional string BankId = 1;// 银行卡号
+	optional string BankCode = 2;// 银行卡编码
+	optional string BankName = 5;// 银行名称
+	optional bool IsSupport =6; //是否支持提现
+}
+
+//银行卡信息响应
+message BankCardResp{
+	repeated BankCardInfo Cards = 1;
+}
+//用户提现大厅请求
+message RecycleToHall{
+	optional int64 PlayerId = 1; //用户id
+	optional string BankCardId = 2;// 银行卡号
+	optional int64 Price = 3;//回收金额
+}
+message DiamondRecharge{
+	optional int64 Id = 1;
+	optional int64 Diamond  = 2; 			//数量 给用户增加的钻石数量,范围1-1000000
+	optional int64 CoinPrice  = 3; 			//价格  单位:硬币 范围1-10000000
+	optional int64 MonthFirst  = 4; 	//月首次购买赠送,范围1-100
+	optional int32 Rebate  = 5; 		//折扣 售价折扣  范围1-99整数,使用时除100
+	optional int64 StartTime = 7;		//活动开始时间 折扣活动开始时间
+	optional int64 EndTime = 8;			//活动结束时间 折扣活动结束时间
+	optional int32 Status = 9;			//状态 1上架,2下架
+	optional int32 Sort = 10;			//排序权重 值越大越靠前
+	optional int64 DisPrice=11;         //折扣价
+	optional int64 GiveDiamond = 12; // 赠送钻石
+	optional bool IsMonthFirst = 13; // 是否首充 true-首充
+}
+// 获取兑换列表
+message DiamondRechargeResp{
+	repeated DiamondRecharge DiamondRechargeList = 1;
+}
+
+// 钻石记录
+message DiamondChangeLogReq{
+	optional int32 Page = 1; // 当前页
+	optional int32 PageSize = 2; // 页面大小
+	optional int32 Type = 3; //  1 获取,2消耗
+
+}
+message DiamondChangeLog{
+	required int64 LogId = 1 ;
+	optional int64 PlayerId = 2;										//用户ID
+	optional int64 ChangeDiamond = 4;										//变化钻石
+	optional int32 SourceType = 5;										//源类型(支付类型)
+	optional int32 PayType=7;											//1收入，2支出
+	optional int64 CurDiamond = 10;										//变化前携带钻石
+	optional int64 Diamond = 11;											//变化后携带钻石
+	optional string Note=12;											//备注
+	optional int64 CreateTime = 13;										//流水时间
+}
+message DiamondChangeLogResp{
+	repeated DiamondChangeLog DiamondChangeLogList = 1; // 列表
+	optional int32 Count=7; // 总条数
+}
+
+// 价格区间
+message PriceSection{
+	optional int32 OneMin = 2; // 第一区间 最小值
+	optional int32 OneMax = 4; // 第一区间 最大值
+	optional int32 TwoMin = 5; // 第二区间 最小值
+	optional int32 TwoMax = 6; // 第二区间 最大值
+	optional int32 ThreeMin = 7; // 第三区间 以上
+}
+// 价格区间响应
+message PriceSectionResp{
+	optional PriceSection PriceSection = 1;
+}
+
+// 货币换算参数设置
+message WishCurrencyConversionCfg {
+	optional int32 Money = 1; // 人民币 单位为元,转换是急需要注意. 比如 人民币：硬币=1:5  *（弃用)
+	optional int32 Coin = 2; // 硬币
+	optional int32 Diamond =3; // 钻石
+}
+
+//返回配置属性响应
+message ConfigResp{
+	optional PostageResp Postage = 1;  //邮费配置
+	optional int32  RecycleRatio = 2;  //回收比例（单位%）
+	repeated Menu RecycleReason = 3; //回收理由（Menu注释忽略）
+	optional WishCurrencyConversionCfg Conversion= 4; //兑换表
+	repeated string errKey = 5; //配置属性项获取失败
+	optional int32  PlayerRecycleMoneyTime = 6;  //用户单日现金回收次数
+	optional int64  PlayerRecycleMoneySum = 7;  //用户单日现金回收额度
+	optional int32  PlayerRecycleDiamondTime = 8;  //用户单日钻石回收次数
+	optional int64  PlayerRecycleDiamondSum = 9;  //用户单日钻石回收额度
+	optional int32  DayRecycleMoneyTime = 10;  //单日回收现金次数阀值
+	optional int64  DayRecycleMoneySum = 11;  //单日现金回收额度
+	optional int32  DayRecycleDiamondTime = 12;  //单日回收钻石次数阀值
+	optional int64  DayRecycleDiamondSum = 13;  //单日钻石回收额度
+}
+
+message BatchDareReq{
+	optional int64 Uid = 1; // 用户id
+	optional int64 BoxId = 2; // 盲盒id
+	optional int32  Count = 3;  // 一次性抽奖次数
+}
+message BatchDareResp{
+	optional int32 Result = 1; //结果1成功，其他失败
+}
+
+
+// 后台添加许愿池钻石.
+message BackStageAddDiamondReq{
+	optional string Account = 1;  // 手机号
+	optional int32 Channel = 2;  //渠道:1 im渠道，2语音渠道
+	optional string NickName = 3; //昵称
+	optional string HeadUrl = 4;  //头像
+	optional int64 PlayerId =5; //渠道方玩家唯一id
+	optional string Token = 6;  //登录渠道token，用来校验是否有效登录用户
+	optional int64 Diamond = 7;// 钻石数量
+}
+
+// 后台更新许愿池钻石.
+message BackStageUpdateDiamondReq{
+	optional string Account = 1;  // 手机号
+	optional int32 Channel = 2;  //渠道:1 im渠道，2语音渠道
+	optional string NickName = 3; //昵称
+	optional string HeadUrl = 4;  //头像
+	optional int64 PlayerId =5; //渠道方玩家唯一id
+	optional string Token = 6;  //登录渠道token，用来校验是否有效登录用户
+	optional int64 Diamond = 7;// 钻石数量
+	optional string Reason = 8; // 原因
+	optional int32 SourceType = 9; // 来源
+}
+
+message BackStageAddDiamondResp{
+	optional int32 Result = 1;// 1-成功,其他失败
+
+}
+
+// 后台设置守护者请求
+message BackstageSetGuardianReq{
+	optional string Account = 1;  // 手机号
+	optional int32 Channel = 2;  //渠道:1 im渠道，2语音渠道
+	optional string NickName = 3; //昵称
+	optional string HeadUrl = 4;  //头像
+	optional int64 PlayerId =5; //渠道方玩家唯一id
+	optional string Token = 6;  //登录渠道token，用来校验是否有效登录用户
+	optional int64 BoxId =7; // 盲盒id
+	optional int32 OpType = 8;  // 1-设置守护者,2-取消守护者
+}
+message BackstageSetGuardianResp{
+	optional int32 Result = 1;// 1-成功,其他失败
+
+}
+
+message PlayCfgResp{
+	optional int64 DayDiamondTop = 2; // 当日收益上限（钻石）
+	optional int64 DayLimit = 6;// 单日抽奖次数,0点清零
+	optional int64 OnceDiamondRebate = 7;//   守护者单次返利（钻石）
+}
+
+//订单生成信息响应
+message OrderMsgResp{
+	optional string OrderId =1; //orderId，失败无order
+	optional int32 Status = 2; //返回状态 1-失败，2-直接回收成功，3-人工审核，4-人工处理
+}
+
+
+//======================许愿池活动================================
+
+// 累计活动请求
+message SumReq{
+	optional int64 ActPoolId = 1; // 奖池id 周排名和月排名 不需要传这id
+	optional int32 Type =2; // 规则类型： 1、次数 2、天数 3、周排名 4、月排名
+
+}
+
+//活动奖项日志记录:wish_acitvity_prize_log
+message WishActivityPrizeLog{
+	optional int64 Id = 1; // 奖项id
+	optional int64 PlayerId =2;         //玩家Id
+	optional int32 Type = 3;            //活动大类型:1连续抽奖次数,2、天数 3、周排名 4、月排名
+	optional int64  ActType=5;          //活动规则ID 获奖类型,规则表中的key
+	optional int64 WishActPoolRuleId = 11;   // 奖池规则id
+	optional int32 Status = 9;          //奖项状态:0待领取，1已领取
+	optional int64 CreateTime = 10;     //创建时间 达到时间
+}
+
+
+// 累计天数活动返回
+message SumNumResp{
+	optional int64 SignNum = 1; // 连续签到的天数或次数
+	repeated WishActivityPrizeLog WishActivityPrizeLogList = 2; // 获奖记录
+	optional int64 LastDayTime = 3; // 请求天数的时候,最新一次的签到时间.
+	repeated int64 DayTimeList = 4; // 签到的时间列表,去重天数
+}
+
+
+message SumMoneyReq{
+	optional int64 DataType = 2; // 1-上期周榜;2-上期月榜;3-本期周榜;4-本期月榜;
+	optional int32 Page = 3; // 当前页
+	optional int32 PageSize = 4; // 页面大小
+}
+
+message SumMoneyData{
+	optional string NickName = 1;// 昵称
+	optional string HeadIcon = 2;// 头像
+	optional string ProductIcon = 3;// 物品图片
+	optional string ProductId = 6;// 物品id
+	optional int32 AwardType = 14; // 奖励类型：1、钻石奖励 2、实物奖励
+	optional int64 ConSumDiamondNum = 4; // 消费的钻石总数
+	optional int64 GiveDiamondNum = 5; // 可能得到的钻石数
+	optional int64 PrizeLogId = 7; // 奖项id
+	optional int64 PlayerId = 8; // 玩家id
+}
+
+message SumMoneyResp{
+	repeated SumMoneyData SumMoneyDataList =1;
+	optional int64 TotalCount =2; // 总条数
+	optional int64 TopNum =3; // 当前用户排第几名.0或者空,表示没有排名.
+	optional int64 DiamondNum =4; // 当前用户投入的钻石数量
+	optional int32 Status = 9;          //奖项状态:0待领取，1已领取,2-不能领奖
+}
+
+// 领奖请求
+message GiveReq{
+//	optional int32 Type = 1;            //活动类型:1连续抽奖天数，2累计抽奖次数，3累计消费钻石排行
+//	optional int32 PrizeId = 2;         //奖项id:如活动类型是1时:奖项id分别是:7,14,21,28;活动类型是2时,奖项id分别是:10,20,30,40,50,活动类型是3时：7代表周榜奖励，30代表月榜奖励
+//	optional int64 WishActPoolId = 3;   //奖池id:1顶级奖池，2豪华奖池，不使用奖池默认0
+	optional int64 PrizeLogId = 1; // 奖项id
+}
+
+// 领奖返回
+message GiveResp{
+	optional int32 Result = 1;// 1-成功;其他失败
+	optional int64 Diamond = 2; // 变化后的钻石数量
+}
+
+//充值挡位
+message WishCoinRechargeActivityCfg{
+	//硬币额度
+	optional int64 Id = 1;
+	//人民币额度 单位分
+	optional int64 Amount=2;
+	//赠送钻石数
+	optional int64 Diamond=3;
+	//赠送电竞币数
+	optional int64 EsCoin=4;
+	//赠送比例
+	optional int64 Ratio=5;
+	//是否已充值
+	optional bool IsRecharge=6;
+}
+
+// 请求类型
+message TypeReq{
+	optional int32 Type = 1;      //请求类型，详细看使用proto
+}
+
+
+
+// 用户充值数据响应
+message RechargeActResp{
+	repeated WishCoinRechargeActivityCfg RechargeLevels = 1;			 //充值档次
+	optional int64 PlayerCoin = 2;    //用户拥有的硬币
+	optional int64 PlayerDiamond = 3; //用户拥有的许愿池钻石
+	optional int64 PlayerEsCoin = 4;  //用户拥有的电竞币
+}
+
+// 用户充值获取记录数据
+message RechargeLogs{
+	optional int64 PayMoney = 1;           	 //充值支付金额
+	optional int64 CoinNum = 2;							 //获得硬币数
+	optional int64 GiveNum = 3;							 //赠送币数
+	optional int32 GiveType = 4;						 //赠送币种 1-钻石 2-电竞币
+	optional int64 CreateTime = 5;					 //记录时间
+}
+// 用户充值获取记录数据响应
+message RechargeLogsResp{
+	repeated RechargeLogs rechargeLogs  = 1;     // 用户充值获取记录数据
+}
+
+
+// 奖池列表
+message ActPool{
+	optional int64 Id = 1;
+	optional string Name = 5; // 名称
+	optional int32 BoxNum = 6; // 包含盲盒数量
+	optional int64 CreateTime = 7; // 创建时间
+	repeated int64 BoxIds = 8; // 盲盒列表
+}
+// 奖池列表返回
+message ActPoolResp{
+	repeated ActPool  ActPoolList =  1;
+}
+
+// 奖池规则查询
+message ActPoolRuleReq{
+	optional int64 ActPoolId = 1;
+	optional int32 Type = 2; // 规则类型： 1、次数 2、天数
+}
+
+message WishActPoolRule {
+	optional int64 Id = 1;
+	optional int64 WishActPoolId = 2; // 奖池id
+	optional int32 Key = 11; // 累计次数/天数/周排名/月排名 根据Type来决定,Type为1,那么这字段就是次数的类型多少次 // 20
+	optional int64 Diamond = 12; // 赠送钻石数
+	optional int64 WishItemId =13 ; // 实物奖励(wish_item表的id)
+	optional int32 AwardType = 14; // 奖励类型：1、钻石奖励 2、实物奖励
+	optional int32 Type = 15; // 规则类型： 1、次数 2、天数 3、周排名 4、月排名
+}
+//奖池规则查询返回
+message ActPoolRuleResp{
+	repeated WishActPoolRule WishActPoolRuleList = 1;
+}
+message ActNameReq{
+	optional int32 Type = 1; // 活动类型,3-累计次数活动;4-累计天数活动;5-累计金额活动
+}
+
+message ActNameResp{
+	optional string Name = 1; // 活动名称
+	optional int32 Type = 2; // 活动类型,3-累计次数活动;4-累计天数活动;5-累计金额活动
+}
+message ActOpenStatusResp{
+	optional bool Status = 1; // true-开启;false -关闭
+
+}
+
+// 后台工具抽奖请求
+message BackstageDareToolReq{
+    optional int64 PoolId = 1; // 水池id
+    optional int64 Count = 2; // 抽奖次数
+    optional int64 Diamond =3; // 抽奖的钻石
+	optional int64 UserId=4;//管理员id 用于通知管理员抽奖结果
+	optional int64 WishBoxId=5;//盲盒ID
+}
+
+// 后台工具抽奖返回
+message BackstageDareToolResp{
+    optional int64 Result = 1; // 1-成功;其他失败
+    optional int64 DareCount = 2; // 实际成功抽奖次数
+}
+
+// 后台清理抽奖工具数据返回
+message BackstageClearToolDataResp{
+    optional int64 Result = 1; // 1-成功;其他失败
+}
+
+
+
+//======================许愿池活动================================
+
+// ==========================其他==========================
+// 上行(客户端主动发起)
+service WishClient2Hall {
+    rpc RpcLogin(h5_wish.LoginReq)returns(h5_wish.LoginResp);// 进入许愿池
+	rpc RpcQueryBox(h5_wish.QueryBoxReq)returns(h5_wish.QueryBoxResp);// 许愿池首页查询
+	rpc RpcQueryBoxProductName(base.Empty)returns(h5_wish.BoxProductNameResp);// 所有商品的名字或者盲盒的名字
+	rpc RpcSearchFound(base.Empty)returns(h5_wish.BoxProductNameResp);// 搜索发现
+	rpc RpcProductShow(base.Empty)returns(h5_wish.ProductShowResp);// 商品展示区
+	rpc RpcGetCoin(base.Empty)returns(h5_wish.GetCoinResp);// xxx 已获得8888硬币
+	rpc RpcGetUseInfo(h5_wish.UserInfoReq)returns(h5_wish.UserInfoResp);//获取用户信息
+	rpc RpcAddCoin(h5_wish.AddCoinReq)returns(h5_wish.AddCoinResp);//修改用户硬币
+	rpc RpcAddGold(h5_wish.AddGoldReq)returns(h5_wish.AddGoldResp);// 修改用户零钱
+	rpc RpcHomeMessage(base.Empty)returns(h5_wish.HomeMessageResp);// 首页消息播放区
+//	rpc RpcProtector(base.Empty)returns(h5_wish.ProtectorResp);// 挑战守护者赢硬币 快捷入口的轮播展示入口
+	rpc RpcProtector(base.Empty)returns(h5_wish.ProtectorDataResp);// 挑战守护者赢硬币 快捷入口的轮播展示入口
+	rpc RpcMenu(base.Empty)returns(h5_wish.MenuResp);// 最新上线,人气盲盒,欧气爆棚 菜单栏
+	rpc RpcProductBrand(base.Empty)returns(h5_wish.ProductBrandListResp);// 最新上线,人气盲盒,欧气爆棚 菜单栏下面的苹果,雷神列表
+	rpc RpcSearchBox(h5_wish.SearchBoxReq)returns(h5_wish.SearchBoxResp);// 盲盒区列表(综合,最新上线,人气盲盒,欧气爆棚条件筛选)
+	rpc RpcBrandList(base.Empty)returns(h5_wish.BrandListResp);// 物品品牌列表;
+	rpc RpcProductTypeList(base.Empty)returns(h5_wish.TypeListResp);// 物品类别列表;
+	rpc RpcGetRandProduct(h5_wish.DareReq)returns(h5_wish.RandProductResp); //获取随机十条物品信息
+	rpc RpcGetDareMessage(base.Empty)returns(h5_wish.DareMessageResp); //获取十条挑战成功记录
+	rpc RpcDefenderCarousel(base.Empty)returns(h5_wish.DefenderMsgResp);  //首页守护者轮播数据（默认十条）
+	rpc RpcGotWishCarousel(base.Empty)returns(h5_wish.GotWishPlayerResp);  //获取许愿款轮播数据（默认十条）
+	// ====================挑战赛主界面==========================
+	rpc RpcDareRecommend(base.Empty)returns(h5_wish.DareRecommendResp);// 挑战赛主界面-消息播放区 封装10个,前端自己处理
+	rpc RpcRankings(base.Empty)returns(h5_wish.RankingResp);// 排行榜列表
+	rpc RpcMyRecord(base.Empty)returns(h5_wish.MyRecordResp);// 我的战绩头部的挑战成功数和硬币数
+	rpc RpcMyDare(h5_wish.MyDareReq)returns(h5_wish.MyDareResp);// 我的战绩列表
+	// ====================抽奖界面==========================
+	rpc RpcBoxInfo(h5_wish.BoxReq)returns(h5_wish.BoxResp);// 盲盒信息(守护者,守护时间)
+	rpc RpcDareList(h5_wish.DareReq)returns(h5_wish.DareResp);// xxx 发起了挑战列表
+	rpc RpcProductDetail(h5_wish.ProductDetailReq)returns(h5_wish.ProductDetail);// 商品详情
+	rpc RpcDareRecord(h5_wish.DareRecordReq)returns(h5_wish.DareRecordResp);// 挑战记录,占领时长都是这个接口.
+	rpc RpcWish(h5_wish.WishReq)returns(h5_wish.WishResp);// 许愿/修改愿望
+	rpc RpcDoDare(h5_wish.DoDareReq)returns(h5_wish.DoDareResp);// 发起挑战
+	rpc RpcBoxList(base.Empty)returns(h5_wish.BoxListResp);// 更多挑战
+	rpc RpcBoxProduct(h5_wish.DareReq)returns(h5_wish.BoxProductResp);// 盲盒中所有商品详情
+	// ====================试玩==========================
+	rpc RpcTryOnce(base.Empty)returns(base.Empty); // 试玩一次
+	// ==========================我的愿望盒==========================
+	rpc RpcMyWish(h5_wish.MyWishReq)returns(h5_wish.ProductResp);// 我的愿望盒子请求 // todo 废弃
+	rpc RpcMyAllWish(h5_wish.MyWishReq)returns(h5_wish.ProductResp);// 我的所有愿望盒子请求
+	rpc RpcGetCollectionBox(h5_wish.DataPageReq)returns(h5_wish.MyCollectedBoxResp);  // 我的愿望盒-已收藏
+	rpc RpcGetAllCollectionBox(base.Empty)returns(h5_wish.MyCollectedBoxResp);  // 我的愿望盒-所有已收藏
+	rpc RpcCollectionBox(h5_wish.CollectionBoxReq)returns(h5_wish.DefaultResp); // 收藏或删除收藏盲盒
+
+	rpc RpcGetWishBoxList(h5_wish.DataPageReq)returns(h5_wish.MyCollectedBoxResp);  // 我的愿望盒-已许愿
+	rpc RpcGetAllWishBoxList(base.Empty)returns(h5_wish.MyCollectedBoxResp);  // 我的愿望盒-所有已许愿
+	rpc RpcDelWishBox(h5_wish.WishBoxReq)returns(h5_wish.DefaultResp); //删除许愿盲盒物品
+	rpc RpcExchangeBox(h5_wish.WishBoxReq)returns(h5_wish.DefaultResp); //兑换盲盒物品 1-失败，2-成功，3-邮费不足, 4-冻结用户
+	rpc RpcRecycleGoods(h5_wish.WishBoxReq)returns(h5_wish.DefaultResp); //回收盲盒物品，1-失败，2-已回收，3-审核, 4-冻结用户
+	rpc RpcGetAddressList(h5_wish.DataPageReq)returns(h5_wish.AddressListResp); // 收货地址列表
+	rpc RpcAddAddress(h5_wish.WishAddress)returns(h5_wish.DefaultResp);  // 添加收货地址
+	rpc RpcEditAddress(h5_wish.WishAddress)returns(h5_wish.DefaultResp);  // 编辑收货地址
+	rpc RpcRemoveAddress(h5_wish.RemoveAddressReq)returns(h5_wish.DefaultResp);  //删除收货地址
+	rpc RpcGetUnReadWishNum(base.Empty)returns(h5_wish.JustNumberResp);  //获取新获取的许愿盒个数
+	rpc RpcToExchangeWishNum(base.Empty)returns(h5_wish.JustNumberResp);  //获取用户所有获取的许愿盒个数
+	rpc RpcAreaPostage(base.Empty)returns(h5_wish.PostageResp);  //获取不同地区邮费
+	rpc RpcRecycleRatio(base.Empty)returns(h5_wish.JustNumberResp); //获取回收比例
+	rpc RpcGetConfig(base.Empty)returns(h5_wish.ConfigResp); //获取默认配置
+	rpc RpcGetUserIdBankCards(base.Empty)returns(h5_wish.BankCardResp); //银行卡信息
+	rpc RpcRecycleDesc(base.Empty)returns(h5_wish.DefaultResp);  //回收责任说明
+	// ==========================其他   以下接口预留,策划美图.==========================
+	rpc RpcSetBoxPreSale(h5_wish.PresaleReq)returns(base.Empty);  // 设置盲盒物品预售
+	rpc RpcSoldOutBox(h5_wish.DealBoxReq)returns(base.Empty); //盲盒下架
+	rpc RpcReplenishBox(h5_wish.DealBoxReq)returns(base.Empty); //盲盒补货
+	rpc RpcSetBoxExpress(h5_wish.SetExpressInfoReq)returns(base.Empty); //设置盲盒物流信息
+	rpc RpcGetBoxExpress(h5_wish.GetExpressInfoReq)returns(h5_wish.GetExpressInfoResp); //获取盲盒物流信息
+	rpc RpcCoinToDiamond(h5_wish.CoinToDiamondReq)returns(h5_wish.CoinToDiamondResq);               //硬币兑换钻石
+	rpc RpcDiamondRechargeList(base.Empty)returns(h5_wish.DiamondRechargeResp);               // 获取兑换列表
+	rpc RpcDiamondChangeLogList(h5_wish.DiamondChangeLogReq)returns(h5_wish.DiamondChangeLogResp);               // 钻石消费记录
+	rpc RpcGetPriceSection(base.Empty)returns(h5_wish.PriceSectionResp);               // 价格区间
+	rpc RpcBatchDare(h5_wish.BatchDareReq)returns(h5_wish.BatchDareResp);               // 批量抽奖测试
+	rpc RpcPlayCfg(base.Empty)returns(h5_wish.PlayCfgResp);               // 玩法配置
+
+	//======================许愿池活动================================
+	rpc RpcSumNum(h5_wish.SumReq)returns(h5_wish.SumNumResp);// 累计天数活动或次数活动查询
+	rpc RpcSumMoney(h5_wish.SumMoneyReq)returns(h5_wish.SumMoneyResp);// 累计金额活动查询 周榜  月榜
+	rpc RpcGive(h5_wish.GiveReq)returns(h5_wish.GiveResp);// 领奖接口
+	rpc RpcActPoolList(base.Empty)returns(h5_wish.ActPoolResp);// 奖池列表
+	rpc RpcActPoolRule(h5_wish.ActPoolRuleReq)returns(h5_wish.ActPoolRuleResp);// 奖池规则查询
+	rpc RpcActName(h5_wish.ActNameReq)returns(h5_wish.ActNameResp);// 活动名字
+	rpc RpcActOpenStatus(base.Empty)returns(h5_wish.ActOpenStatusResp);// 活动开启状态.
+	rpc RpcRechargeActStatus(base.Empty)returns(h5_wish.ActOpenStatusResp);// 充值活动开启状态.
+	rpc RpcReportWishLog(h5_wish.TypeReq)returns(base.Empty); //添加埋点记录  请求类型：4-访问挑战页 5-点击发起挑战
+	rpc RpcGetRechargeAct(base.Empty)returns(h5_wish.RechargeActResp); //获取用户充值活动页数据
+	rpc RpcGetRechargeLogs(h5_wish.DataPageReq)returns(h5_wish.RechargeLogsResp); //获取用户充值活动获取记录
+	//======================许愿池活动================================
+
+
+}
+
+// 下行(服务端主动发起)1
+service Hall2WishClient {
+	//rpc RpcNewVersionSquareAllDynamic(client_hall.NewVersionAllInfo)returns(base.NoReturn); // 新版本获取社交广场内容 刷新也用这个下发
+}

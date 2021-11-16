@@ -1,0 +1,1101 @@
+// 如果仅用于通讯的 message,别放在这里
+package share_message;
+import "ggotag.proto";
+//许愿池用户相关数据存储:wish_player
+message WishPlayer{
+    optional int64 Id = 1 [(gogoproto.jsontag) = "_id,omitempty"]; // 许愿池的用户id
+    optional string Account = 2;  //账号唯一标示同渠道的用户
+    optional int32 Channel =3;  //渠道:1001-柠檬im，1002-语音渠道，1003-其他渠道
+    optional string NickName = 4; //昵称
+    optional string HeadUrl = 5;  //头像
+    optional int64 PlayerId =6; //渠道方玩家唯一id,用来获取详细数据的 player_base表中的id
+    optional string Token =7;  //登录渠道token，用来校验是否有效登录用户
+    optional bool IsTryOne = 8; //是否试玩过了
+    optional int64 CreateTime=9; //创建时间
+    repeated WishAddress Address = 10;   //地址
+    optional int32 HallSid = 11;   //所在的大厅
+    optional bool NotOne = 12; // false-首次玩,true-不是首次玩
+    optional bool NotOneWish = 13; // false-首次许愿,true-不是首次许愿
+    optional int64 Diamond = 14;    //钻石
+    optional int32 Types = 15;      // 用户类型 0-正常用户，1假用户 ,大于等于2的就是柠檬用户表里的types
+    optional int64 LastExchangeDiamondTime = 16;    // 最近一次兑换钻石的时间
+    optional bool IsFreeze=17;//钻石帐户是否冻结
+    optional int64 FreezeTime=18;//冻结到期时间 秒 -1 永久冻结
+    optional string Note=19;//冻结备注
+    optional string Operator=20;//后台操作人
+}
+message WishAddress{
+    optional string Name = 1;       //地址名称
+    optional string Phone = 2;      //电话号码
+    optional string Detail = 3;      //详细地址
+    optional bool IfDefault = 4;      //是否是默认地址
+    optional int64 AddressId = 5;  //创建时间
+    optional string Province = 6;    //地址省份
+    optional string City = 7;    //地址城市
+    optional string Area = 8;    //地址区域
+
+    //需要字段自行补足
+}
+//菜单列表 wish_menu
+message WishMenu{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //1最新上线，2人气盲盒，3欧气爆棚
+    optional string Name = 2;   //描述
+}
+//品牌 wish_brand
+message WishBrand{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional string Name = 2;
+    optional string Type = 3; // 首字母
+    optional bool IsHot = 4; // 是否热门
+
+    optional int32 ClickCount = 10; // 点击次数
+    optional int64 CreateTime = 11; // 创建时间
+    optional int64 UpdateTime = 12; // 更新时间
+
+    optional int32 Status=13;		// 状态 0关闭，1开启
+    optional int32 HostWeight = 15; // 热门权重
+}
+//物品类型 wish_item_type
+message WishItemType{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional string Name = 2;
+    optional string Type = 3; // 首字母
+    optional bool IsRecommend = 4; // 是否推荐
+    optional int32 HostWeight = 5; // 热门权重
+    optional int32 ClickCount = 10; // 点击次数
+    optional int64 CreateTime = 11; // 创建时间
+    optional int64 UpdateTime = 12; // 更新时间
+    optional int32 Status=13;		// 状态 0关闭，1开启
+    optional bool IsHot = 6; // 是否热门
+}
+//物品款式 wish_style
+message WishStyle{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional string Name = 2;
+}
+//物品配置 wish_item
+message WishItem{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //道具配置id
+    optional string Name = 2;   //名称
+    optional string Icon = 3;   //图标
+    optional string Desc = 4;   //描述
+    optional int32 Brand = 5;   //品牌:如苹果，小米，华为...
+    optional int32 Type = 6;    //类型:如手机，电脑，手表...
+    optional int64 Price = 7;   //出售价格
+    optional int64 RecoveryPrice = 8; //回收价格:按售价的固定比例
+    optional int32 Length = 9;  //长
+    optional int32 Wide = 10;    //宽
+    optional int32 High = 11;    //高
+    optional string BigSize = 12;  //尺寸
+    repeated string Material =  13; //材料描述
+    optional int64 Diamond = 15; // 钻石价格
+
+    optional int32 StockAmount = 22; // 库存
+    optional int32 Status =23;   // 状态： 0、下架 1、上架
+    optional int64 PreHaveTime =24;  // 预计到货时间
+    optional bool IsPreSale = 25; // 是否预售
+    optional int64 UploadTime = 26; // 上架时间
+    optional int64 SoldOutTime = 27; // 下架时间
+    optional int64 UpdateTime = 28; // 更新时间
+
+    optional int32 UseType = 30; // 0、正常商品（默认） 1、排行榜实物奖励
+}
+//盲盒出售物品 wish_box_item /tool_wish_box_item
+message WishBoxItem{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //道具配置id
+    optional int64 WishItemId = 2; //物品配置id
+    optional int32 Status =3;   //0待售，1在售，2预售
+    optional int64 PreStartTime = 4; //预售开始时间
+    optional int64 PreEndTime =5;  //预售结束时间
+    optional int64 WishBoxId = 6;   //所属盲盒Id
+    optional int32 Style = 7;   //盲盒类型:1普通款，2典藏款，3梦幻款，4超凡款
+    optional bool IsWin = 8;    //是否必中
+    optional int32 PerNum =9;   //单次补货量 3
+    optional int32 PerTime =10; //补货时间间隔 单位：分钟
+    optional int32 PerRate = 11; //权重
+    optional int64 CreateTime = 12 ;//创建时间
+    optional int64 Price = 13;   // 具体物品的价格
+    optional int64 PredictArrivalTime = 14;   // 预计到货时间
+    optional int64 Diamond = 15; // 钻石价格
+
+
+    optional int32 BigLoss = 16; // 大亏
+    optional int32 SmallLoss = 17; // 小亏
+    optional int32 Common = 18; // 普通
+    optional int32 BigWin = 19; // 大盈
+    optional int32 SmallWin = 20; // 小盈
+
+    optional int32 CommonAddWeight = 21; // 普通 附加权重
+    optional int32 BigWinAddWeight = 22; // 大盈 附加权重
+    optional int32 SmallWinAddWeight = 23; // 小盈 附加权重
+
+    optional int32 RewardLv = 30 ; //商品级别 1、小奖 2、大奖
+    optional bool IsMakeWish = 31 ; // 是否许愿必中,true-是,false-否
+
+    optional int32 LocalNum =35;   // 当前还剩下多少个.
+    optional int64 TaskTime =36;   // 重新上架的到期时间,定时任务使用.上架后重置0
+    optional string WishItemName=37; //物品名称
+}
+//盲合数据存储结构 wish_box
+message WishBox {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional string Name = 2;        //名称
+    optional string Icon = 3;        //图标
+
+    repeated int32 Menu = 4;         //菜单:0综合，1最新上线，2人气盲盒，3欧气爆棚,4普通
+    repeated int64 items = 5;        //中间表物品id
+    optional string Desc = 6;        //盲盒描述
+    optional string Index = 7;       //盲盒模糊查询字段
+    optional int32 Match = 8 ;        //0普通赛，1挑战赛
+    optional int32 TotalNum = 9;     //物品总数
+    optional int32 RareNum = 10;     //稀有个数
+    optional int64 Price = 11;       //许愿价格
+    optional int32 Status = 12;      //状态:0下架，1上架;2-积极补货中
+    optional int64 CreateTime = 13;  //创建时间
+    repeated int64 Brands = 14;      //包含品牌列表
+    repeated int64 Types = 15;       //包含类型列表
+    repeated int32 Styles = 16;       //包含款式列表
+    optional int64 WinNum = 17;       //心愿达成次数
+    optional int64  GuardianId =18;     //守护者玩家id
+
+    optional int64 UpdateTime = 31;  // 更新时间
+    optional int64 PutOnTime = 32;  // 上架时间.
+    optional int64 SortWeight = 33;  // 排序权重.
+    optional bool HaveIsWin = 34;    //是否包含必中
+
+    optional int64 WishPoolId = 40 ; // 水池id
+    repeated int64 wishItems = 41;        // 最底层商品id数组
+    optional bool IsTask = 45; // 是否在定时任务补货中状态,true 定时任务中.
+    optional int32 ProductStatus =46;   //0待售，1在售，2预售
+    optional int64  GuardianOverTime =47;     // 守护的到期时间.
+    optional bool IsGuardian = 48; // 是否在守护中 true 为正在守护中
+    optional bool IsRecommend = 49; // 是否推荐
+    optional int32 GuardType = 50; //0-用户自己挑战成为的守护者,1-后台设置的守护者
+}
+
+
+//盲盒挑战记录 wish_log
+message WishLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 WishBoxId = 2;   //盲盒id
+	optional int64 DareId = 3;     // 挑战者id
+	optional string DareName = 4;   // 挑战者名字
+	optional int64 BeDareId = 5;   // 被挑战者id
+	optional string BeDareName = 6; // 被挑战者名字
+	optional int64 CreateTime = 7; // 挑战时间
+	optional bool Result = 8; // 挑战结果;true-成功;false-失败
+    optional int64 ChallengeItemId =9;  //挑战抽到道具id(中间表ID)
+    optional string DareHeadIcon = 10;  // 挑战者的头像
+    optional int64 DefendTime =11;  // 总共守护的时间(只有被别人挑战下台后才会有这个值,否则需要通过计算).
+    optional int64 DarePrice =12;  // 挑战时的价格
+    optional int32 DareType = 13; // 1-挑战赛;2-非挑战赛
+
+    optional int64 WishItemId = 20;   // 最底层的商品id
+    optional string ChallengeItemName = 25;   // 抽到的商品名字
+    optional int64 PoolLocalStatus=21; // 当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+    optional bool PoolIsOpenAward = 22; // 是否开启放奖 true 放奖 false 关闭
+    optional int64 PoolId=23; // 水池id
+    optional int64 PoolIncomeValue= 24; //抽奖前水池当前收入值
+    optional int64 AfterPoolIncomeValue= 26; //抽奖后水池当前收入值
+    optional int32 GuardType = 50; //0-用户自己挑战成为的守护者,1-后台设置的守护者产生的记录.
+
+    optional bool AfterPoolIsOpenAward = 39; // 抽奖后是否开启放奖 true 放奖 false 关闭
+    optional int64 AfterPoolLocalStatus=51; //  抽奖后当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+    optional int64 CreateTimeMill = 63; // 创建时间(毫秒).
+    optional int64 GoroutineID = 64; // 当前线程id,高并发的时候方便查找日志
+
+}
+
+//盲盒挑战占领时长表 wish_occupied
+message WishOccupied{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 WishBoxId = 2;   //盲盒id
+    optional string NickName = 4; //昵称
+    optional string HeadUrl = 5;  //头像
+    optional int64 PlayerId =6; //玩家id
+    optional int64 CreateTime = 7; // 挑战成功时间
+    optional int64 EndTime = 8; // 被挑战成功时间
+    optional int64 OccupiedTime = 9; // 占领时长（秒）
+    optional int32 Status = 10;   //占领状态 1：占领中， 2：占领结束
+    optional int32 CoinNum = 11;   //占领期间受到的硬币
+}
+
+//玩家愿望数据 player_wish_data
+message PlayerWishData{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //愿望id
+    optional int64 PlayerId = 2;    //许愿人id
+    optional int64 WishBoxId = 3;   //盲盒id
+    optional int64 CreateTime = 4;   //许愿时间或修改愿望的时间
+    optional int64 WishBoxItemId = 5; //许愿盲盒道具的id
+    optional int32 Status  =6;   //愿望状态:0待挑战，1成功，2取消
+    optional int64 FinishTime =7;   //愿望达成或者被取消的时间
+    optional string ProductUrl = 8; // 物品图片.
+    optional int32 Match = 9 ;        //0普通赛，1挑战赛
+    optional bool IsMakeWish = 10 ;        // 是否许愿必中
+
+    optional int64 WishItemId = 20; // 商品id
+}
+//玩家物品列表(挑战产生物品):player_wish_item/tool_player_wish_item
+message PlayerWishItem{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //物品自增编号
+    optional int64 PlayerId = 2;    //玩家id
+    optional int64 ChallengeItemId =3;  //挑战获得道具(中间表的id)
+    optional int64 CreateTime =4;   //获得时间
+    optional int32 Status = 5 ;     //处理状态:0待兑换，1已兑换，2已回收, 3回收审核中 4已扣除
+    optional int64 WishBoxId = 6;   //盲盒id
+    optional bool IsRead = 7;   //是否新增
+    optional int64 UpdateTime = 8;   //更新时间
+    optional int64 ExpireTime = 9;   //到期时间（获得时间后14天）
+    optional int64 RecyclePrice = 10; //缓存兑换价格/钻石，根据下面类型区分
+    optional int32 RecycleType = 12;    //回收类型：0-回收到钻石，1-回收到银行卡
+    optional string Operator = 13; 		 //后台操作人
+
+    optional int64 WishItemId = 20; // 商品id
+    optional int64 WishItemPrice = 21; // 商品价格
+    optional int64 DareDiamond = 22; // 挑战是的钻石
+    optional string ProductName = 23; // 物品名字
+    optional int64 WishItemDiamond = 24; // 商品钻石价格
+    optional string WishItemIcon = 25; //物品图片
+    optional int32 WishItemStyle = 29 ;//物品款式 1普通款，2典藏款，3梦幻款，4超凡款
+    optional string BoxName = 30;// 盲盒名字
+    optional string BoxIcon = 31; //盲盒图片
+    optional int32 BoxMatch = 32;//挑战赛 0普通赛，1挑战赛
+
+    optional bool AfterIsOpenAward = 39; // 抽奖后是否开启放奖 true 放奖 false 关闭
+    optional int64 AfterLocalStatus=51; //  抽奖后当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+    optional bool IsOpenAward = 40; // 是否开启放奖 true 放奖 false 关闭
+    optional int64 LocalStatus=52; // 当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+    optional int64 CreateTimeMill = 63; // 创建时间(毫秒).
+    optional int64 GoroutineID = 64; // 当前线程id,高并发的时候方便查找日志
+    optional int64 GiveType = 65; // 0或者空表示发起挑战得到的,1-表示许愿池活动
+
+    //optional int32 WishItemStatus = 26; //物品状态 0、下架 1、上架
+    //optional int64 WishItemPreHaveTime =27; //盲盒物品预计到货时间
+    //optional bool WishItemIsPreSale = 28; //物品是否预售
+    //optional int32 BoxStatus =33; //盲盒状态 0下架，1上架;2-积极补货中
+}
+
+//玩家盲盒商品兑换记录
+message PlayerExchangeLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //物品自增编号
+    optional int64 PlayerId = 2;    //玩家id
+    optional string PlayerAccount = 3;   // 玩家账号
+    optional int32 Status = 4;  // 订单状态 0、待发货 1、已发货 2、已取消 3、已拒绝
+    optional string Receiver = 5;  //收货人
+    optional string Phone = 6;  //联系电话
+    optional string Address = 7;  //收货地址
+    optional int64 CreateTime = 8;  //创建时间
+    optional int64 DeliveryTime = 9;  //发货时间
+    optional string OrderId = 10 ; // 订单id
+
+    optional int64 BoxDrawPrice = 14;   // 盲盒抽奖价格(当时的)
+    optional int64 WishBoxItem = 15; // 盲盒里商品ID
+    optional string Note = 23; // 备注  取消原因
+
+    optional string Company = 24; // 快递公司
+    optional string CompanyCode = 25; // 快递公司代码
+    optional string Odd = 26; // 快递单号
+    optional int64 WishBoxId = 30; //盲盒ID
+    optional int64 ProductId = 32; //商品ID
+    optional string ProductName = 37; //商品名字
+    optional string ProductIcon = 38; //商品图片
+    optional int64 ProductPrice = 39; // 商品价格
+    optional int64 ProductDiamond = 40; // 商品钻石价
+    optional int64 PlayerItemId = 41; //用户物品表ID
+    optional int64 UserId = 42; // 用户id （IM用户）
+    optional int64 Postage = 43; //用户扣除的邮费（钻石），注：一个订单的多个兑换记录只收一次邮费
+
+    optional int64 UpdateTime = 45; // 更新时间
+    optional string Operator = 46; // 操作人
+    optional int64 GiveType = 47; // 0或者空表示发起挑战得到的,1-表示许愿池活动
+
+
+    //    optional int32 Style = 33; //盲盒类型:1普通款，2典藏款，3梦幻款，4超凡款
+//    optional int32 SaleStatus =35; //上下架状态 0-下架 1-上架
+//    optional int64 PreHaveTime = 36; // 预计到货时间
+//    repeated PlayerExchangeItem WishItemList = 73;  //兑换的盲盒商品详情列表
+//    optional int64 PriceTotal = 71;  //商品总额
+//    optional int64 BoxDrawPriceTotal = 72; // 抽奖总额
+}
+
+//玩家盲盒商品兑换记录
+message PlayerExchangeItem {
+    optional int64 BoxDrawPrice = 14;   // 盲盒抽奖价格(当时的)
+    optional int64 WishBoxItem = 15; // 盲盒里商品ID
+    optional int64 WishBoxId = 30; //盲盒ID
+    optional int64 ProductId = 32; //商品ID
+    optional int32 Style = 33; //盲盒类型:1普通款，2典藏款，3梦幻款，4超凡款
+    optional int32 SaleStatus =35; //上下架状态 0-下架 1-上架
+    optional int64 PreHaveTime = 36; // 预计到货时间
+    optional string ProductName = 37; //商品名字
+    optional string ProductIcon = 38; //商品图片
+    optional int64 ProductPrice = 39; // 商品价格
+    optional int64 WinTime = 40; // 中奖时间
+}
+
+// 回收订单
+message WishRecycleOrder {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 RecycleTime = 5;   // 回收时间0
+    optional string UserAccount = 6;   // 回收账号（IM账号）
+    optional int64 PlayerId = 7;    //玩家id
+    optional int64 UserId = 11; // 用户id （IM用户）
+    optional int32 Type = 12; // 回收方式 1、用户回收 2、平台回收 3、人工审核（触发回收阈值，无论是用户回收还是平台回收）
+    optional int32 Channel = 13; // 回收渠道 1、回收到银行卡 2、回收到钻石
+    optional string BankCardId = 21; //玩家回收的银行卡ID
+    repeated WishRecycleItem RecycleItemList = 35; // 回收物品列表详情
+
+    optional int32 Status = 40; // 回收状态 0、待审核 1、已回收 2、已拒绝,3、已取消
+    optional int64 InitTime = 41; // 发起时间
+    optional int64 RecyclePriceTotal = 44;   // 回收价格总额
+    optional int64 ProductPriceTotal = 45; //商品价格总额
+    optional int64 RecycleDiamond  =46;   // 回收总钻石数
+
+    optional int32 RecycleNote = 47; // 回收理由
+    optional string RefusalNote = 48; // 拒绝理由
+    optional string Remarks = 49; // 备注1
+    optional int64 UpdateTime = 50; // 更新时间(后台操作)
+    optional string PaymentOrderId = 51; // 支付订单ID
+    optional string Operator = 52; // 操作人
+}
+
+// 回收物品
+message WishRecycleItem {
+    optional int64 BoxDrawPrice = 3;   // 抽奖价格 盲盒抽奖价格(当时的)
+    optional int64 RecyclePrice = 4;   // 回收价格
+    optional int64 RecycleDiamond  =5;   // 回收钻石数
+    optional int64 WinTime = 6; // 中奖时间
+
+    optional int64 WishBoxId = 13; //盲盒ID
+    optional int64 ProductId = 14; //商品ID
+    optional int32 Style = 15; //盲盒类型:1普通款，2典藏款，3梦幻款，4超凡款
+//    optional int32 SaleStatus =16; //上下架状态 0-下架 1-上架
+//    optional int64 PreHaveTime = 17; // 预计到货时间
+    optional string ProductName = 18; //商品名字
+    optional string ProductIcon = 19; //商品图片
+    optional int64 PlayerItemId = 20; //玩家物品表ID
+
+    optional int64 WishBoxItemId = 30; // 盲盒物品id
+    optional int64 ProductPrice = 31; //商品价格
+    optional int64 ProductDiamond = 40; // 商品钻石价
+    optional int64 GiveType = 41; // 0或者空表示发起挑战得到的,1-表示许愿池活动
+}
+
+
+//玩家收藏列表
+message PlayerWishCollection{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //收藏id
+    optional int64 PlayerId = 2;    //玩家id
+    optional int64 WishBoxId = 3;   //盲盒id
+    optional int64 CreateTime = 4;   //收藏时间
+//    optional int32 SaleStatus = 5; //上下架状态 0-下架，1-上架
+}
+
+// 榜单,总榜top10     wish_top_log
+message WishTopLog {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //收藏id
+    optional int64 PlayerId = 2;    //玩家id
+    optional string HeadIcon = 3;    // 头像
+    optional string NickName = 4;    // 昵称
+    optional int64 WishNum = 5;    // 成功守护的愿望数量,挑战成功时累加
+    optional int64 CoinNum = 6;    // 累计硬币数量,被挑战时累加
+    optional int64 ThatDayTime = 7;   // 当天0点时间戳 (upsert) 秒
+    optional int64 CreateTime = 8;  // 生成时间
+}
+
+// 守护者获得的钻石流水 wish_guardian_diamond_log
+message WishGuardianDiamondLog {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //id
+    optional int64 BoxId = 10;    // 盲盒id
+    optional int64 PlayerId = 2;    //玩家id
+    optional string HeadIcon = 3;    // 头像
+    optional string NickName = 4;    // 昵称
+    optional int64 WishNum = 5;    // 成功守护的愿望数量,挑战成功时累加
+    optional int64 CoinNum = 6;    // 累计硬币数量,被挑战时累加
+    optional int64 CreateTime = 8;  //生成时间毫秒
+    optional int64 TotalNum = 11;  // 总数,统计使用,其他人不用管.
+}
+
+//榜单,总榜top10  wish_guardian_top_log
+message WishGuardianTopLog {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //收藏id
+    optional int64 PlayerId = 2;    //玩家id
+    optional int64 WishNum = 5;    // 成功守护的愿望数量,挑战成功时累加
+    optional int64 CoinNum = 6;    // 累计硬币数量,被挑战时累加
+    optional int64 CreateTime = 8;  // 生成时间
+    optional int64 UpdateCoinTime = 9;  // 更新获得硬币时间毫秒
+    optional int64 UpdateWishTime = 10;  // 更新挑战成功时间毫秒
+}
+
+
+
+
+//  table:wish_pool 水池
+message WishPool{
+    optional int64 Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //id
+    optional int64 PoolLimit=2; //水池上限（放大一百倍）
+    optional int64 InitialValue =3; // 水池初始值(存库)
+    optional int64 IncomeValue=4; //水池当前收入值
+    optional int64 Recycle=5; //回收阀值(存库)
+    optional int64 Commission=6; //官方抽水(回收比例)(存库)
+    optional int64 StartAward=7; //开启放奖金额(存库)
+    optional int64 CloseAward=8; //关闭放奖金额(存库)
+
+    optional string Name = 15; // 名称
+    optional int64 CreateTime=16; //水池创建时间
+    optional int64 UpdateTime=17; //水池更新时间
+
+    optional int64 ShowInitialValue=33; // 水池初始值(百分比%，后台展示)
+    optional int64 ShowRecycle=35; // 回收阀值(百分比%，后台展示)
+    optional int64 ShowCommission=36; // 官方抽水(回收比例)(百分比%，后台展示)
+    optional int64 ShowStartAward=37; // 开启放奖金额(百分比%，后台展示)
+    optional int64 ShowCloseAward=38; // 关闭放奖金额(百分比%，后台展示)
+
+    optional bool IsOpenAward = 39; // 是否开启放奖 true 放奖 false 关闭
+
+    optional bool IsDefault = 40; // 是否默认水池 true 默认 false 非默认
+
+    optional WishPoolStatus BigLoss = 46; // 大亏
+    optional WishPoolStatus SmallLoss = 47; // 小亏
+    optional WishPoolStatus Common = 48; // 普通
+    optional WishPoolStatus BigWin = 49; // 大盈
+    optional WishPoolStatus SmallWin = 50; // 小盈
+    optional int64 LocalStatus=51; // 当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+    optional int64 PoolConfigId=52 ; // 水池模板配置id
+}
+
+//  table:wish_pool_cfg 水池
+message WishPoolCfg{
+    optional int64 Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //id
+    optional int64 PoolLimit=2; //水池上限（放大一百倍）
+    optional int64 InitialValue =3; // 水池初始值(存库)
+    optional int64 IncomeValue=4; //水池当前收入值
+    optional int64 Recycle=5; //回收阀值(存库)
+    optional int64 Commission=6; //官方抽水(回收比例)(存库)
+    optional int64 StartAward=7; //开启放奖金额(存库)
+    optional int64 CloseAward=8; //关闭放奖金额(存库)
+
+    optional string Name = 15; // 名称
+    optional int64 CreateTime=16; //水池创建时间
+    optional int64 UpdateTime=17; //水池更新时间
+
+    optional int64 ShowInitialValue=33; // 水池初始值(百分比%，后台展示)
+    optional int64 ShowRecycle=35; // 回收阀值(百分比%，后台展示)
+    optional int64 ShowCommission=36; // 官方抽水(回收比例)(百分比%，后台展示)
+    optional int64 ShowStartAward=37; // 开启放奖金额(百分比%，后台展示)
+    optional int64 ShowCloseAward=38; // 关闭放奖金额(百分比%，后台展示)
+
+    optional bool IsOpenAward = 39; // 是否开启放奖 true 放奖 false 关闭
+
+    optional bool IsDefault = 40; // 是否默认水池 true 默认 false 非默认
+
+    optional WishPoolStatus BigLoss = 46; // 大亏
+    optional WishPoolStatus SmallLoss = 47; // 小亏
+    optional WishPoolStatus Common = 48; // 普通
+    optional WishPoolStatus BigWin = 49; // 大盈
+    optional WishPoolStatus SmallWin = 50; // 小盈
+
+    optional int64 WishPoolIds=52 ; // 属于该水池模板配置的子水池数组
+}
+//  水池状态
+message WishPoolStatus {
+    optional int64 MaxValue = 2;// 上限值大于等于(存库) 80
+    optional int64 MinValue = 3;// 下限值大于等于(存库)
+    optional int64 ShowMaxValue = 12;// 上限值大于等于(%)(百分比%，后台展示)
+    optional int64 ShowMinValue = 13;// 下限值大于等于(%)(百分比%，后台展示)
+}
+
+
+
+// 盲盒中奖配置      wish_box_item_win_cfg
+message WishBoItemWinCfg {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //对应盲盒出售商品Id
+    optional int64 WishBoxId = 2 ; // 盲盒Id
+    optional int64 WishItemId = 3; // 商品Id
+    optional int32 BigLoss = 6; // 大亏
+    optional int32 SmallLoss = 7; // 小亏
+    optional int32 Common = 8; // 普通
+    optional int32 BigWin = 9; // 大盈
+    optional int32 SmallWin = 10; // 小盈
+}
+
+
+
+// 价格参数设置
+message PriceSection {
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //对应盲盒出售商品Id
+    optional int32 OneMin = 2; // 第一区间 最小值
+    optional int32 OneMax = 4; // 第一区间 最大值
+    optional int32 TwoMin = 5; // 第二区间 最小值
+    optional int32 TwoMax = 6; // 第二区间 最大值
+    optional int32 ThreeMin = 7; // 第三区间 以上
+}
+
+// 邮寄参数设置
+message WishMailSection {
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //Id
+    optional int32 Postage1 = 2; // 江浙沪 邮寄费用
+    optional int32 Postage2 = 4; // 江浙沪以外非偏远地区 邮寄费用
+    optional int32 Postage3 = 5; // 江浙沪以外偏远地区 邮寄费用
+    repeated string RemoteAreaList = 10; // 江浙沪以外偏远地区 列表
+
+    optional int32 FreeNumber = 12; // 包邮起始件数
+}
+
+
+
+// 物品回收参数设置
+message WishRecycleSection {
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //
+    optional int32 Platform = 4; // 平台回收  物品回收比例
+    optional int32 DayTopCount = 6; // 单日回收订单笔数上限
+
+    // 新版
+    // 回收公功能
+    optional int32 Player = 9; // 用户回收   物品回收比例
+    optional bool Status = 10; // 回收功能开关 true：开 false：关
+    optional int32 DayMoneyTopCount = 11; // 单日出款最大数(次)
+    optional int64 DayMoneyTop = 12; // 单日出款最大额(分)
+    optional int64 OrderThresholdMoney = 13; // 回收订单安全阈值(人民币-元)-单次出款风控(分)
+    optional int32 DayDiamondTopCount = 15; // 单日回收钻石最大数(次)
+    optional int64 DayDiamondTop = 16; // 单日累计回收最大额(个/钻石)
+    optional int64 OrderThreshold = 17; // 回收订单安全阈值(钻石)-单次出款风控(个/钻石)
+    // 回收支付设置
+    optional int32 FeeRate=22;		//手续费千分比(必须大于0的正整数)
+    optional int64 PlatformTax = 25;  //平台手续费
+    optional int64 RealTax=26;		//总服务费
+}
+
+// 支付预警
+message WishPayWarnCfg {
+    //支付预警配置
+    optional int64  WithdrawalTime=59;		// 回收预警频次时间
+    optional int64 	WithdrawalTimes=60;		// 回收预警频次次数
+    optional int64  WithdrawalGoldRate=61;	//人民币回收预警金额时间
+    optional int64  WithdrawalGold=62;		//人民币回收预警总金额
+    optional int64  WithdrawalDiamondRate= 63;	//钻石提现预警金额时间
+    optional int64  WithdrawalDiamond= 64;		//钻石提现预警总金额
+    repeated string PhoneList=65;			//接收预警电话
+}
+
+// 货币换算参数设置
+message WishCurrencyConversionCfg {
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //
+    optional int32 Money = 2; // 人民币 单位为元,转换是急需要注意. 比如 人民币：硬币=1:5  *（弃用)
+    optional int32 Coin = 4; // 硬币
+    optional int32 Diamond = 5; // 钻石
+}
+
+// 守护者收益设置
+message WishGuardianCfg {
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //
+    optional int64 DayDiamondTop = 2; // 当日收益上限（钻石）
+    optional int64 OnceDiamondRebate = 3; // 守护者单次返利（钻石）
+}
+
+// 后台一次性执行配置表
+message SingleInitCfg {
+    optional string Table = 1;
+    optional int32 Status = 2; // 0、未执行 1、已执行
+}
+
+//回收说明
+message RecycleNoteCfg {
+    optional string Id = 1;
+    repeated string Text = 2; //回收说明
+}
+
+// 钻石商城.
+//钻石购买 diamond_recharge
+message DiamondRecharge{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 Diamond  = 2; 			//数量 给用户增加的钻石数量,范围1-1000000
+    optional int64 CoinPrice  = 3; 			//价格  单位:硬币 范围1-10000000
+    optional int64 MonthFirst  = 4; 	//月首次购买赠送,范围1-100
+    optional int32 Rebate  = 5; 		//折扣 售价折扣  范围1-99整数,使用时除100
+    optional int64 StartTime = 7;		//活动开始时间 折扣活动开始时间
+    optional int64 EndTime = 8;			//活动结束时间 折扣活动结束时间
+    optional int32 Status = 9;			//状态 1上架,2下架
+    optional int32 Sort = 10;			//排序权重 值越大越靠前
+    optional int64 DisPrice=11;         //折扣价
+    optional int64 GiveDiamond = 12; // 赠送钻石
+}
+
+
+// 许愿池报表
+message WishPoolReport {
+    optional int64 CreateTime = 1 [(gogoproto.jsontag) = "_id,omitempty"];  // 创建时间即是id
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 AddPlayerCount = 3; // 收藏人数
+    optional int32 LuckyPlayerCount = 4; // 抽奖人数
+    optional int32 LuckyCount = 5; // 抽奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收
+    optional int32 OfficialRecycleCount = 10; // 平台回收
+    optional int64 RecycleGoldTotal = 11; // 回收合计（钻石）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（钻石）
+    optional int32 CommissionTotal=14; //官方抽水（分）
+    optional int64 PendConvertGoodsPriceTotal = 15; // 待兑换商品总额（钻石）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（钻石）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（钻石）
+    optional int64 Profit = 20; // 盈利（硬币）
+
+
+    optional int64 ConvertDiamondTotal = 27; // 兑换钻石总金额
+    optional int32 ConvertDiamondPlayerCount = 28; // 兑换钻石人数
+    optional int64 ConvertDiamondCount = 29; // 兑换钻石次数
+    optional int32 RecyclePlayerCount = 30; // 回收订单人数
+    optional int64 DeliverCount = 31; // 发货订单数
+    optional int32 DeliverPlayerCount = 32; // 发货订单人数
+    optional int64 InPoolCount = 33; // 进入许愿池次数
+    optional int32 InPoolPlayerCount = 34; // 进入许愿池人数
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 StartTime = 46; // 开始时间(接口专用不入库)
+    optional int64 EndTime = 47; // 结束时间（接口专用不入库）
+    optional int64 ProductDiamondTotal = 49; // 商品钻石价格  （回收物品物品钻石差价=回收物品的总价格（ProductDiamondTotal）-回收物品钻石总金额（RecycleGoldTotal））
+}
+
+// 许愿池报表-周表
+message WishPoolReportWeek {
+    optional int64 CreateTime = 1 [(gogoproto.jsontag) = "_id,omitempty"];  // 创建时间即是id
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 AddPlayerCount = 3; // 收藏人数
+    optional int32 LuckyPlayerCount = 4; // 抽奖人数
+    optional int32 LuckyCount = 5; // 抽奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收
+    optional int32 OfficialRecycleCount = 10; // 平台回收
+    optional int64 RecycleGoldTotal = 11; // 回收合计（钻石）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（钻石）
+    optional int32 CommissionTotal=14; //官方抽水（分）
+    optional int64 PendConvertGoodsPriceTotal = 15; // 待兑换商品总额（钻石）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（钻石）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（钻石）
+    optional int64 Profit = 20; // 盈利（硬币）
+
+
+    optional int64 ConvertDiamondTotal = 27; // 兑换钻石总金额
+    optional int32 ConvertDiamondPlayerCount = 28; // 兑换钻石人数
+    optional int64 ConvertDiamondCount = 29; // 兑换钻石次数
+    optional int32 RecyclePlayerCount = 30; // 回收订单人数
+    optional int64 DeliverCount = 31; // 发货订单数
+    optional int32 DeliverPlayerCount = 32; // 发货订单人数
+    optional int64 InPoolCount = 33; // 进入许愿池次数
+    optional int32 InPoolPlayerCount = 34; // 进入许愿池人数
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 StartTime = 46; // 开始时间
+    optional int64 EndTime = 47; // 结束时间
+    optional int64 ProductDiamondTotal = 49; // 商品钻石价格  （回收物品物品钻石差价=回收物品的总价格（ProductDiamondTotal）-回收物品钻石总金额（RecycleGoldTotal））
+
+}
+
+// 许愿池报表-月表
+message WishPoolReportMonth {
+    optional int64 CreateTime = 1 [(gogoproto.jsontag) = "_id,omitempty"];  // 创建时间即是id
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 AddPlayerCount = 3; // 收藏人数
+    optional int32 LuckyPlayerCount = 4; // 抽奖人数
+    optional int32 LuckyCount = 5; // 抽奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收
+    optional int32 OfficialRecycleCount = 10; // 平台回收
+    optional int64 RecycleGoldTotal = 11; // 回收合计（分）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（分）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（分）
+    optional int32 CommissionTotal=14; //官方抽水（分）
+    optional int64 PendConvertGoodsPriceTotal = 15; // 待兑换商品总额（分）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（分）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（分）
+    optional int64 Profit = 20; // 盈利（硬币）
+
+    optional int64 ConvertDiamondTotal = 27; // 兑换钻石总金额
+    optional int32 ConvertDiamondPlayerCount = 28; // 兑换钻石人数
+    optional int64 ConvertDiamondCount = 29; // 兑换钻石次数
+    optional int32 RecyclePlayerCount = 30; // 回收订单人数
+    optional int64 DeliverCount = 31; // 发货订单数
+    optional int32 DeliverPlayerCount = 32; // 发货订单人数
+    optional int64 InPoolCount = 33; // 进入许愿池次数
+    optional int32 InPoolPlayerCount = 34; // 进入许愿池人数
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 StartTime = 46; // 开始时间
+    optional int64 EndTime = 47; // 结束时间
+    optional int64 ProductDiamondTotal = 49; // 商品钻石价格  （回收物品物品钻石差价=回收物品的总价格（ProductDiamondTotal）-回收物品钻石总金额（RecycleGoldTotal））
+
+}
+// 盲盒报表
+message WishBoxReport {
+    optional string Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //复合主键 CreateTime+BoxId
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 AddPlayerCount = 3; // 收藏人数
+    optional int32 DrawPlayerCount = 4; // 抽奖人数
+    optional int32 DrawCount = 5; // 抽奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收 次数
+    optional int32 OfficialRecycleCount = 10; // 平台回收 次数
+    optional int64 RecycleGoldTotal = 11; // 回收合计（钻石）
+    //optional int64 DrawGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（钻石）
+    optional int32 CommissionTotal=14; //官方抽水（分）
+    optional int64 PendConvertGoodsPriceTotal = 15; // 待兑换商品总额（钻石）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（钻石）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（钻石）
+    optional int64 Profit = 20; // 盈利（分）
+
+    optional int32 ConvertDiamondPlayerCount = 28; // 兑换钻石人数
+
+    optional int32 RecyclePlayerCount = 30; // 回收订单人数
+    optional int64 DeliverCount = 31; // 发货订单数
+    optional int32 DeliverPlayerCount = 32; // 发货订单人数
+
+
+    optional int64 WishPoolReportId = 33; // 对应许愿池报表ID
+    optional int64 CreateTime=34;	// 每天0点时间戳
+    optional int64 BoxId=35;		// 盲盒Id
+    optional string BoxName = 36;
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 ProductDiamondTotal = 46; // 商品钻石价格 （回收物品物品钻石差价=回收物品的总价格（ProductDiamondTotal）-回收物品钻石总金额（RecycleGoldTotal））
+
+}
+
+// 盲盒报表-周表
+message WishBoxReportWeek {
+    optional string Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //复合主键 CreateTime+BoxId
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 AddPlayerCount = 3; // 收藏人数
+    optional int32 DrawPlayerCount = 4; // 抽奖人数
+    optional int32 DrawCount = 5; // 抽奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收 次数
+    optional int32 OfficialRecycleCount = 10; // 平台回收 次数
+    optional int64 RecycleGoldTotal = 11; // 回收合计（钻石）
+    //optional int64 DrawGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（钻石）
+    optional int32 CommissionTotal=14; //官方抽水（分）
+    optional int64 PendConvertGoodsPriceTotal = 15; // 待兑换商品总额（钻石）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（钻石）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（钻石）
+    optional int64 Profit = 20; // 盈利（分）
+
+    optional int32 ConvertDiamondPlayerCount = 28; // 兑换钻石人数
+
+    optional int32 RecyclePlayerCount = 30; // 回收订单人数
+    optional int64 DeliverCount = 31; // 发货订单数
+    optional int32 DeliverPlayerCount = 32; // 发货订单人数
+
+
+    optional int64 WishPoolReportId = 33; // 对应许愿池报表ID
+    optional int64 CreateTime=34;	// 每天0点时间戳
+    optional int64 BoxId=35;		// 盲盒Id
+    optional string BoxName = 36;
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 StartTime = 46; // 开始时间
+    optional int64 EndTime = 47; // 结束时间
+    optional int64 ProductDiamondTotal = 48; // 商品钻石价格 （回收物品物品钻石差价=回收物品的总价格（ProductDiamondTotal）-回收物品钻石总金额（RecycleGoldTotal））
+}
+
+// 盲盒报表-月表
+message WishBoxReportMonth {
+    optional string Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //复合主键 CreateTime+BoxId
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 AddPlayerCount = 3; // 收藏人数
+    optional int32 DrawPlayerCount = 4; // 抽奖人数
+    optional int32 DrawCount = 5; // 抽奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收 次数
+    optional int32 OfficialRecycleCount = 10; // 平台回收 次数
+    optional int64 RecycleGoldTotal = 11; // 回收合计（钻石）
+    //optional int64 DrawGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（钻石）
+    optional int32 CommissionTotal=14; //官方抽水（分）
+    optional int64 PendConvertGoodsPriceTotal = 15; // 待兑换商品总额（钻石）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（钻石）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（钻石）
+    optional int64 Profit = 20; // 盈利（分）
+
+    optional int32 ConvertDiamondPlayerCount = 28; // 兑换钻石人数
+
+    optional int32 RecyclePlayerCount = 30; // 回收订单人数
+    optional int64 DeliverCount = 31; // 发货订单数
+    optional int32 DeliverPlayerCount = 32; // 发货订单人数
+
+
+    optional int64 WishPoolReportId = 33; // 对应许愿池报表ID
+    optional int64 CreateTime=34;	// 每天0点时间戳
+    optional int64 BoxId=35;		// 盲盒Id
+    optional string BoxName = 36;
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 StartTime = 46; // 开始时间
+    optional int64 EndTime = 47; // 结束时间
+    optional int64 ProductDiamondTotal = 48; // 商品钻石价格
+}
+
+// 盲盒详情报表
+message WishBoxDetailReport {
+    optional string Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //复合主键 CreateTime+BoxId
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 WishAndDrawPlayerCount = 3; // 许愿并抽奖人数
+    optional int32 WinCount = 4; // 中奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收 次数
+    optional int32 OfficialRecycleCount = 10; // 平台回收 次数
+    optional int64 RecycleGoldTotal = 11; // 回收合计（钻石）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（钻石）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（钻石）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（钻石）
+    optional int64 PendConvertPriceTotal= 19; // 待兑换商品总额（钻石）
+    optional int64 Profit = 20; // 盈利（分）
+
+    optional int32 RecyclePlayerCount = 29; // 回收订单人数
+    optional int64 DeliverCount = 30; // 发货订单数
+    optional int32 DeliverPlayerCount = 31; // 发货订单人数
+
+    optional int64 WishBoxId = 32; // 盲盒id
+    optional string WishBoxReportId = 33; // 对应盲盒报表ID
+    optional int64 CreateTime=34;	// 每天0点时间戳
+    optional int64 ItemId=35;		// 盲盒商品Id
+    optional string ItemName = 36; // 商品名称
+    optional int32 Style = 37;   //盲盒类型:1普通款，2典藏款，3梦幻款，4超凡款
+
+    optional int32 AuditConvertCount = 40; // 兑换审核中次数
+    optional int64 AuditConvertPriceTotal= 41; //兑换审核中商品总额（钻石）
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 ProductDiamondTotal = 46; // 商品钻石价格
+}
+
+// 盲盒详情报表-周表
+message WishBoxDetailReportWeek {
+    optional string Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //复合主键 CreateTime+BoxId
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 WishAndDrawPlayerCount = 3; // 许愿并抽奖人数
+    optional int32 WinCount = 4; // 中奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收 次数
+    optional int32 OfficialRecycleCount = 10; // 平台回收 次数
+    optional int64 RecycleGoldTotal = 11; // 回收合计（钻石）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（钻石）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（钻石）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（钻石）
+    optional int64 PendConvertPriceTotal= 19; // 待兑换商品总额（钻石）
+    optional int64 Profit = 20; // 盈利（分）
+
+    optional int32 RecyclePlayerCount = 29; // 回收订单人数
+    optional int64 DeliverCount = 30; // 发货订单数
+    optional int32 DeliverPlayerCount = 31; // 发货订单人数
+
+    optional int64 WishBoxId = 32; // 盲盒id
+    optional string WishBoxReportId = 33; // 对应盲盒报表ID
+    optional int64 CreateTime=34;	// 每天0点时间戳
+    optional int64 ItemId=35;		// 盲盒商品Id
+    optional string ItemName = 36; // 商品名称
+    optional int32 Style = 37;   //盲盒类型:1普通款，2典藏款，3梦幻款，4超凡款
+
+    optional int32 AuditConvertCount = 40; // 兑换审核中次数
+    optional int64 AuditConvertPriceTotal= 41; //兑换审核中商品总额（钻石）
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 StartTime = 46;  //开始时间
+    optional int64 EndTime = 47;  //结束时间
+    optional int64 ProductDiamondTotal = 48; // 商品钻石价格
+}
+
+message WishBoxDetailReportMonth {
+    optional string Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //复合主键 CreateTime+BoxId
+    optional int32 WishPlayerCount = 2; // 许愿人数
+    optional int32 WishAndDrawPlayerCount = 3; // 许愿并抽奖人数
+    optional int32 WinCount = 4; // 中奖次数
+    optional int32 LuckyWishCount = 6; // 抽中许愿款次数
+    optional int32 ConvertCount = 7; // 兑换次数
+    optional int32 RecycleCount = 8; // 回收次数
+    optional int32 PlayerRecycleCount = 9; // 用户回收 次数
+    optional int32 OfficialRecycleCount = 10; // 平台回收 次数
+    optional int64 RecycleGoldTotal = 11; // 回收合计（钻石）
+    optional int64 LuckyGoldTotal = 12; // 抽奖合计（钻石）
+    optional int64 ConvertGoodsPriceTotal = 13; // 兑换商品总额（钻石）
+    optional int32 PendConvertCount = 16; // 待兑换次数
+
+    optional int64 PlayerRecycleGoldTotal = 17; // 用户回收回收合计（钻石）
+    optional int64 OfficialRecycleGoldTotal = 18; // 平台回收回收合计（钻石）
+    optional int64 PendConvertPriceTotal= 19; // 待兑换商品总额（钻石）
+    optional int64 Profit = 20; // 盈利（分）
+
+    optional int32 RecyclePlayerCount = 29; // 回收订单人数
+    optional int64 DeliverCount = 30; // 发货订单数
+    optional int32 DeliverPlayerCount = 31; // 发货订单人数
+
+    optional int64 WishBoxId = 32; // 盲盒id
+    optional string WishBoxReportId = 33; // 对应盲盒报表ID
+    optional int64 CreateTime=34;	// 每天0点时间戳
+    optional int64 ItemId=35;		// 盲盒商品Id
+    optional string ItemName = 36; // 商品名称
+    optional int32 Style = 37;   //盲盒类型:1普通款，2典藏款，3梦幻款，4超凡款
+
+    optional int32 AuditConvertCount = 40; // 兑换审核中次数
+    optional int64 AuditConvertPriceTotal= 41; //兑换审核中商品总额（钻石）
+
+    optional int64 WinItemPriceTotal = 45; // 出奖钻石金额（钻石）
+    optional int64 StartTime = 46;  //开始时间
+    optional int64 EndTime = 47;  //结束时间
+    optional int64 ProductDiamondTotal = 48; // 商品钻石价格
+}
+
+// 商品报表
+message WishItemReport {
+    optional string Id=1 [(gogoproto.jsontag) = "_id,omitempty"]; //复合主键 CreateTime+ItemId
+    optional int64 CreateTime=2;	//每天0点时间戳
+    optional int64 ItemId=3;		// 商品Id
+    optional int32 WishPlayerCount = 4; // 许愿人数
+    optional int32 WishAndDrawPlayerCount = 5; // 许愿并抽奖人数
+    optional int32 WinCount = 6; // 中奖次数
+    optional int32 LuckyWishCount = 7; // 抽中许愿款次数
+    optional int32 PendConvertCount = 16; // 待兑换次数
+    optional int32 ConvertCount = 17; // 兑换次数
+    optional int32 RecycleCount = 18; // 回收次数
+    optional int32 PlayerRecycleCount = 19; // 用户回收 次数
+    optional int32 OfficialRecycleCount = 20; // 平台回收 次数
+    optional int64 RecycleGoldTotal = 21; // 回收硬币合计
+    optional int64 LuckyGoldTotal = 22; // 抽奖硬币合计
+
+
+    optional string ItemName = 36; // 商品名称
+}
+
+// 水池抽水日志 wish_pool_pump_log/tool_wish_pool_pump_log
+message WishPoolPumpLog {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 BoxId = 2; // 盲盒id
+    optional int64 PoolId = 3; // 水池id
+    optional int64 Price = 4; // 抽水金额
+    optional int64 CreateTime = 5; // 创建时间.
+    optional int64 IncomeValue = 6; //抽水时的收入
+
+    optional string BoxName = 10 [(gogoproto.jsontag) = "-"];	 // 盲盒名称
+    optional string PoolName = 11 [(gogoproto.jsontag) = "-"];	 // 水池名称
+    optional int64 GoroutineID = 64; // 当前线程id,高并发的时候方便查找日志
+    optional int64 CreateTimeMill = 63; // 创建时间(毫秒).
+}
+
+// 水池流水日志 wish_pool_log
+message WishPoolLog {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 BoxId = 2; // 盲盒id
+    optional int64 PoolId = 3; // 水池id
+    optional int64 PlayerId = 4; // 玩家id
+    optional int64 BeforeValue = 5; // 变化前的值
+    optional int64 AfterValue = 6; // 变化后的值
+    optional int64  Value = 7; // 变化 的值
+    optional int64  Type = 8; // 1-抽水扣除;2-挑战增加;3-得到物品后扣除
+    optional int64 CreateTime = 9; // 创建时间.
+
+    optional bool AfterIsOpenAward = 39; // 抽奖后是否开启放奖 true 放奖 false 关闭
+    optional int64 AfterLocalStatus=51; //  抽奖后当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+    optional bool IsOpenAward = 40; // 是否开启放奖 true 放奖 false 关闭
+    optional int64 LocalStatus=52; // 当前水池的状态;1-大亏;2-小亏;3-普通;4-大赢;5-小盈
+    optional int64 CreateTimeMill = 63; // 创建时间(毫秒).
+    optional int64 GoroutineID = 64; // 当前线程id,高并发的时候方便查找日志
+
+}
+
+// 冷却期设置表 wish_cool_down_config
+message WishCoolDownConfig{
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional bool IsOpen = 2; // 是否开启,true-开启
+    optional int64 ContinuousTime = 3;// 连续抽奖的时间间隔  单位:秒
+    optional int64 ContinuousTimes = 4;// 连续抽奖次数
+    optional int64 CoolDownTime = 5;// 冷却时间  单位:秒
+    optional int64 DayLimit = 6;// 单日抽奖次数,0点清零
+    optional int64 CreateTime = 7;// 创建时间
+}
+
+//钻石变化日志
+message DiamondChangeLog{
+    required int64 LogId = 1 [(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 PlayerId = 2;										//用户ID
+    optional string Account=3 [(gogoproto.jsontag) = "-"];				//柠檬号
+    optional int64 ChangeDiamond = 4;										//变化钻石
+    optional int32 SourceType = 5;										//源类型(支付类型)
+    optional string SourceTypeName=6 [(gogoproto.jsontag) = "-"];		//源类型类型名称
+    optional int32 PayType=7;											//1收入，2支出
+    optional int64 CurDiamond = 10;										//变化前携带钻石
+    optional int64 Diamond = 11;											//变化后携带钻石
+    optional string Note=12;											//备注
+    optional int64 CreateTime = 13;										//流水时间
+}
+
+//回收理由
+message RecycleReason{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional string Reason = 2;  //理由
+}
+
+// 汇总占领时长排行榜总表 wish_sum_occupied
+message WishSumOccupied{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 WishBoxId = 2;   //盲盒id
+    optional string NickName = 4; //昵称
+    optional string HeadUrl = 5;  //头像
+    optional int64 PlayerId =6; //玩家id
+    optional int64 OccupiedTime = 9; // 占领时长（秒）
+}
+
+// 白名单 wish_white
+message WishWhite {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //wishPlayer表的id
+    optional string NickName = 2; //昵称
+    optional string Account = 3;    //柠檬号
+    optional int64 PlayerId = 4; // 柠檬玩家id
+    optional string Note = 5; // 备注
+}
+
+//许愿池埋点日志记录:wish_burying_point_log
+message WishBuryingPointLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //自增id
+    optional int64 PlayerId = 2;                            //操作玩家
+    optional int32 EventType = 3;  //事件
+    optional int64 Time = 4;       //时间,毫秒
+}

@@ -1,0 +1,115 @@
+package share_message;
+import "ggotag.proto";
+
+// 话题类别.
+message TopicType{
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];			//类别id
+    optional string Name = 2;       //类别名字
+    optional int64 CreateTime = 3; // 创建时间
+    optional int32 TopicClass = 4; // 1-官方的话题,2-用户自定义的话题.
+    optional int64 Sort=5;          //排序字段
+    optional int32 Status = 6;		//状态 1开启,2关闭
+    optional int64 UpdateTime=7;    //修改时间
+    optional int32 HotCount=8;      //热门数量
+    optional int64 TopicCount=9[(gogoproto.jsontag) = "-"]; //包含话题数量
+    optional string HeadURL = 10;   // 类别图标
+}
+
+// 玩家所关注的话题
+message PlayerAttentionTopic{
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];			// 自增id
+    optional int64 TopicId = 2; // 话题id
+    optional int64 PlayerId = 3; // 玩家id
+    optional int64 CreateTime = 4; // 关注时间.
+}
+
+//玩家贡献日榜 table: topic_player_devote_day
+message TopicPlayerDevoteDay{
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];			// 自增id
+    optional int64 TopicId = 2; // 话题id
+    optional int64 PlayerId = 3; // 玩家id
+    optional int32 Year = 4; // 年
+    optional int32 Month = 5; // 月
+    optional int32 Day = 6; // 日
+    optional int64 Devote = 7; // 贡献度
+    optional int64 CreateTime = 8; // 数据创建时间
+    optional string TopicName = 9; // 话题名称
+}
+
+//玩家贡献月榜 table: topic_player_devote_month
+message TopicPlayerDevoteMonth{
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];			// 自增id
+    optional int64 TopicId = 2; // 话题id
+    optional int64 PlayerId = 3; // 玩家id
+    optional int32 Year = 4; // 年
+    optional int32 Month = 5; // 月
+    optional int64 Devote = 7; // 贡献度
+    optional int64 CreateTime = 8; // 数据创建时间
+    optional string TopicName = 9; // 话题名称
+}
+
+//玩家贡献总榜 table: topic_player_devote_total
+message TopicPlayerDevoteTotal{
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];			// 自增id
+    optional int64 TopicId = 2; // 话题id
+    optional int64 PlayerId = 3; // 玩家id
+    optional int64 Devote = 7; // 贡献度
+    optional int64 CreateTime = 8; // 数据创建时间
+    optional string TopicName = 9; // 话题名称
+}
+
+//话题贡献榜用户信息
+message TopicDevote{
+    optional int64 PlayerId = 1;       //用户ID
+    optional string NickName = 2;       //用户名
+    optional string HeadIcon = 3;       //用户头像
+    optional int64 Devote = 4;       //贡献度
+    optional int64 Sex = 5;       //性别
+}
+
+//申请话题主记录表 表:apply_topic_master
+message ApplyTopicMaster {
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];			// 自增id
+    optional int64 TopicId = 2;         // 话题id
+    optional int64 PlayerId = 3;        // 申请人id
+    optional bool IsManageExp= 4;       // 是否有管理经验
+    optional string Reason= 5;          // 申请理由
+    optional string ContactDetails= 6;  // 联系方式
+    optional int64 CreateTime = 8;      // 数据创建时间 秒
+    optional string TopicName = 9;      // 话题名称
+    optional int32 Status = 11;         // 审核状态 0:待审核 1：通过，2：拒绝
+    optional int64 UpdateTime=12;       // 审核时间 秒
+    optional string Operator = 13;	    // 审核人
+    optional string PlayerAccount = 14; // 申请人柠檬号
+}
+
+//申请修改话题信息 表:apply_edit_topic_info
+message ApplyEditTopicInfo{
+    optional string Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 TopicId = 2;             // 话题id
+    optional string HeadURL = 3;            // 话题头像
+    optional string Description = 4;       // 介绍
+    optional int64 CreateTime = 5;         // 创建时间（秒）
+    optional int32 Status=6;               // 状态 0-未审核,1-通过,2-拒绝
+    optional string BgUrl=7;               // 话题背景图
+    optional string TopicRule = 8;         // 话题规则
+    optional string PlayerAccount = 9;     // 申请人柠檬号
+    optional string Operator = 10;	         // 审核人
+    optional int64 UpdateTime=11;           // 审核时间 秒
+    repeated int32 Reason=12;               // 拒绝理由
+    optional string TopicName = 13;        // 话题名称
+}
+
+//话题主删除动态操作日志表 表:topic_master_del_dynamic_log
+message TopicMasterDelDynamicLog {
+    optional string Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 TopicId = 2; // 话题id
+    optional int64 LogId = 3; // 需要删除的动态id
+    optional int32 DelReasonId = 4; // 删除动态的理由ID
+    optional string DelReasonMsg = 5; // 删除动态的理由描述
+    optional string TopicName = 9; // 话题名称
+    optional int64 CreateTime = 10;         // 创建时间（秒）
+    optional int64 PlayerId = 11;       //操作人id
+}
+
+

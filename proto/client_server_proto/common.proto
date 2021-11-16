@@ -1,0 +1,392 @@
+package client_server; //
+import "base.proto";
+import "game_server/proto/share_message/allcommon.proto";
+import "game_server/proto/share_message/table_struct.proto";
+import "game_server/proto/share_message/table_struct_player_base.proto";
+message ToastMsg {
+	required string Text = 1; // 
+}
+
+message NTP{
+	required int64 T1 = 1;        //把客户端当前时间戳发到服务器,记为t1（毫秒）
+	optional int64 T2 = 2;        //服务器取得当前时间戳(记为t2),和客户端第1步发上来的时间戳(t1)一起发下去（毫秒）
+}
+
+message AllPersonalChatLog{
+	optional int64 PlayerId = 1;//
+	repeated share_message.PersonalChatLog PersonalChatLog =2;//
+}
+
+message AssistantInfo{
+	repeated AssistantMsg assistantInfoList = 1;//好友请求信息
+//	repeated  公告信息
+}
+message AssistantMsg {
+	optional int32 MsgType = 1;//消息类型 0：好友请求 1：系统消息 2 客服反馈 3：系统公告
+    optional int64 DateTime = 2;//时间
+	//
+	optional int32 AddPalType = 3;//添加好友类型 0：请求添加你为好友 1：已添加你为好友 2：已拒绝你的好友请求
+	optional string NickName = 4;// 玩家昵称
+	optional string HeadIcon = 5;// 玩家头像
+	optional string Account = 6; //闲聊号
+	optional string Phone = 7;//手机号
+	//
+	optional string SysContent = 8;//系统消息
+	//
+	optional string title = 9;//标题
+	optional string SysNoticeContent = 10;//系统公告
+	optional int32 AddFriendType = 11;										//添加好友的渠道类型
+	optional string Signature = 12;											//个性签名
+	repeated string Photo = 13;
+	optional int64 PlayerId = 14;
+	optional int64 log_id = 15;                                             // 个人的ID
+	optional int64 notice_id = 16;                                          // 公告ID
+	optional int32 Sex = 17;	//性别
+	optional int32 Types = 18;	//
+}
+
+message AllPlayerMsg{
+	optional PlayerMsg Myself = 1;//自己的信息
+	repeated PlayerMsg Friends = 2;//好友的信息
+	repeated TeamMsg Teams = 3;//群信息
+	repeated AllPersonalChatLog ChatMsg = 4;//私聊信息
+	optional share_message.AllAddPlayerMsg  AllAddPlayerMsg = 5;//所有好友申请信息
+	optional bool IsNearBy =6;//是否有附近的人打招呼
+	repeated share_message.PlatformChannel Pay= 7;    //支付，代付渠道信息
+	optional string ShopAddr = 8;                     //商城地址
+	repeated AssistantMsg assistantInfoList = 9;        // 小助手信息
+	repeated share_message.PaymentSetting PayConfig=10;          //充值、提现后台配置
+	optional share_message.SysParameter LimitConfig= 11;         //金额限制配置
+	optional LabelMsg LabelMsg = 12;//
+	optional RecommendInfo RecommendInfo =13;//
+	optional TweetsListResponse tweetsListResponse = 14;      //推文列表
+	optional string RandName = 15;//随机名字
+	optional string SquareAddr = 16;                     //社交广场地址
+
+	optional int32 FanNum = 17;                     // 粉丝数
+	optional int32 AttentionNum = 18;                     // 关注数
+	optional int32 ZanNum = 19;                     // 点赞数
+	optional int32 Types = 20;                     //
+
+}
+
+message RecommendPlayerInfo{
+	optional int64 playerId = 1;//
+	optional string Name = 2;//
+	optional int32 Sex = 3;//
+	optional string HeadIcon = 4;//
+	optional int32 Type = 5;// 1：真人 2:客服号 3:机器人
+}
+
+message RecommendTeamInfo{
+	optional int64 TeamId = 1;//
+	optional string Name = 2;//
+	repeated RecommendPlayerInfo MemberInfo = 3;//
+	optional int64 OwnerId = 4;//
+}
+
+message RecommendInfo{
+	repeated RecommendTeamInfo TeamInfo = 1;//
+	repeated RecommendPlayerInfo PlayerInfo =2;//
+	optional string Photo = 3;//
+	optional int32 PlayTime = 4;  //播放时长
+}
+
+message LabelMsg{
+	repeated share_message.InterestTag  LabelInfo = 1;//第一次登陆完善标签信息
+	optional int32 Max = 2;// 最多选取标签
+	optional int32 Min = 3;// 最少选取标签
+	repeated share_message.InterestType InterestType = 4;//标签类型
+}
+
+message AllPlayerInfo{
+	repeated PlayerMsg PlayerMsg = 1;//
+}
+
+message ReadInfo{
+	optional int64 LogId = 1;//日志id
+	optional int32 Type = 2;//1私聊，2群聊，3讨论组
+	optional int64 TeamId = 3;//群聊id
+	repeated int64 FriendId = 4;//好友请求id
+	optional int64 PlayerId = 5;//跟谁聊天
+	optional string SessionId = 6; //会话id
+}
+
+message ChangePlayerInfo{
+	optional int32 Type = 1;// 1:昵称 2:头像 3:性别 4:照片 5:邮箱 6:个性签名 7:手机号  8:省 9:市 10:个人设置 11:区 12:背景图
+	optional int32 Value = 2;//
+	optional string Value1 = 3;// type为3时,value1 必须是头像
+	repeated string Photo = 4;//
+	optional share_message.PlayerSetting PlayerSetting = 5;//玩家个人设置
+	optional int64 PlayerId = 6;//
+	optional string BackgroundImageURL = 7;// 我的主页的背景图
+}
+
+
+message PlayerMsg {
+	required int64 PlayerId = 1; // 玩家 id
+	optional int64 Gold = 2;   // 玩家金钱
+	optional string NickName = 3;// 玩家呢称
+	optional string HeadIcon = 4;// 玩家头像
+	optional int32 Sex = 5;// 性别 0:默认 1：男 2:女
+	optional string Account = 6; //闲聊号
+	optional string PeopleID = 7;//身份证
+	optional string Phone = 8;//手机号
+	repeated string Photo = 9;//照片
+	optional string Email = 10;//邮箱
+	optional share_message.FriendSetting FriendSetting = 11;//好友设置
+	repeated share_message.BankInfo BankInfo = 12;//银行卡
+    optional string RealName = 13;//真名
+	optional string Signature = 14;// 个性签名
+	optional string Provice = 15;//省
+	optional string City = 16;//市
+	optional string Area = 17;//区
+	optional bool IsPayPassword = 18;//是否设置支付密码
+	optional share_message.PlayerSetting PlayerSetting = 19;//玩家个人设置
+	repeated int64 BlackList = 20;//黑名单列表
+	optional share_message.AddFriend_Type AddType = 21;//添加类型
+	optional int64 ClearLocalLogTime = 22;//清理本地聊天记录时间
+	optional bool IsVisitor = 23;//是否是游客
+	optional bool IsLoginPassword = 24;//是否设置登录密码
+	optional int32 OpenWindows = 25;//	添加好友用 添加成功后  1:打开好友窗口
+	optional int32 FreeTimes = 26;  //提现免手续费的次数
+	optional string ReName = 27;//备注
+	optional bool IsMark = 28;//添加好友用 自己是否弹弹窗
+	optional bool IsBindWechat = 29; //是否绑定微信
+	repeated share_message.PlayerEmoticon emoticons=30;   //玩家表情数据
+	repeated share_message.LabelInfo  LabelInfo = 31;// 标签信息
+	optional string AreaCode = 32;      //电话国际区号
+	optional string BackgroundImageURL  = 33;      //我的主页的背景图
+	optional int64 Coin=34;		//充值硬币
+	optional int64 BCoin=35;	//绑定硬币
+	optional string YoungPassWord = 36; //青少年模式，有值就开启
+	optional int32 Types=37;					//用户类型 1普通用户,2营销运营,3商城账号,4管理运营,5官方运营,6运营测试
+	optional bool IsCanRoam = 38;       //是否可以漫游记录
+	optional int32 Constellation = 39;              //星座
+	optional int64 ESportCoin = 40;   // 玩家电竞币
+	optional int64 MixId = 41;        //交友名片id(录像id，大于0表示有录像)
+	optional bool IsSetPersonalTags = 42; //是否设置了个性化标签
+	optional int64 Diamond = 43;        //钻石
+}
+message NewFriends{
+    repeated PlayerMsg Friends = 1;//好友的信息
+}
+message TeamMsg{
+    optional share_message.TeamData Team = 1; //群基本信息
+	optional share_message.TeamChatInfo TeamChatInfo = 2;
+	repeated share_message.PersonalTeamData Members= 3;  //群成员
+	optional share_message.TeamSetting Setting = 4;//群设置
+	optional bool  IsShow = 5;                  //是否跳转到群:true跳，false不跳
+	optional int32 Type = 6;//	1二維碼 2群名片 3群口令
+	optional share_message.PersonalTeamData MyData=7;  //个人群信息
+}
+
+message BroadIdReq {
+	optional int32 BroadId = 4;         //广播id
+}
+
+// 超时未操作被踢出房间的提示
+message PlayerTimeoutBeKick{
+    optional string tip = 1; // 提示内容
+}
+
+//玩家请求信息
+message PlayerReq{
+    optional int64 PlayerId = 1;   //玩家id
+	optional int32 Type =2;//
+	optional int32 CurrentPage =3;// 当前页
+	optional int32 PageSize =4; // 页面大小
+
+}
+
+message TeamReq{
+	repeated int64 PlayerIdList = 1;   //玩家id列表
+	optional int64 TeamId = 2;   //群id
+	optional int64 InviteId = 3;//	邀请人id
+	optional int32 Type = 4;// 加群类型 1:二维码  2:群名片 3:群口令 4：后台添加,5: 通过广告进群,6:后台推送，7话题申请进群
+	optional string TeamName = 5;//
+	optional int64 AdminId = 6;//
+	optional int64 AdvId = 7;// 广告id,预留使用
+}
+
+message TeamInfo{
+	optional int64 TeamId = 1;   //群id
+	optional int64 PlayerId = 2;   //玩家id
+	optional int32 Type = 3;
+	optional int64 LogId = 4;//
+	optional int32 CurrentPage = 5; // 当前页
+	optional int32 PageSize = 6; // 页面大小
+}
+
+message TeamManagerSetting{
+	repeated int64 ManageList = 1;//管理人员id
+	optional share_message.MessageSetting MessageSetting = 2;//群消息设置
+	repeated TeamActivity ActivityInfo = 3;//
+	repeated PlayerMsg OutPlayerInfo = 4;//退群成员信息
+	repeated share_message.InviteInfo InviteInfo = 5;//申请进群信息
+	optional int64 TeamId = 6;//
+	repeated share_message.PersonalTeamData Members= 7;  //群成员信息
+}
+
+message TeamActivity{
+	optional int32 Day = 1;//天数
+	repeated int64 PlayerId = 2;//
+}
+
+message PasswordInfo{
+	optional string Password = 1;//
+	optional int32 Type = 2;// 1:支付密码  2:安全密码  3:登录密码
+	optional string OldPassword = 3;//
+}
+
+//验证码请求
+message GetCodeRequest {
+	required string Phone = 1;   //国际版需要带区号:如855968553490，855为国际区号
+	optional int32 Type=2;		// 1:登录发送验证码  2:注册发送验证码  3：设置支付密码短信验证  4：忘记登录密码短信验证  5:绑定银行卡短信验证 6.第一次登陆完善信息
+	optional string AreaCode =3;       //国内为空，其他为区号
+}
+
+//验证码返回
+message CodeResponse {
+	optional string Code = 1;
+	optional int32 Type = 2; // 1:登录发送验证码  2:注册发送验证码  3：设置支付密码短信验证 4：忘记登录密码短信验证 5:绑定银行卡短信验证 6.第一次登陆完善信息
+	optional string Phone = 3;
+}
+
+message ClientInfo{
+	optional int32 Cid = 1;//自己的信息
+	optional int32 Sid = 2;//服务器编号
+	optional string Ip = 3; //客户端ip
+}
+
+message CheckInfo{
+	optional string Account = 1;//
+	optional string HeadIcon = 2;//
+	optional bool Vaild = 3;    // 是否有效账号
+	optional int32 Sex = 4;     //
+	optional int32 State=5;     //0正常，1用户冻结，2后台冻结，3注销中，4，已注销
+	optional string ErrMsg=6;   //错误提示
+	optional bool IsCheckPhone=7;    //是否需进行绑定手机检测
+}
+
+message ArticleResponse{
+	optional int64 Id = 1;					//文章ID
+	optional string Title = 2;				//文章标题
+	optional string Icon = 3;				//图片URL
+	optional string ArticleAdd = 4;			//文章URL
+	optional int32 ArticleType = 5;			//跳转类型 1 图文文章，2 转载文章，3 内部跳转
+	optional int32 Location = 6;            //跳转位置：1 主界面，2 柠檬助手，3 柠檬团队，4附近的人，5社交广场-主界面，6社交广场-新增关注，7社交广场-指定动态：通过填写动态ID指定，8好物-主界面，9好物-指定商品：通过填写商品ID指定,10群-MakeRedisKey(id,11社交广场发布页,12零钱,13话题-指定话题,14-指定的动态评论,15-话题主界面
+	optional int32 IsMain = 7;              //是否主要：1 次要，2 主要
+	optional string Profile = 8;            //文章概要
+	optional int64 ObjectId=9;				//对象ID 跳转对象的id
+	optional int64 ObjPlayerId=10;			//对象用户id
+}
+
+message ArticleListResponse{
+	optional int64 ArticleListId = 1;										//文章列表ID
+	repeated ArticleResponse ArticleList = 2;				//文章列表
+	optional int64 TweetsId = 3;                            //推文ID
+}
+
+
+message TweetsListResponse{
+    optional int64 TweetsId = 1;
+    repeated ArticleListResponse TweetsList = 2;            //推文列表
+}
+
+message TweetsIdsRequest{
+    repeated int64 TweetsIdList = 1;    //推文Id列表
+}
+
+message MyMainPageInfo{
+	optional int32 Fans = 1;//粉丝数量
+	optional int32 Attentions = 2;//关注数量
+	optional int32 Zans = 3; //获赞数量
+	optional int32 Icon = 4;//硬币数量
+	optional share_message.DynamicDataListPage DynamicData = 5;//动态数据
+	optional int64 PlayerId = 6;//人物id
+}
+
+message AttenInfo{
+	optional int64 PlayerId = 1;//
+	optional int32 Type = 2;//1 关注 2取消关注
+}
+message ZanInfo{
+	optional int64 LogId = 1;//
+	optional int32 Type = 2;//1 点赞 2:取消点赞
+}
+message IdInfo{
+	optional int64 Id = 1;//
+	optional int64 MainId = 2;// 主评论id
+	optional int64 SecondId = 3;//子评论id
+	optional int32 Page = 4; // 请求评论页码
+	optional int32 PageSize = 5;//请求条数，不传就默认用服务器的20条一页
+	repeated int64 HotList = 6; //热门评论Id，非第一页要带回来
+	optional int64 JumpMainCommentId = 7;// 跳转的主评论id
+}
+
+message RequestInfo{
+	optional int64 Id = 1;//
+}
+
+message BtnClickInfo{
+	/*
+		1-协议页面同意按钮点击
+		2-协议页面不同意按钮点击
+		3-手机登录注册按钮点击次数
+		4-微信登录注册点击次数
+		5-本机号码一键登录次数
+		6-其他号码登录点击次数
+		7-注册登录页2返回键次数
+		8-获取验证码次数
+		9-重新获取验证码按钮点击次数
+		10-兴趣墙确定按钮点击次数 s
+		11-兴趣墙返回键点击次数 s
+		12-推荐页面跳过按钮点击次数 s
+		13-推荐页面下一步按钮点击次数 s
+		14-进入柠檬畅聊按钮点击次数 s
+	*/
+	optional int32 BtnType=1;
+}
+
+message PageRegLogLoad{
+	/*Type类型
+		1-登录页面浏览次数
+		2-一键登录页面浏览次数
+		3-微信绑定页浏览次数
+		4-手机号注册页浏览次数
+		5-验证码填写页浏览次数
+		6-个人信息页浏览次数
+		7-兴趣墙页的浏览次数
+		8-推荐页的浏览次数
+	*/
+	optional int32 Type=1;			//类型
+	optional string Channel = 2;	//渠道号
+	optional string Code=3;			//设备码
+	optional string Idfa = 4;       //idfa
+}
+
+// 上行(客户端主动发起)
+service Client2server{ //
+   /*
+   ntp网络对时(打击外挂会用到),clock offset=t2-(t1+t3)/2
+   1. 把客户端当前时间戳发到服务器,记为t1
+   2. 服务器取得当前时间戳(记为t2),和客户端第1步发上来的时间戳(t1)一起发下去
+   3. 客户端收到包时的时间戳记为t3
+   4. t2-(t1+t3)/2,正值,客户端比服务器比慢了多少,负值,客户端比服务器快了多少
+   */
+	rpc RpcHeartbeat(client_server.NTP)returns(client_server.NTP);       		//心跳时间同步
+	rpc RpcTFToServer(client_server.ClientInfo)returns(base.NoReturn);       		//连接报道
+	rpc RpcBtnClick(client_server.BtnClickInfo)returns(base.Empty);//上报按钮点击
+	rpc RpcPageRegLogLoad(client_server.PageRegLogLoad)returns(base.Empty);//上报注册登录页面加载数据
+}
+
+// 下行(服务端主动发起)
+service Server2Client{
+	rpc RpcToast(client_server.ToastMsg)returns(base.NoReturn); // 透明提示框
+	rpc RpcBroadCastMsg(share_message.BroadCastMsg)returns(base.NoReturn);       //跑马灯广播
+	rpc RpcPlayerAttrChange(client_server.PlayerMsg)returns(base.NoReturn); // 玩家属性变化
+	rpc RpcStopBroad(client_server.BroadIdReq) returns(base.NoReturn); //停止跑马灯广播
+	rpc RpcPlayerTimeoutBeKick(client_server.PlayerTimeoutBeKick) returns(base.NoReturn); //超时未操作被踢出房间的提示
+}
+

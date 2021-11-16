@@ -1,0 +1,1 @@
+mongo --port 27017 -u "root" -p "MongoDB.2019"

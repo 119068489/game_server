@@ -1,0 +1,132 @@
+package client_square;
+import "base.proto";
+import "common.proto";
+import "game_server/proto/share_message/allcommon.proto";
+import "game_server/proto/share_message/table_struct.proto";
+
+message LoginMsg {
+	required string Account = 1;           // 玩家账号
+	optional int64 PlayerId = 3;//
+	optional string Token = 2;              //登陆token
+}
+
+message AllInfo{
+	repeated share_message.DynamicData SquareInfo = 1;//
+	optional bool FirstAddSquareDynamic = 2; // 是否第一次发布动态,true:首次,false:不是首次
+}
+message NewVersionAllInfo{
+	optional share_message.DynamicDataListPage SquareInfo = 1;// 分页的动态数据
+	optional bool FirstAddSquareDynamic = 2; // 是否第一次发布动态,true:首次,false:不是首次
+	optional int32 Type = 3;//1 广场 2:关注
+}
+
+message FlushInfo{
+	optional int64 LogId = 1;//当FlushType是1的时候是最新的一条动态id  否则是当前客户端最后一条动态id
+	optional int32 Type = 2;//1 广场 2:关注
+	optional int32 FlushType = 3;//1:请求最新  2:往下请求
+	optional int64 AdvId = 4; // 上一次返回的最后一条的广告id,第一页的时候提交0给后端.
+}
+
+// 新版本的刷新信息
+message NewVersionFlushInfo{
+	optional int32 Type = 1;//1 广场 2:关注
+	optional int64 AdvId = 2; // 上一次返回的最后一条的广告id,第一页的时候提交0给后端.
+	optional int32 page = 3; // 当前页
+	optional int32 pageSize = 4; // 页面大小
+}
+
+
+message MessageMainInfo{
+	repeated share_message.CommentData CommentData = 1;//评论详情
+	repeated share_message.DynamicData DynamicData = 2;//动态详情
+	optional int32 UnreadComment = 3;// 未读评论数量
+	optional int32 UnreadZan =4;//未读赞数量
+	optional int32 UnreadAttention = 5;//未读关注信息数量
+}
+
+
+message ZanList{
+	repeated share_message.ZanData ZanData = 1;
+	repeated share_message.DynamicData DynamicData = 2;//
+}
+
+
+
+message AttentionList{
+	repeated share_message.AttentionData AttentionData = 1;
+}
+
+
+
+message UnReadInfo{
+	optional int32 Type =1;// 1:评论 2:点赞 3:关注
+}
+
+message NewUnReadMessageResp{
+	optional int32 UnreadComment = 1;// 未读评论数量
+	optional int32 UnreadZan =2;//未读赞数量
+	optional int32 UnreadAttention = 3;//未读关注信息数量
+}
+
+message DynamicTopReq {
+	optional int64 Coin = 1; // 硬币数量
+	optional int64 LogId = 2; // 需要置顶的动态id
+}
+
+//message RequestInfo{
+//	optional int64 Id = 1;//
+//}
+
+// 用户首次浏览社交广场，触发条件后弹出发布动态互动提示弹窗
+message FirstLoginSquareReply{
+	optional int64 ZanCount = 1;// 当前点赞的总次数
+	optional int64 CommentCount = 2;// 当前发布评论的总条数
+	optional   bool IsBrowse2Square = 3;// 是否连续浏览2层屏内容,如果是false,后端不处理,直接查询,如果是true,后端埋点
+}
+// 用户首次浏览社交广场，触发条件后弹出发布动态互动提示弹窗
+message FirstLoginSquareReq{
+	optional   bool IsBrowse2Square = 1;// 是否连续浏览2层屏内容,如果是false,后端不处理,直接查询,如果是true,后端埋点
+}
+
+message AdvDetailReply {
+	optional share_message.AdvSetting AdvSetting = 1; // 广告数据
+	optional int32 DataType = 2; // 0-动态,1-广告
+}
+
+// 上行(客户端主动发起)
+service Client2Square { // 登录注册账号相关
+	rpc RpcLogin(client_square.LoginMsg)returns(base.Empty); // 登录
+	rpc RpcFlushSquareDynamic(client_square.FlushInfo)returns(base.Empty);// 刷新社区广场
+	rpc RpcNewVersionFlushSquareDynamic(client_square.NewVersionFlushInfo)returns(base.Empty);// 新版本刷新社区广场
+	rpc RpcAddSquareDynamic(share_message.DynamicData)returns(client_server.RequestInfo);// 发布动态
+	rpc RpcDelSquareDynamic(client_server.RequestInfo)returns(base.Empty);// 删除动态
+	rpc RpcZanOperateSquareDynamic(client_server.ZanInfo)returns(base.Empty);// 点赞操作
+	rpc RpcAddCommentSquareDynamic(share_message.CommentData)returns(share_message.CommentData);// 添加评论
+	rpc RpcDelCommentSquareDynamic(client_server.IdInfo)returns(base.Empty);// 删除评论
+	rpc RpcAttentioPlayer(client_server.AttenInfo)returns(base.Empty);// 关注某人
+	rpc RpcGetDynamicInfo(client_server.IdInfo)returns(share_message.DynamicData);// 获取动态详情
+	rpc RpcGetDynamicMainComment(client_server.IdInfo)returns(share_message.CommentList);//获取下一页主评论
+	rpc RpcGetDynamicSecondaryComment(client_server.IdInfo)returns(share_message.CommentList);// 获取动态子评论
+	rpc RpcGetDynamicInfoNew(client_server.IdInfo)returns(share_message.DynamicData);// 新版获取动态详情
+    rpc RpcGetDynamicMainCommentNew(client_server.IdInfo)returns(share_message.CommentList);//新版获取下一页主评论
+    rpc RpcGetDynamicSecondaryCommentNew(client_server.IdInfo)returns(share_message.CommentList);// 新版获取动态子评论
+	rpc RpcGetSquareMessage(client_server.IdInfo)returns(client_square.MessageMainInfo); //请求消息界面信息
+	rpc RpcGetPlayerZanInfo(client_server.RequestInfo)returns(client_square.ZanList);// 获取自己的赞信息
+	rpc RpcGetPlayerAttentionInfo(client_server.RequestInfo)returns(client_square.AttentionList);// 获取自己的关注信息
+	rpc RpcDynamicTop(client_square.DynamicTopReq)returns(base.Empty);// 动态置顶操作.
+//	rpc RpcGetPlayerMainPage(base.Empty)returns(client_square.MainInfo);// 获取自己主页信息
+	rpc RpcReadPlayerInfo(client_square.UnReadInfo)returns(base.Empty);//已读未读消息
+	rpc RpcLogOut(base.Empty)returns(base.Empty); // 退出
+	rpc RpcFirstLoginSquare(client_square.FirstLoginSquareReq)returns(client_square.FirstLoginSquareReply);// 触发条件后弹出发布动态互动提示弹窗
+	rpc RpcAdvDetail(share_message.AdvSetting)returns(client_square.AdvDetailReply);// 广告详情
+	rpc RpcAddAdvLog(share_message.AdvLogReq)returns(base.Empty); // 添加广告日志
+}
+
+// 下行(服务端主动发起)
+service Square2Client {
+    rpc RpcSquareAllDynamic(client_square.AllInfo)returns(base.NoReturn); // 获取社交广场内容 刷新也用这个下发
+	rpc RpcNewMessage(client_square.NewUnReadMessageResp)returns(base.NoReturn);	//有新消息显示红点
+	rpc RpcNoNewMessage(base.Empty)returns(base.NoReturn);	//沒有新消息取消红点
+    //rpc RpcReLogin(base.Empty)returns(base.NoReturn);   	// 顶号通知
+	rpc RpcNewVersionSquareAllDynamic(client_square.NewVersionAllInfo)returns(base.NoReturn); // 新版本获取社交广场内容 刷新也用这个下发
+}

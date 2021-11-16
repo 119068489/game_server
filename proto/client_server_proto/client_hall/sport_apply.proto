@@ -1,0 +1,499 @@
+package client_hall; //
+import "game_server/proto/share_message/table_struct_e-sports.proto";
+import "game_server/proto/share_message/table_struct_e-sports_sm.proto";
+import "base.proto";
+
+//获取比赛相关列表
+message ESportGameViewPageRequest {
+   optional int64 UniqueGameId = 1;
+   //页码
+   optional int32 Page = 2;
+   //页尺寸
+   optional int32 PageSize = 3;
+}
+//数据状态更改
+message ESportDataStatusInfo {
+   //菜单ID
+    optional int32 MenuId = 1;
+   //数据ID
+   optional int64 DataId = 2;
+   //状态
+   optional int32 Status = 3;
+}
+
+//通用列表请求
+message ESportPageRequest {
+   //菜单ID（可选）
+    optional int32 MenuId = 1;
+   //类型ID（可选）
+   optional int64 TypeId = 2;
+   //labelId（可选）
+   optional int64 LabelId = 7;
+   //页码
+   optional int32 Page = 3;
+   //页尺寸
+   optional int32 PageSize = 4;
+   //排序字段
+   optional string OrderField = 5;
+   //升序或者降序
+   optional string AscOrDesc = 6; //- 降序 + 升序
+}
+//記錄埋点停留时长
+message ESPortsBpsDurationData{
+
+    //底部导航模块按钮  当前 PageType = 1000的时候生效  1 消息、2 通讯录、3 广场、4电竞、 5我的
+    optional int32 NavigationId= 1;
+    //菜單id  100= 系统消息，其他301等等按照原来的意思
+    optional int32 MenuId = 2;
+    //标签数据ID 当 PageType = 3000 ， LabelId= -1000 的时候  就是等于玩家点中了 标签筛选按钮
+    optional int64 LabelId = 3;
+    //扩展tabId
+    optional int64 ExTabId = 4;
+    //内容详细页Id
+    optional int64 DataId = 5;
+    //内容子页Id
+    optional int64 ExId = 6;
+    //數據類型：
+    //1000、人单次进入电竞时长
+    //2000、菜单
+    //3000、自定标签
+    //4000、扩展tabId
+    //5000、内容页
+    //6000、内容页子页
+    optional int32 PageType = 7;
+    //操作类型 1进入，2退出并结算
+    optional int32 Opt = 8;
+}
+
+//記錄埋点停留列表时长
+message ESPortsBpsDurationRequest{
+    repeated client_hall.ESPortsBpsDurationData List = 1;
+}
+
+
+//埋点点击
+message ESPortsBpsClickRequest{
+    //底部导航模块按钮  当前 PageType = 1000的时候生效  1 消息、2 通讯录、3 广场、4电竞、 5我的
+    optional int32 NavigationId = 1;
+    //菜單id  100= 系统消息，其他301等等按照原来的意思
+    optional int32 MenuId = 2;
+    //标签数据ID   当 PageType 等于 3000  LabelId= -1000  就是等于玩家点中了 标签筛选按钮
+    optional int64 LabelId = 3;
+    //扩展tabId
+    optional int64 ExTabId = 4;
+    //内容详细页Id
+    optional int64 DataId = 5;
+    //内容子页Id
+    optional int64 ExId = 6;
+    //点击哪个按钮 按钮ID 小于1 没有点击按钮  》=1开始 就点击了按钮
+    optional int32 ButtonId = 7;
+    //數據類型：
+    //1000、進入电竞模块点击
+    //2000、菜单
+    //3000、标签
+    //4000、扩展tabId
+    //5000、内容页
+    //6000、内容页子页
+    optional int32 PageType = 8; // = 5001
+    // 1 轮播图  2 内容详细页  3 申请放映厅  针对DataId 使用
+    optional int32 DataType = 9;
+ }
+//埋点点击擴展数据
+message ESPortsBpsClickRequestEx{
+    //客户端点击的时间
+    optional int64 ClientClickTime = 1;
+    //點擊的數據
+    optional ESPortsBpsClickRequest BpsData = 2;
+}
+
+//埋点点击擴展数据列表
+message ESPortsBpsClickListRequest{
+    //客户端发送的时间
+    optional int64 ClientTime = 1;
+    //點擊的數據
+    repeated ESPortsBpsClickRequestEx BpsDataList = 2;
+}
+
+//通用ID数据请求
+message ESportInfoRequest {
+   //菜单ID（可选）
+    optional int32 MenuId = 1;
+   //类型ID（可选）
+   optional int64 GameTypeId = 2;
+   //数据唯一ID（可选）
+   optional int64 DataId = 3;
+   //扩展唯一ID（可选）
+   optional int64 ExtId = 4;
+}
+//通用ID数据请求
+message ESportVideoRequest {
+   //菜单ID（可选）
+    optional int32 MenuId = 1;
+    //视频类型
+    optional int64 VideoType = 2;     // 1视频 2 直播（放映厅）
+   //数据唯一ID（可选）
+   optional int64 DataId = 3;
+}
+
+//通用列表请求
+message ESportVideoPageRequest {
+   //菜单ID（可选）
+    optional int32 MenuId = 1;
+   //类型ID（可选）
+   optional int32 VideoType = 2;// 1视频 2 直播（放映厅）
+   //类型ID（可选）
+   optional int64 TypeId = 3;
+   //labelId（可选）
+   optional int64 LabelId = 4;
+   //页码
+   optional int32 Page = 5;
+   //页尺寸
+   optional int32 PageSize = 6;
+   //排序字段
+   optional string OrderField = 7;
+   //升序或者降序
+   optional string AscOrDesc = 8; //- 降序 + 升序
+}
+
+//同用消息返回
+message ESportCommonResult
+{
+    optional int32 code = 1;           // 错误码 1成功 1以外失败
+    optional string msg = 2;           // 错误提示
+    optional int64 DataId = 3;         // 数据ID （选填）
+}
+
+message ESportVideoResult
+{
+    optional int32 code = 1;           // 错误码 1成功 1以外失败
+    optional string msg = 2;           // 错误提示
+    optional share_message.TableESPortsVideoInfo Data = 3;         // 数据
+}
+message ESportRealTimeResult
+{
+    optional int32 code = 1;           // 错误码 1成功 1以外失败
+    optional string msg = 2;           // 错误提示
+    optional share_message.TableESPortsRealTimeInfo Data = 3;         // 数据
+}
+
+//点赞返回
+message ESportThumbsUpResult
+{
+    optional int32 code = 1;         // 错误码 1成功 1以外失败
+    optional string msg = 2;           // 错误提示
+    //1已点赞 0未点赞
+    optional int32 IsThumbsUp=3;
+    //点赞数
+    optional int32 ThumbsUpCount=4;
+}
+//通用首页数据
+message ESportMenuHomeInfo{
+    //标签
+    repeated share_message.TableESPortsLabel LabelList = 1;
+}
+//輪播圖數據
+message ESportCarouselList{
+    //轮播图列表
+    repeated share_message.TableESPortsCarousel CarouselList = 2;
+
+}
+//提交申请信息
+message ESportMyLiveRoomInfo{
+    //封面图
+    optional string CoverImageUrl = 1;
+    //游戏标签ID（类型选择）
+    optional int64 AppLabelID = 2;
+    //视频url
+    optional string VideoUrl = 3;
+    //标题
+    optional string Title = 4;
+    //状态
+    optional int32 Status = 5;  //0未发布(未审核) 1已发布(审核通过) 2已删除(审核拒绝) 3已禁用 4已过期
+    //公告
+    optional string Content = 6;
+    //关联比赛表ID
+    optional int64 UniqueGameId = 7; //没有的话，就是0
+    //关联比赛表标题
+    optional string UniqueGameName = 8;
+}
+
+//直播首页数据（放映厅）
+message ESportLiveHomeInfo
+{
+    //我的放映厅信息 如果是空就是没申请过，如果有数据 就看 Status
+    optional share_message.TableESPortsVideoInfo MyLiveInfo = 1;
+    //标签
+    repeated share_message.TableESPortsLabel LabelList = 2;
+}
+
+message ESportCommentInfo
+{
+     //类型ID
+     optional int32 MenuId = 1;  //1资讯 2视频
+     //父ID
+     optional int64 ParentId = 2;  //资讯ID 或 视频ID视频ID
+     //某个评论的ID
+     optional int64 CommentId = 9; //如果不为0那么就是某个评论的回复
+     optional string Content = 3;
+     //被回复的用户ID
+     optional int64 ReplyPlayerId=4;
+}
+message ESportDeleteCommentInfo{
+     //类型ID
+     optional int32 MenuId = 1;  //1资讯 2视频
+     //父ID
+     optional int64 ParentId = 2;  //资讯ID 或 视频ID视频ID
+     //某个评论的ID
+     optional int64 PCommentId = 3;//如果不为0那么就是某个评论的回复
+     //某个评论的ID
+     optional int64 CommentId = 4;//当前要删除的评论或回复ID
+     //1 评论 2 二级回复
+     optional int32 CommentType = 5;
+}
+message ESportCommentRequest
+{
+     //类型ID
+     optional int32 MenuId = 1;  //1资讯 2视频
+     //父ID
+     optional int64 ParentId = 2;  //资讯ID 或 视频ID视频ID
+     //某个评论的ID
+     optional int64 CommentId = 3; //如果不为0那么就是某个评论的回复
+     //页码
+     optional int32 Page = 4;
+     //页尺寸
+     optional int32 PageSize = 5;
+}
+
+
+//父信息的评论
+message ESportCommentListResult
+{
+    //数据总数
+    optional int32 Total =1;
+    //
+    repeated share_message.TableESportComment List = 2;
+}
+//评论的回复的
+message ESportCommentReplyListResult
+{
+    //数据总数
+    optional int32 Total =1;
+    //
+    repeated share_message.TableESportComment List = 2;
+}
+//资讯列表
+message ESportRealtimeListResult
+{
+    //数据总数
+    optional int32 Total =1;
+    //
+    repeated share_message.TableESPortsRealTimeInfo List = 2;
+}
+
+//比赛视图列表
+message ESPortsGameItemViewResult
+{
+    //数据总数
+    optional int32 Total =1;
+    //
+    repeated share_message.ESPortsGameItemView List = 2;
+}
+
+
+
+message ESportLabelList
+{
+     //标签
+     repeated share_message.TableESPortsLabel LabelList = 1;
+}
+
+
+//直播或视频（放映厅）列表
+message ESportVideoListResult
+{
+    //数据总数
+    optional int32 Total =1;
+    //列表
+    repeated share_message.TableESPortsVideoInfo List = 2;
+}
+
+
+
+message ESPortsSysMsgList {
+    optional int64 PlayerId = 4;
+    repeated share_message.TableESPortsSysMsg SysMsgList =1;
+    //未结算订单列表
+    repeated share_message.TableESPortsGameOrderSysMsg UnPayed =2;
+    //已结算订单列表
+    repeated share_message.TableESPortsGameOrderSysMsg Payed =3;
+}
+
+
+//电竞币兑换页面返回数据
+message ESPortsCoinViewResult {
+    // 错误码 1成功 1以外失败
+    optional int32 Code = 1;
+    // 错误提示
+    optional string Msg = 2;
+
+    //活动类型：1-日常赠送,2-首充赠送,3-活动赠送
+    optional int32 Type=3;
+    //显示的banner
+    optional string BannerUrl=4;
+    //电竞币兑换页内容
+    repeated ExChangeObject ExChangeList =5;
+}
+
+//电竞币兑换页豆腐块中的对象实体
+message ExChangeObject {
+    //电竞币额度
+	optional int64 ESportCoin = 1;
+	//硬币额度
+	optional int64 Coin   = 2;
+	//日常赠送额度
+    optional int64 DailyGive=3;
+    //首充赠送额度
+    optional int64 FirstGive=4;
+    //活动赠送概率
+    repeated share_message.ExchangeRate Rate=5;
+}
+
+//电竞币兑换动作请求
+message ESPortsCoinExChangeRequest {
+    //活动类型：1-日常赠送,2-首充赠送,3-活动赠送
+    optional int32 Type=1;
+	//豆腐块中的对象实体
+	optional ExChangeObject exChangeObject   = 2;
+}
+
+//电竞币兑换动作返回数据
+message ESPortsCoinExChangeResult {
+    // 错误码 1成功 1以外失败 (12 :硬币余额不足  16:活动停止)
+    optional int32 Code = 1;
+    // 错误提示
+    optional string Msg = 2;
+
+    //活动类型：1-日常赠送,2-首充赠送,3-活动赠送
+    optional int32 Type=3;
+    //显示的banner
+    optional string BannerUrl=4;
+    //电竞币兑换页内容(Code 1成功 ,16活动停止 设置值)
+    repeated ExChangeObject ExChangeList =5;
+
+    //赠送电竞币总数
+    optional int64 GiveTotalCoins=6;
+}
+
+//电竞币兑换流水请求参数
+message ESPortsCoinExChangeRecordRequest {
+   //页码
+   optional int32 Page = 1;
+   //页尺寸
+   optional int32 PageSize = 2;
+}
+
+//电竞币兑换流水返回数据
+message ESPortsCoinExChangeRecordResult {
+    // 错误码 1成功 1以外失败
+    optional int32 Code = 1;
+    // 错误提示
+    optional string Msg = 2;
+    //数据总数
+     optional int32 Total =3;
+    //电竞币兑换流水列表
+    repeated ExChangeRecordObject ExChangeRecordList =4;
+}
+
+message ExChangeRecordObject {
+    // 电竞币
+    optional int64 ChangeESportCoin = 1;
+    // 时间(毫秒)
+    optional int64 CreateTime = 2;
+    //title
+    optional string title =3;
+}
+
+//取得api平台号返回数据
+message RpcESPortsApiOriginResult {
+    // 错误码 1成功 1以外失败
+    optional int32 Code = 1;
+    // 错误提示
+    optional string Msg = 2;
+    //api来源 90001:野子科技, 90002:破晓字节
+    optional int32 ApiOrigin =3;
+}
+
+// 上行(客户端主动发起)
+service Client2ESports {
+	//获取某个首页的数据
+	rpc RpcESportGetHomeInfo(client_hall.ESportInfoRequest)returns(client_hall.ESportMenuHomeInfo);
+	//获取资讯列表
+    rpc RpcESportGetRealtimeList(client_hall.ESportPageRequest)returns(client_hall.ESportRealtimeListResult);
+	//获取资讯数据
+    rpc RpcESportGetRealtimeInfo(client_hall.ESportInfoRequest)returns(client_hall.ESportRealTimeResult);
+    //点赞操作（所有点赞）
+    rpc RpcESportThumbsUp(client_hall.ESportInfoRequest)returns(client_hall.ESportThumbsUpResult);
+    //发送评论
+    rpc RpcESportSendComment(client_hall.ESportCommentInfo)returns(client_hall.ESportCommonResult);
+    //删除评论
+    rpc RpcESportDeleteComment(client_hall.ESportDeleteCommentInfo)returns(client_hall.ESportCommonResult);
+    //获取评论
+    rpc RpcESportGetComment(client_hall.ESportCommentRequest)returns(client_hall.ESportCommentReplyListResult);
+    //获取评论的回复
+    rpc RpcESportGetCommentReply(client_hall.ESportCommentRequest)returns(client_hall.ESportCommentReplyListResult);
+    //获取所有标签
+    rpc RpcESportGetAllLabelList(client_hall.ESportInfoRequest)returns(client_hall.ESportLabelList);
+    //轮播图列表
+    rpc RpcESportGetCarouselList(client_hall.ESportInfoRequest)returns(client_hall.ESportCarouselList);
+    //保存标签配置
+    rpc RpcESportSaveGameLabelConfig(client_hall.ESportLabelList)returns(client_hall.ESportCommonResult);
+    //获取系统消息列表
+    rpc RpcESportGetSysMsgList(client_hall.ESportInfoRequest)returns(client_hall.ESPortsSysMsgList);
+    //获取视频或者放映厅列表
+    rpc RpcESportGetVideoList(client_hall.ESportVideoPageRequest)returns(client_hall.ESportVideoListResult);
+    //获取娱乐视频或者放映厅数据
+    rpc RpcESportGetVideoInfo(client_hall.ESportVideoRequest)returns(client_hall.ESportVideoResult);
+    //获取观看历史视频或者放映厅列表（近期）
+    rpc RpcESportGetMyHistoryVideoList(client_hall.ESportVideoPageRequest)returns(client_hall.ESportVideoListResult);
+	//获取放映厅首页的数据
+    rpc RpcESportGetLiveHomeInfo(client_hall.ESportInfoRequest)returns(client_hall.ESportLiveHomeInfo);
+    //添加关注放映厅
+    rpc RpcESportAddFollowLive(client_hall.ESportInfoRequest)returns(client_hall.ESportCommonResult);
+
+    //获取关注直播列表
+    rpc RpcESportGetMyFollowLiveList(client_hall.ESportPageRequest)returns(client_hall.ESportVideoListResult);
+    //申请放映厅
+    rpc RpcESportApplyOpenLive(client_hall.ESportMyLiveRoomInfo)returns(client_hall.ESportCommonResult);
+    //放映厅发言
+    rpc RpcESportSendLiveRoomMsg(client_hall.ESportCommentInfo)returns(client_hall.ESportCommonResult);
+    //离开直播放映厅
+    rpc RpcESportLeaveLive(client_hall.ESportCommonResult)returns(client_hall.ESportCommonResult);
+    //获取比赛名字和Id列表
+    rpc RpcESportGetESPortsGameViewList(client_hall.ESportPageRequest)returns(client_hall.ESPortsGameItemViewResult);
+   //获取比赛相关放映厅
+    rpc RpcESportGetGameVideoList(client_hall.ESportGameViewPageRequest)returns(client_hall.ESportVideoListResult);
+    //埋点点击
+    rpc RpcESPortsBpsClick(client_hall.ESPortsBpsClickRequest)returns(client_hall.ESportCommonResult);
+    //埋点点击列表
+    rpc RpcESPortsBpsClickList(client_hall.ESPortsBpsClickListRequest)returns(client_hall.ESportCommonResult);
+    //埋点停留时长
+    rpc RpcESPortsBpsDuration(client_hall.ESPortsBpsDurationRequest)returns(client_hall.ESportCommonResult);
+    //电竞币兑换页
+    rpc RpcESPortsCoinView(base.Empty)returns(client_hall.ESPortsCoinViewResult);
+    //电竞币兑换动作
+    rpc RpcESPortsCoinExChange(client_hall.ESPortsCoinExChangeRequest)returns(client_hall.ESPortsCoinExChangeResult);
+    //电竞币兑换流水
+    rpc RpcESPortsCoinExChangeRecord(client_hall.ESPortsCoinExChangeRecordRequest)returns(client_hall.ESPortsCoinExChangeRecordResult);
+    //取得api平台来源
+    rpc RpcESPortsApiOrigin(base.Empty)returns(client_hall.RpcESPortsApiOriginResult);
+}
+
+// 下行(服务端主动发起 由大厅发给前端)
+service ESports2Client {
+    //推送系统消息或竞猜消息列表
+    rpc RpcESportNewSysMessage(client_hall.ESPortsSysMsgList)returns(base.NoReturn);
+    //推送直播间消息,或者直接用Im Rpc 结构由前端定义
+    rpc RpcESportNewRoomMsg(share_message.TableESPortsLiveRoomMsgLog)returns(base.NoReturn);
+    //某个menuId的数据状态更改
+    rpc RpcESportDataStatusInfo(client_hall.ESportDataStatusInfo)returns(base.NoReturn);
+}

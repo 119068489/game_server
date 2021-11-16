@@ -1,0 +1,16 @@
+﻿1、启动需要的mongodb节点(可以起在不同物理机上，这里起在同一机子上)
+.\mongod.exe --dbpath C:/MongoDB/data --logpath C:/MongoDB/data/mongodb.log --logappend --port=27017 --replSet sy01   
+.\mongod.exe --dbpath C:/MongoDB/data --logpath C:/MongoDB/data/mongodb.log --logappend --port=27018 --replSet sy01  
+.\mongod.exe --dbpath C:/MongoDB/data --logpath C:/MongoDB/data/mongodb.log --logappend --port=27019 --replSet sy01
+
+2、节点配置：
+cfg={ _id:"sy01", members:[ {_id:0,host:'192.168.18.114:27017',priority:2},{_id:2,host:'192.168.18.114:27018',priority:1}, {_id:1,host:'192.168.18.114:27019',arbiterOnly:true}]}
+
+rs.initiate(cfg)
+
+3、在主节点增加密码
+use admin
+db.createUser({ user: "root", pwd: "MongoDB.2019", roles: ["root"] }) 
+db.auth("root", "MongoDB.2019")  # 如果返回1，则表示成功
+
+参考网址:http://www.voidcn.com/article/p-glsfcjhd-bsd.html

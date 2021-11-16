@@ -1,0 +1,247 @@
+package client_hall; //恋爱匹配相关协议
+import "base.proto";
+import "game_server/proto/share_message/table_struct.proto";
+import "game_server/proto/share_message/allcommon.proto";
+
+
+//匹配数据请求，每次返回
+message LoveMatchResp{
+	repeated VoiceCard Cards = 1;       //语音卡片
+}
+
+//语音卡片:
+message VoiceCard{
+    optional int64 PlayerId = 1;      //ID
+    optional string NickName = 2;     //昵称
+    optional string HeadUrl = 3;      //头像
+    optional int32 Sex = 4;           //性别
+    optional int32 Constellation =5;  //星座
+    repeated PersonTag PersonalityTags=6; //个性化标签:值为空标识未设定个性标签
+    optional int32 MatchingDegree =7; //匹配度:百分比值，如50，则显示50%
+    optional int32 ZanNum =8;         //点赞数
+    optional string VoiceUrl = 9;     //语音链接:值为空标识未设置语音信息
+    optional bool IsOnLine = 10;      //true在线，false不在线
+    optional string BgUrl = 11;       //背景图:为空表示未设置背景
+    optional int32 Type = 12;         //数据类型:0完整的语音名片，1需要补充语音，2需要补充个性签名，3广告
+    optional string Content = 13;     //最近一条聊天
+    repeated string CommonTags = 14;   //共同标签
+    optional int64 AttentionTime = 15;  //关注时间差
+    optional int32 AttentionType = 16;  //关注类型 1-点赞 2-SayHi
+    optional share_message.AdvSetting Adv = 17;            //广告内容
+}
+//请求喜欢我的列表
+message LoveMeReq{
+    optional int32 Page = 1;        //请求页码，
+}
+//喜欢我的列表
+message LoveMeResp{
+    optional int32 Page = 1;       //请求页
+    repeated VoiceCard Cards = 2;  //响应列表
+}
+//请求我喜欢的列表
+message MyLoveReq{
+    optional int32 Page = 1;        //请求页码，
+}
+//我喜欢的列表响应
+message MyLoveResp{
+    optional int32 Page = 1;       //请求页
+    repeated VoiceCard Cards = 2;  //响应列表
+}
+//指定玩家请求信息
+message PlayerInfoReq{
+    optional int64 PlayerId = 1;        //玩家id，
+}
+//系统背景图请求
+message SystemBgReq{
+    optional string Url = 1;        //当前背景，没有为空
+}
+//系统背景图响应
+message SystemBgResp{
+    optional string Url = 1;       //新的url，下次请求切换带过来
+}
+message PersonTag{
+    optional int32 Id = 1;  //编号
+    optional string Name = 2;   //名称
+    optional bool IsHot =3 ; //是否热门标签
+}
+//系统个性化标签响应
+message PersonalityTagReq{
+    optional int32 Page = 1;   //页码
+    optional int32 Num = 2;    //大小
+    repeated PersonTag PersonalityTags = 3;    //个性化标签
+}
+//搜索声音短片
+message SearchVoiceVideoReq{
+    optional string Content = 1;    //搜索内容
+    optional int32 Type = 2;  //0全部，1独白，2电影配音，3唱一唱
+    optional int32 Page = 3;   //页码(默认一页十条）
+}
+//声音片段数据
+message VoiceVideo{
+    optional int64 Id = 1;      //编号   合成时发给服务器
+    optional string Maker = 2;  //作者
+    optional string Name = 3;   //名称
+    repeated int32 TagIds = 4;   //作品标签
+    repeated string Tags = 5;   //标签
+    optional string Content = 6;    //内容对白
+    optional string MusicUrl = 7;   //音频链接
+    optional string ImageUrl = 8;   //图片链接
+    optional int32 Type = 9;    //类型：1独白，2电影，3唱一唱
+    optional int64 MusicTime = 10;  //音乐时长:秒
+}
+
+//搜索声音短片响应
+message SearchVoiceVideoResp{
+    repeated VoiceVideo Data = 1;
+}
+//玩家录制音频
+message MixVideo{
+    optional int64 Id = 1; //自增序号
+    optional int64 PlayerId = 2;        //玩家id
+    optional VoiceVideo BgVideo = 3;            //背景音频
+    optional string MixVoiceUrl = 4;    //合成音频url
+    optional bool IsCard = 5;           //是否用作交友名片
+    optional int64 MixTime = 6;         //时长:秒
+}
+//指定玩家声音名片列表
+message VoiceCardListResp{
+    optional int64 PlayerId = 1;            //玩家id
+    repeated MixVideo  Cards = 2;          //录制音频
+}
+//指定玩家个性化标签列表
+message PersonalityTagsResp{
+    optional int64 PlayerId = 1;            //玩家id
+    repeated PersonTag PersonalityTags =2;     //个性标签
+}
+//设置语音名片请求
+message SetVoiceCard{
+    optional int64 MixId = 1;  //录音更换
+    repeated int32 PersonalityTags = 2; //个性换标签
+    optional string BgUrl = 3;          //背景图
+    optional int32 Result = 4;          //结果:1成功，0失败
+}
+//混合两个音频
+message MixVoiceVideo{
+    optional int64 BgId = 1;         //背景音频id
+    optional string MyVoiceUrl = 2;            //自己录制的音频
+    optional string MixVideoUrl = 3;           //混合后的音频
+    optional int64 MixId = 4;                  //混合后音频ID
+    optional int32 Result = 5;                 //合成结果:0成功，1无效的BgId,2录制音频文件无效，3音频合成失败，4录制声音名片已达上限
+    optional int32 BgVolume =6;                //背景音频的音量值
+    optional int32 MixVolume = 7;              //录制的音量值
+    optional int64 MixTime = 8;                //合成音频时长
+}
+//请求指定类型音频短片
+message GetVoiceVideoReq{
+    optional int32 Type = 1;   //1独白，2电影配音，3唱一唱
+    optional int32 Page = 2;    //默认第1页开始
+    optional int32 PageSize = 3; //每页大小:不传就默认10个
+}
+//获取背景音频响应
+message GetVoiceVideoResp{
+    optional int32 Type = 1;        //1独白，2电影配音，3唱一唱
+    optional int32 Page = 2;    //默认第1页开始
+    optional int32 PageSize = 3; //页数大小
+    repeated VoiceVideo Data = 4;   //每次返回指定个数
+}
+//响应亲密度信息
+message IntimacyInfoResp{
+    optional string Id = 1;       //玩家id
+    optional int32 IntimacyLv = 2;     //亲密度等级
+    optional int64 IntimacyVal = 3;    //亲密度值
+    optional int64 IntimacyMaxVal = 4;  //当前亲密度最大值
+    optional bool IsShow = 5;           //是否显示亲密度
+}
+//所有星座响应
+message ConstellationResp{
+    repeated share_message.InterestTag Constellations=1;  //所有星座
+}
+//设置自己的星座
+message SetConstellation{
+    optional int32 Id = 1;          //设置星座
+}
+//匹配共同信息
+message PlayerCommonData{
+    optional int64 PlayerId = 1;  //玩家id
+    optional string HeadUrl = 2; //头像
+    repeated PersonTag Tags = 3; //个性标签
+    optional int32 Constellation=4; //星座
+    optional string GuideWord =5;   //引导语
+    repeated int32 Labels = 6;      //标签
+    optional int32 Sex = 7;         //性别
+}
+//SiHay数据
+message SayHiData{
+    repeated PlayerCommonData PlayerData= 1; //头像
+    optional int32 MatchingDegree = 2;  //匹配度
+}
+//喜欢我数量
+message LoveMeData{
+    optional int32 Num = 1;    //新的喜欢我数目
+    optional int32 TotalNum = 2;  //总共喜欢我的数目
+}
+//点赞结果
+message VCZanResult{
+    optional bool Result = 1;  //true成功，false其他失败
+}
+
+//热门片段响应
+message HotEpisodeResp{
+    repeated PersonTag Episode = 1; //标签
+}
+
+//标签作品请求
+message VoiceProduct{
+    optional int32 TabId = 1;   //标签ID
+    optional int32 Page = 2;    //请求页码，
+}
+//删除卡片作品
+message DelVoiceCard{
+    optional int64 MixId = 1;   //删除名片id
+    optional int64 NewMixId = 2;  //新的名片id
+}
+//获取会话sayHi信息
+message SayHiLog{
+    optional string SessionId = 1;  //会话id
+    optional share_message.PersonalChatLog Log = 2; //syaHi记录
+}
+message IsFirstLogin{
+    optional bool IsFirstReq = 1;  //是否第一次请求:true 是
+}
+// 上行(客户端主动发起)
+service LoveClient2Hall {
+	rpc RpcGetVoiceCards(base.Empty)returns(client_hall.LoveMatchResp);                     // 获取语音卡片信息
+	rpc RpcGetVoiceCardsNew(client_hall.IsFirstLogin)returns(client_hall.LoveMatchResp);          // 新版获取语音卡片信息
+	rpc RpcZanVoiceCard(client_hall.PlayerInfoReq)returns(client_hall.VCZanResult);                           // 点赞
+	rpc RpcGetLoveMeList(client_hall.LoveMeReq)returns(client_hall.LoveMeResp);             // 喜欢我的列表
+	rpc RpcGetMyLoveList(client_hall.MyLoveReq)returns(client_hall.MyLoveResp);             // 我喜欢的列表
+	rpc RpcGetVoiceCard(client_hall.PlayerInfoReq)returns(client_hall.VoiceCard);            // 获取指定玩家的声音名片信息
+	rpc RpcChangeSystemBgImage(client_hall.SystemBgReq)returns(client_hall.SystemBgResp);          // 更换名片背景
+	rpc RpcSysPersonalityTags(client_hall.PersonalityTagReq)returns(client_hall.PersonalityTagReq);          // 获取个性化系统标签列表
+	rpc RpcMakeVoiceVideo(client_hall.VoiceVideo)returns(client_hall.VoiceVideo);                           // 背景音频制作
+	rpc RpcMixVoiceVideo(client_hall.MixVoiceVideo)returns(client_hall.MixVoiceVideo);      // 玩家录音作品
+	rpc RpcGetVoiceVideo(client_hall.GetVoiceVideoReq)returns(client_hall.GetVoiceVideoResp);       // 获取指定类型背景音频
+	rpc RpcSearchVoiceVideo(client_hall.SearchVoiceVideoReq)returns(client_hall.SearchVoiceVideoResp);       // 搜索背景音频(Type 1-作品名 2-台本 3-作者)
+	rpc RpcGetVoiceCardList(client_hall.PlayerInfoReq)returns(client_hall.VoiceCardListResp);      //获取指定玩家录音作品列表
+	rpc RpcGetPersonalityTags(client_hall.PlayerInfoReq)returns(client_hall.PersonalityTagsResp);      //获取指定玩家个性标签列表
+	rpc RpcModifyVoiceCard(client_hall.SetVoiceCard)returns(client_hall.SetVoiceCard);      //设置语音名片背景、录音、个性标签
+	rpc RpcSayHiToPlayer(client_hall.PlayerInfoReq)returns(base.Empty);                     //向指定玩家打招呼:Hi
+	rpc RpcGetIntimacyInfo(client_hall.PlayerInfoReq)returns(client_hall.IntimacyInfoResp);                   //获取指定玩家之间的亲密度信息
+	rpc RpcGetAllConstellation(base.Empty)returns(client_hall.ConstellationResp);           //获取所有星座信息
+	rpc RpcSetMyConstellation(client_hall.SetConstellation)returns(client_hall.SetConstellation);           //设置自己的星座
+	rpc RpcGetLoveMeNewNum(base.Empty)returns(client_hall.LoveMeData);        //获取新的喜欢我条目数量
+    rpc RpcReadLoveMeLog(base.Empty)returns(base.Empty);           //读取喜欢我列表时发送
+    rpc RpcGetVoiceTags(client_hall.SearchVoiceVideoReq)returns(client_hall.PersonalityTagsResp);           //获取所有背景音乐素材标签列表
+    rpc RpcGetHotEpisode(client_hall.SearchVoiceVideoReq)returns(client_hall.HotEpisodeResp);           //获取热门片段的标签列表
+    rpc RpcGetMayLikeEpisode(client_hall.SearchVoiceVideoReq)returns(client_hall.SearchVoiceVideoResp);           //获取猜你喜欢片段
+    rpc RpcGetVoiceProduct(client_hall.VoiceProduct)returns(client_hall.SearchVoiceVideoResp);           //获取该标签下的作品
+    rpc RpcDelVoiceCard(client_hall.DelVoiceCard)returns(client_hall.DelVoiceCard);                 //删除名片作品
+    rpc RpcGetSessionSayHiLog(client_hall.SayHiLog)returns(client_hall.SayHiLog);                    //获取打招呼SayHi匹配数据
+
+}
+
+// 下行(服务端主动发起)
+service LoveHall2Client {
+   rpc RpcChangeIntimacy(client_hall.IntimacyInfoResp)returns(base.NoReturn);    //亲密度改变下发通知
+   rpc RpcDelSayHiLog(client_hall.SayHiLog)returns(base.NoReturn);     //删除好友时，在线收到下发通知
+}

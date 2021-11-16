@@ -1,0 +1,17 @@
+INCLUDE: ["config_share.yaml","config_hall_secret.yaml"] # 可以包含多个其他 *.yaml 文件
+
+SERVER_TYPE: 4     #服务器类型
+SERVER_ID: 5001     #服务器编号:5000开头
+SERVER_NAME: "商场1"  #服务器名称
+SERVER_ADDR: "127.0.0.1"  #服务器外部地址
+SERVER_ADDR_INTERNAL: "127.0.0.1"  #服务器内部地址
+LISTEN_PORT_FOR_CLIENT: 5111  #监听Websocket客户端连接端口
+LISTEN_PORT_FOR_CLIENT_TCP: 5311  #监听 TCP 客户端的链接
+LISTEN_ADDR_FOR_WEB_API: 5701 # Web API 地址
+SEND_MAIL_ADDRESS: "cash77825@sina.com"     #H5邮箱发送邮箱地址
+SEND_MAIL_PASS: "be6309dca39bd8fa"          #H5邮箱发送密码或者是授权码(根据邮箱配置)
+SEND_MAIL_HOST: "smtp.sina.com"             #H5邮箱发送HOST
+SEND_MAIL_PORT: "465"                       #H5邮箱发送PORT
+
+LISTEN_PORT_FOR_WEB_API_CLIENT: 5511  #监听 http对外客户端请求
+LISTEN_PORT_FOR_WEB_API_SERVER: 5611  #监听 http对内服务器间请求

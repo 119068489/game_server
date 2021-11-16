@@ -1,0 +1,121 @@
+package client_login; //
+import "base.proto";
+import "common.proto";
+
+enum LoginMark{
+	LOGIN_SUCCESS = 1;//登录成功
+	LOGIN_ERROR_ACCOUNT = 2;//账号不存在
+	LOGIN_ERROR_PASSWORD = 3;//密码错误
+	LOGIN_ERROR_MESSAGE = 4;//验证码错误
+	LOGIN_ERROR_FREEZEIP = 5;//冻结ip
+	LOGIN_ERROR_FREEZEACCOUT = 6;//冻结账号
+	LOGIN_ERROR_STOPSERVER = 7;//服务器维护
+	LOGIN_ERROR_ONEKEYPHONE = 8;//一键登录手机号码错误
+	LOGIN_ERROR_WECHATTOKEN = 9;//微信token码错误
+	LOGIN_ERROR_AUTOTOKEN = 10;//自动登录验证码过期
+	REGISTER_ERROR_CREATEACCOUNT = 11;//db创建账号异常
+	LOGIN_ERROR_ACCOUNT_CANCELING = 12; //账号注销中
+	LOGIN_ERROR_ACCOUNT_CANCELED = 13; //账号已注销，未满60天
+	LOGIN_ERROR_BIND_PHONE = 14; //需要绑定手机号
+	LOGIN_ERROR_BIND_PHONE_REPEAT = 15; //手机已绑定其他账号
+}
+
+//enum RegisterMark{
+//	REGISTER_SUCCESS = 1;//注册成功
+//	REGISTER_ERROR_PHONE = 2;//手机号错误
+//	REGISTER_ERROR_PASSWORD = 3;//两次密码不同
+//	REGISTER_ERROR_MESSAGE = 4;//验证码错误
+//	REGISTER_ERROR_FREEZE = 5;//冻结ip
+//	REGISTER_ERROR_ACCOUNT = 6;//账号已存在
+//	REGISTER_ERROR_CREATEACCOUNT = 7;//db创建账号异常
+//}
+
+
+message LoginMsg {
+	required string Account = 1;            // 手机号 或 邮件 或 一串字符
+	optional string Password = 2;           // 密码
+	optional int32 PF = 3;                 //设备类型 1 ios，2 android，3 pc
+	optional string LoginIp = 5;    //登陆ip
+	optional int32 Type = 6;//登录类型  1:密码登录  2:验证码登录 3.游客登录 4.一键登录 5.微信code登录 6.自动登录
+	optional string OneKeyToken = 7;//一键登录的token
+	optional string WechatCode = 9;//微信code
+	optional string Mark = 10;//硬件码
+	optional string Token =  11;//自动登录的token
+	optional string LoginCode = 12;//短信验证码
+	optional int64 PlayerId = 13;//
+	optional string  OpenId = 14;//只有取消注销状态时需要传值:微信登录时:可传微信openid，一键登录时可传:电话号码
+	optional string Phone = 15; //微信登录时，绑定的手机号
+	optional string WeChatToken = 16;//微信登录时token
+	optional string AreaCode = 17;  //国际区号
+	optional int32 ApkCode = 18;  // 一键登录时区分安卓还是iOS 旧的:100, 新的:101
+	optional string UnionId = 19;   //微信登录时UnionId
+	optional string Idfa = 20;      //登录时idfa码
+}
+
+message RegisterMsg {
+	required string Account = 1; // 手机号 或 邮件 或 一串字符
+	optional string Password = 2; // 密码
+	optional string PasswordAgain = 3; // 密码
+	optional string NickName = 4; // 玩家呢称
+	optional string CheckCode = 5; // 验证码
+}
+
+//message RegisterResult{
+//	optional RegisterMark Mark = 1;//注册结果
+//	optional string message = 2;//返回的弹窗信息
+//}
+
+message LoginResult{
+	optional LoginMark Result= 1;//登陆结果
+	optional string Account = 2;//账号
+	optional string	Address = 3;//大厅地址及端口
+	optional string Token = 4;//链接大厅的token码
+	optional bool IsVisitor = 5;//是否是游客登录
+    optional int32 LoginType = 6;//  1:密码登录  2:验证码登录 4.一键登录 5.微信登录 6.自动登录
+	optional int64 PlayerId = 7;//
+	optional string ErrMsg = 8;     //错误提示
+	optional bool IsAppAct=9; 		//是否是有效激活设备
+	optional bool IsUserReg=10;		//是否是有效注册人数
+	optional bool IsLoginMan=11;    	//是否是有效登录人数
+	optional bool IsLoginFreq=12;	//是否是有效登录次数
+	optional string OpenId = 13;    //微信登录openid
+	optional string WeChatToken = 14;//微信登录token
+	optional string UnionId = 15;   //微信登录UnionId
+	optional bool IsMarkChange = 16;      //是否更换机器登录
+}
+message AccountCancel{
+    optional int32 AccountType = 1; //1手机，2微信
+    optional string Account = 2;  //账号
+    optional string UnionId = 3;//微信UnionId，后续登录用
+	optional int32 ApkCode = 4;  // 一键登录时区分安卓还是iOS 旧的:100, 新的:101
+}
+
+//注册登录埋点事件请求
+message LoginEventRequst{
+	optional int64 PlayerId=1;
+	optional string DeviceCode=2;	
+}
+
+//注册登录埋点事件返回
+message LoginEventResult{
+	optional bool IsAppAct=1; 		//是否是有效激活设备
+	optional bool IsUserReg=2;		//是否是有效注册人数
+	optional bool IsLoginMan=3;    	//是否是有效登录人数
+	optional bool IsLoginFreq=4;	//是否是有效登录次数
+}
+
+
+// 上行(客户端主动发起)
+service Client2Login { // 登录注册账号相关
+	rpc RpcLoginHall(client_login.LoginMsg)returns(client_login.LoginResult); //登陆验证
+//	rpc RpcRegister(client_login.RegisterMsg)returns(client_login.RegisterResult);//注册账号
+	rpc RpcClientGetCode(client_server.GetCodeRequest)returns(base.Empty);//获取验证码
+	rpc RpcCheckMessageCode(client_server.CodeResponse)returns(base.Empty);//检查短信验证码
+	rpc RpcForgetLoginPassword(client_login.LoginMsg)returns(base.Empty);//忘记登录密码
+	rpc RpcCheckAccountVaild(client_server.CheckInfo)returns(client_server.CheckInfo);//检验账号是否有效
+	rpc RpcAccountCancel(client_login.AccountCancel)returns(client_login.AccountCancel);//取消注销账号
+}
+
+// 下行(服务端主动发起)
+service Login2Client {
+}

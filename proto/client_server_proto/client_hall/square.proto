@@ -1,0 +1,403 @@
+package client_hall;
+import "base.proto";
+import "common.proto";
+
+
+import "game_server/proto/share_message/allcommon.proto";
+import "game_server/proto/share_message/table_struct_topic.proto";
+
+message AllInfo{
+	repeated share_message.DynamicData SquareInfo = 1;//
+	optional bool FirstAddSquareDynamic = 2; // 是否第一次发布动态,true:首次,false:不是首次
+}
+message NewVersionAllInfo{
+	optional share_message.DynamicDataListPage SquareInfo = 1;// 分页的动态数据
+	optional bool FirstAddSquareDynamic = 2; // 是否第一次发布动态,true:首次,false:不是首次
+	optional int32 Type = 3;//1 广场 2:关注
+}
+
+message FlushInfo{
+	optional int64 LogId = 1;//当FlushType是1的时候是最新的一条动态id  否则是当前客户端最后一条动态id
+	optional int32 Type = 2;//1 广场 2:关注
+	optional int32 FlushType = 3;//1:请求最新  2:往下请求
+	optional int64 AdvId = 4; // 上一次返回的最后一条的广告id,第一页的时候提交0给后端.
+}
+
+/*
+// 新版本的刷新信息
+message NewVersionFlushInfo{
+	optional int32 Type = 1;//1 广场 2:关注
+	optional int64 AdvId = 2; // 上一次返回的最后一条的广告id,第一页的时候提交0给后端.
+	optional int32 page = 3; // 当前页
+	optional int32 pageSize = 4; // 页面大小
+}
+*/
+
+
+message MessageMainInfo{
+	repeated share_message.CommentData CommentData = 1;//评论详情
+	repeated share_message.DynamicData DynamicData = 2;//动态详情
+	optional int32 UnreadComment = 3;// 未读评论数量
+	optional int32 UnreadZan =4;//未读赞数量
+	optional int32 UnreadAttention = 5;//未读关注信息数量
+}
+
+
+message ZanList{
+	repeated share_message.ZanData ZanData = 1;
+	repeated share_message.DynamicData DynamicData = 2;//
+}
+
+
+
+message AttentionList{
+	repeated share_message.AttentionData AttentionData = 1;
+}
+
+
+
+message UnReadInfo{
+	optional int32 Type =1;// 1:评论 2:点赞 3:关注
+}
+
+message NewUnReadMessageRespForApi{
+	optional int32 UnreadComment = 1;// 未读评论数量
+	optional int32 UnreadZan =2;//未读赞数量
+	optional int32 UnreadAttention = 3;//未读关注信息数量
+}
+
+message DynamicTopReq {
+	optional int64 Coin = 1; // 硬币数量
+	optional int64 LogId = 2; // 需要置顶的动态id
+}
+
+
+// 用户首次浏览社交广场，触发条件后弹出发布动态互动提示弹窗
+message FirstLoginSquareReply{
+	optional int64 ZanCount = 1;// 当前点赞的总次数
+	optional int64 CommentCount = 2;// 当前发布评论的总条数
+	optional   bool IsBrowse2Square = 3;// 是否连续浏览2层屏内容,如果是false,后端不处理,直接查询,如果是true,后端埋点
+}
+// 用户首次浏览社交广场，触发条件后弹出发布动态互动提示弹窗
+message FirstLoginSquareReq{
+	optional   bool IsBrowse2Square = 1;// 是否连续浏览2层屏内容,如果是false,后端不处理,直接查询,如果是true,后端埋点
+}
+
+message AdvDetailReply {
+	optional share_message.AdvSetting AdvSetting = 1; // 广告数据
+	optional int32 DataType = 2; // 0-动态,1-广告
+}
+
+//=============话题============
+// 单个话题类型
+message OneTopicType {
+	optional share_message.TopicType  TopicType = 1; // 话题类别
+	repeated share_message.Topic TopicList = 2; // 改类别对应的话题列表
+}
+// 话题列表
+message AllTopic{
+	repeated client_hall.OneTopicType TopicTypeList = 1;
+}
+
+// 话题类别列表(不展示用户自定义的)
+message TopicTypeListResp{
+	repeated share_message.TopicType  TopicTypeList = 1;
+}
+
+// 根据话题类别查找话题
+message TopicListReq{
+	optional int64 TopicTypeId = 1; // 话题类别id
+	optional int64 Page = 2; // 当前页
+	optional int64 PageSize = 3; // 页面大小
+}
+message TopicListResp{
+	repeated share_message.Topic  TopicList = 1;
+	optional int64 Count = 2; // 总条数
+}
+
+// 话题主页头部详情请求
+message TopicDetailReq{
+	optional int64 Id = 1; // 话题id
+	optional string Name = 2; // 话题名字
+
+}
+// 话题主页头部详情
+message TopicDetailResp{
+	optional share_message.Topic Topic = 1; // 话题详情
+	repeated share_message.Topic RelatedTopics = 2; // 相关话题
+	optional share_message.TeamPlayerInfo TopicMasterInfo = 3; // 话题主信息
+}
+// 话题主页动态列表请求
+message TopicMainPageListReq{
+	optional int64 Id = 1; // 话题id
+	optional int32 ReqType = 2; // 请求类型 1-最新;2-热门.
+	optional int64 Page = 3; // 当前页
+	optional int64 PageSize = 4; // 页面大小
+	optional string Name = 5; // 话题名字
+
+}
+// 话题主页动态列表响应
+message TopicMainPageListResp{
+	repeated share_message.DynamicData DynamicList = 1; // 动态列表
+	optional int64 DynamicCount = 2; // 动态总条数
+
+}
+
+// 某话题参与详情列表请求
+message TopicParticipateListReq {
+	optional int64 Id = 1; // 话题id
+	optional int64 Page = 2; // 当前页
+	optional int64 PageSize = 3; // 页面大小
+	optional string Name = 5; // 话题名字
+}
+// 某话题参与详情列表响应
+message TopicParticipateListResp {
+	repeated share_message.TopicParticipatePlayer PlayerList = 1;
+	optional int64 PlayerCount = 2;
+}
+
+// 关注/取消关注话题
+message AttentionTopicReq {
+	repeated int64 Id = 1; // 话题id列表
+	optional int32 Operate = 2; // 1-关注;2-取消关注
+}
+
+message  MyAttentionTopicListReq {
+	optional int64 Page = 1; // 当前页
+	optional int64 PageSize = 2; // 页面大小
+}
+
+message MyAttentionTopicListResp{
+	repeated share_message.Topic TopicList = 1;
+	optional int64 Count = 2; // 条数
+}
+
+// 模糊查询话题
+message SearchTopicReq{
+	optional string Name = 1; // 名字.
+}
+message SearchTopicResp{
+	repeated share_message.Topic TopicList = 1;
+}
+
+// 热门推荐,不包含自定义
+message SearchHotTopicResp{
+	repeated share_message.Topic TopicList = 1;
+}
+
+// 话题,刷新话题
+message FlushTopicReq {
+	optional int64 Page = 1; // 当前页
+	optional int64 PageSize = 2; // 页面大小
+}
+
+// 话题包含着呦动态列表.
+message TopicDynamicList{
+	optional share_message.Topic Topic = 1;
+	repeated share_message.DynamicData DynamicList = 2; // 后端默认返回10条,为了前端能足够的左滑.后续再优化.
+	repeated share_message.TopicParticipatePlayer TopicParticipatePlayer=3; // 用户推荐栏
+}
+message FlushTopicResp{
+	repeated client_hall.TopicDynamicList TopicDynamicList = 1;
+	optional int64 Count = 2; // 总条数
+}
+
+// 热门话题列表(官方)
+message HotTopicListReq{
+	optional int64 Page = 1; // 当前页
+	optional int64 PageSize = 2; // 页面大小
+}
+message HotTopicListResp{
+	repeated share_message.Topic TopicList = 1;
+	optional int64 Count = 2; // 总条数
+}
+
+//关注页推荐用户
+message AttentionRecommendPlayerResp{
+	repeated share_message.TopicParticipatePlayer PlayerList=1;
+}
+
+// 社交广场关注页的请求.
+message SquareAttentionReq {
+	optional int64 Page = 1; // 当前页
+	optional int64 PageSize = 2; // 页面大小
+	optional bool HasAttentionTopic = 3; // 是否有关注话题
+	optional bool HasAttentionPlayer = 4; // 是否有关注用户
+}
+
+message SquareAttentionResp {
+	repeated share_message.Topic TopicList = 1 ; // 话题列表
+	repeated share_message.DynamicData DynamicList = 2 ; // 动态列表.
+	repeated client_hall.OneTopicType TopicTypeList = 3 ; // 话题类别和类别对应的话题(无关注人,无关注话题的情况下这个字段才有值).
+	repeated share_message.TopicParticipatePlayer PlayerList=4;
+	optional bool HasAttentionTopic = 5; // 是否有关注话题
+	optional bool HasAttentionPlayer = 6; // 是否有关注用户
+	optional int64 Count = 7; // 动态总条数
+}
+
+// 广场按钮旁边的话题头部话题列表.
+message TopicHeadResp{
+	repeated share_message.Topic TopicList = 1 ; // 话题列表
+}
+
+//话题贡献榜
+message TopicDevoteListReq{
+    optional int64 DataType = 1; // 1：总榜  2：月榜  3：日榜
+    optional int64 Page = 2; // 当前页
+    optional int64 PageSize = 3; // 页面大小
+    optional string TopicName = 6;  //话题名称
+    optional int64 TopicId = 7;  //话题ID
+}
+message TopicDevoteListResp{
+    repeated share_message.TopicDevote DevoteList = 1;//贡献榜列表
+    optional int64 Count = 7; // 贡献榜总条数
+}
+
+//获取申请话题主条件
+message TopicMasterConditionReq {
+    optional int64 TopicId = 1;  //话题ID
+}
+message TopicMasterConditionResp{
+    optional bool Registered = 1; //注册条件
+    optional bool Follow = 2; //关注条件
+    optional bool Dynamic = 3; //动态条件
+    optional bool GeneralStatus = 20; //申请条件，总状态 true：满足    false：不满足
+}
+
+//申请话题主
+message ApplyTopicMasterReq{
+    optional int64 TopicId = 2; // 话题id
+    optional bool IsManageExp= 4; // 是否有管理经验
+    optional string Reason= 5; // 申请理由
+    optional string ContactDetails= 6; // 联系方式
+    optional string TopicName = 9; // 话题名称
+}
+message ApplyTopicMasterResp{
+    optional int32 Result = 1;//结果:1成功，2失败
+}
+
+//题主修改话题信息
+message TopicMasterEditReq{
+     optional int64 TopicId = 1; // 话题id
+     optional string TopicName = 2; // 话题名称
+     optional string HeadURL = 4;            // 话题头像
+     optional string Description = 10;       // 介绍
+     optional string BgUrl=19;               //话题背景图
+     optional string TopicRule = 24;         // 话题规则
+}
+message TopicMasterEditResp{
+    optional int32 Result = 1;//结果:1成功，2失败
+}
+
+// 话题置顶
+message TopicTopReq{
+    optional int64 TopicId = 1; // 话题id
+    optional int64 LogId = 2; // 需要置顶的动态id
+    optional string TopicName = 9; // 话题名称
+}
+message TopicTopResp{
+    optional int32 Result = 1;//结果:1成功，2失败
+}
+
+// 取消话题置顶
+message TopicTopCancelReq{
+    optional int64 TopicId = 1; // 话题id
+    optional int64 LogId = 2; // 需要置顶的动态id
+    optional string TopicName = 9; // 话题名称
+}
+message TopicTopCancelResp{
+    optional int32 Result = 1;//结果:1成功，2失败
+}
+
+//话题排行榜规则说明
+message TopicLeaderBoardDescriptionResp{
+    repeated string Rule = 1;//排行榜规则
+    repeated string Introduction = 2;//排行榜介绍
+}
+
+//退出话题主
+message QuitTopicMasterReq{
+    optional int64 TopicId = 1; // 话题id
+}
+message QuitTopicMasterResp{
+    optional int32 Result = 1;//结果:1成功，2失败
+}
+
+// 话题主删除话题中的动态
+message TopicMasterDelDynamicReq {
+    optional int64 TopicId = 1; // 话题id
+    optional int64 LogId = 2; // 需要删除的动态id
+    optional int32 DelReasonId = 3; // 删除动态的理由ID
+    optional string DelReasonMsg = 4; // 删除动态的理由描述
+    optional string TopicName = 9; // 话题名称
+}
+message TopicMasterDelDynamicResp{
+    optional int32 Result = 1;//结果:1成功，2失败
+}
+
+
+// 上行(客户端主动发起)
+service SquareClient2Hall { // 登录注册账号相关
+//	rpc RpcLogin(client_hall.LoginMsg)returns(base.Empty); // 登录
+	rpc RpcFlushSquareDynamic(client_hall.FlushInfo)returns(base.Empty);// 刷新社区广场
+	rpc RpcNewVersionFlushSquareDynamic(share_message.NewVersionFlushInfo)returns(base.Empty);// 新版本刷新社区广场
+	rpc RpcFlushSquareDynamicTopic(share_message.FlushSquareDynamicTopicReq)returns(base.Empty);//  刷新社区广场,插入推荐话题
+	rpc RpcAddSquareDynamic(share_message.DynamicData)returns(client_server.RequestInfo);// 发布动态
+	rpc RpcDelSquareDynamicApi(client_server.RequestInfo)returns(base.Empty);// 删除动态
+//	rpc RpcZanOperateSquareDynamic(client_server.ZanInfo)returns(base.Empty);// 点赞操作
+//	rpc RpcAddCommentSquareDynamic(share_message.CommentData)returns(share_message.CommentData);// 添加评论
+//	rpc RpcDelCommentSquareDynamic(client_server.IdInfo)returns(base.Empty);// 删除评论
+//	rpc RpcAttentioPlayer(client_server.AttenInfo)returns(base.Empty);// 关注某人
+	rpc RpcGetDynamicInfo(client_server.IdInfo)returns(share_message.DynamicData);// 获取动态详情
+	rpc RpcGetDynamicMainComment(client_server.IdInfo)returns(share_message.CommentList);//获取下一页主评论
+	rpc RpcGetDynamicSecondaryComment(client_server.IdInfo)returns(share_message.CommentList);// 获取动态子评论
+	rpc RpcGetDynamicInfoNew(client_server.IdInfo)returns(share_message.DynamicData);// 新版获取动态详情
+    rpc RpcGetDynamicMainCommentNew(client_server.IdInfo)returns(share_message.CommentList);//新版获取下一页主评论
+    rpc RpcGetDynamicSecondaryCommentNew(client_server.IdInfo)returns(share_message.CommentList);// 新版获取动态子评论
+	rpc RpcGetSquareMessage(client_server.IdInfo)returns(client_hall.MessageMainInfo); //请求消息界面信息
+	rpc RpcGetPlayerZanInfo(client_server.RequestInfo)returns(client_hall.ZanList);// 获取自己的赞信息
+	rpc RpcGetPlayerAttentionInfo(client_server.RequestInfo)returns(client_hall.AttentionList);// 获取自己的关注信息
+	rpc RpcDynamicTop(client_hall.DynamicTopReq)returns(base.Empty);// 动态置顶操作.
+//	rpc RpcGetPlayerMainPage(base.Empty)returns(client_hall.MainInfo);// 获取自己主页信息
+	rpc RpcReadPlayerInfo(client_hall.UnReadInfo)returns(base.Empty);//已读未读消息
+//	rpc RpcLogOut(base.Empty)returns(base.Empty); // 退出
+	rpc RpcFirstLoginSquare(client_hall.FirstLoginSquareReq)returns(client_hall.FirstLoginSquareReply);// 触发条件后弹出发布动态互动提示弹窗
+	rpc RpcAdvDetail(share_message.AdvSetting)returns(client_hall.AdvDetailReply);// 广告详情
+//	rpc RpcAddAdvLog(share_message.AdvLogReq)returns(base.Empty); // 添加广告日志
+
+// ====================话题================================
+	rpc RpcGetAllTopic(base.Empty)returns(client_hall.AllTopic);// 全部话题.
+	rpc RpcGetTopicDetailReq(client_hall.TopicDetailReq)returns(client_hall.TopicDetailResp); // 话题主页头部详细信息
+	rpc RpcGetTopicMainPageList(client_hall.TopicMainPageListReq)returns(client_hall.TopicMainPageListResp); // 话题主页动态列表
+	rpc RpcGetTopicParticipateList(client_hall.TopicParticipateListReq)returns(client_hall.TopicParticipateListResp); // 某话题参与详情列表请求
+	rpc RpcAttentionTopic(client_hall.AttentionTopicReq)returns(base.Empty); // 关注或取消关注话题
+	rpc RpcMyAttentionTopicList(client_hall.MyAttentionTopicListReq)returns(client_hall.MyAttentionTopicListResp); // 话题我的关注列表
+	rpc RpcSearchTopic(client_hall.SearchTopicReq)returns(client_hall.SearchTopicResp); // 模糊搜索话题.
+	rpc RpcSearchHotTopic(base.Empty)returns(client_hall.SearchHotTopicResp); //  热门推荐,不包含自定义
+	rpc RpcGetTopicTypeList(base.Empty)returns(client_hall.TopicTypeListResp); //  话题类别列表(不展示用户自定义的)
+	rpc RpcGetTopicList(client_hall.TopicListReq)returns(client_hall.TopicListResp); // 根据话题类别查找话题
+	rpc RpcFlushTopic(client_hall.FlushTopicReq)returns(client_hall.FlushTopicResp); // 话题,广场旁边的按钮.
+	rpc RpcHotTopicList(client_hall.HotTopicListReq)returns(client_hall.HotTopicListResp); // 热门话题列表(官方)
+	rpc RpcAttentionRecommendPlayer(base.Empty)returns(client_hall.AttentionRecommendPlayerResp); //关注页推荐用户
+	rpc RpcSquareAttention(client_hall.SquareAttentionReq)returns(client_hall.SquareAttentionResp); // 带话题的社交广场关注页的请求.
+	rpc RpcTopicHotDynamicParticipatePlayer(client_hall.TopicParticipateListReq)returns(client_hall.TopicParticipateListResp); // 话题主页,热门动态用户推荐栏
+	rpc RpcTopicHead(base.Empty)returns(client_hall.TopicHeadResp); // 广场按钮旁边的话题头部话题列表
+	rpc RpcTopicDevoteList(client_hall.TopicDevoteListReq)returns(client_hall.TopicDevoteListResp); // 话题贡献榜
+	rpc RpcTopicMasterCondition(client_hall.TopicMasterConditionReq)returns(client_hall.TopicMasterConditionResp); // 获取申请话题主条件
+	rpc RpcApplyTopicMaster(client_hall.ApplyTopicMasterReq)returns(client_hall.ApplyTopicMasterResp); // 申请话题主
+	rpc RpcTopicMasterEdit(client_hall.TopicMasterEditReq)returns(client_hall.TopicMasterEditResp); // 话题主修改话题信息
+	rpc RpcTopicTop(client_hall.TopicTopReq)returns(client_hall.TopicTopResp); // 话题置顶
+	rpc RpcTopicTopCancel(client_hall.TopicTopCancelReq)returns(client_hall.TopicTopCancelResp); // 取消话题置顶
+	rpc RpcTopicLeaderBoardDescription(base.Empty)returns(client_hall.TopicLeaderBoardDescriptionResp); // 话题排行榜规则说明
+	rpc RpcQuitTopicMaster(client_hall.QuitTopicMasterReq)returns(client_hall.QuitTopicMasterResp); // 退出话题主
+	rpc RpcTopicMasterDelDynamic(client_hall.TopicMasterDelDynamicReq)returns(client_hall.TopicMasterDelDynamicResp); // 话题主删除话题中的动态
+}
+
+// 下行(服务端主动发起)
+service Hall2SquareClient {
+    rpc RpcSquareAllDynamic(client_hall.AllInfo)returns(base.NoReturn); // 获取社交广场内容 刷新也用这个下发
+	rpc RpcNewMessageForApi(client_hall.NewUnReadMessageRespForApi)returns(base.NoReturn);	//有新消息显示红点
+//	rpc RpcNoNewMessage1(base.Empty)returns(base.NoReturn);	//沒有新消息取消红点
+//    rpc RpcReLogin(base.Empty)returns(base.NoReturn);   	// 顶号通知
+	rpc RpcNewVersionSquareAllDynamic(client_hall.NewVersionAllInfo)returns(base.NoReturn); // 新版本获取社交广场内容 刷新也用这个下发
+}

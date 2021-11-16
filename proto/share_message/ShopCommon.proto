@@ -1,0 +1,877 @@
+package share_message;
+import "ggotag.proto";
+
+message ShopInfo {
+	required int32 page = 1;            // 分页
+	required int32 page_size = 2;       // 每分页物品数量
+	required int32 type = 3;            // 页面的过滤项
+        // 全部 0(针对商店列表)
+        // 推荐 1      (10086暂时不处理)
+	    // ==========母婴玩具 (为了应对通联支付审核,目前页面删除,这个分类的值不记入数据库,自己对应需求上小分类)
+	    // 数码电器 2
+	    //========== 美妆个护  (为了应对通联支付审核,目前页面删除,这个分类的值不记入数据库,自己对应需求上小分类)
+	    // 服装服饰 3
+	    // 家居家居 4
+	    //========= 图书文具  (为了应对通联支付审核,目前页面删除,这个分类的值不记入数据库,自己对应需求上小分类)
+	    //========== 宠物用品 (为了应对通联支付审核,目前页面删除,这个分类的值不记入数据库,自己对应需求上小分类)
+	    // 其他 5
+	repeated int32 cache_item_types = 4;            // 用户浏览的商品的小类缓存项目
+	repeated string cache_search = 5;            // 用户搜索的缓存记录
+}
+
+message ItemFile{
+     required string file_url = 1;       // 文件url(包括图片和视频)
+     required int32 file_type = 2;       // 0:图片文件 1:视频文件
+     optional string file_width = 3;      // 文件(图片或视频的宽度)
+     optional string file_height = 4;      // 文件(图片或视频的高度)
+ }
+
+message ShopItem{
+    required int64 item_id = 1;         // 商品唯一ID
+    optional int32 price = 2;           // 价格
+    optional ItemFile item_file = 3;    // 文件url(包括图片和视频)
+    optional string title = 4;          // 文字描述
+    optional int32 store_count = 5;     // 收藏数量
+    optional int64 player_id = 6;        // 玩家ID
+    optional string nickname = 7;        // 昵称
+    optional string avatar = 8;          // 头像
+    optional string short_address = 9;  // 商品地址
+    optional string account = 10;       // 柠檬号
+    optional int32 sex = 11;			//性别
+    optional string name = 12;          //商品名字(商城2.0页面增加项目即商品标题)
+    optional int32 state = 13;           // 状态   0 上架 1下架 2删除 3审核中 4审核失败
+    optional int32 item_type = 14;           // 小分类
+    optional bool may_enjoy = 15;           // 你可能喜欢 false 不打标  true 你可能喜欢(只在打标的时候用)
+    optional bool item_flag = 16;   // false未下架 true下架(只在收藏的时候和我的下架列表用)
+    optional string copy_name = 17;         //商品名字备份(因为在点卡的时候,为了客户端不改代码,会用点卡名称覆盖商品名称)
+    optional int32 Types = 18;           //
+}
+
+message ItemList {
+    repeated ShopItem items = 1;        // 商品列表
+    required int32 page = 2;            // 分页
+    required int32 page_size = 3;       // 每分页物品数量
+    required int32 count = 4;       // 查询的总数量
+}
+
+message MyReleaseInfo{
+    required int32 page = 1;            // 分页
+    required int32 page_size = 2;       // 每分页物品数量
+}
+
+message ItemListForMyRelease {
+    repeated ShopItem items = 1;        // 商品列表
+    required int32 page = 2;            // 分页
+    required int32 page_size = 3;       // 每分页物品数量
+    required int32 count = 4;       // 查询的总数量
+}
+
+message BuyItem {
+     required int64 item_id = 1;        // 商品唯一ID
+     required ItemFile item_file = 2;    // 文件url(包括图片和视频)
+     optional string name = 3;          // 商品名字
+     optional int32 origin_price = 4;          // 原始价格(用不到了)
+     optional int32 price = 5;          // 价格
+     optional int64 sponsor_id = 6;              // 卖家ID
+     optional string avatar = 7;                  // 页面展示头像(已经判断好)
+     optional string nickname = 8;               // 页面展示昵称名字(已经判断好)
+     optional int32 count = 9;               // 订单中商品数量
+     optional int32 sex = 10;			        //性别(已经判断好)
+     optional string title = 11;          // 商品正文描述
+     optional DeliverAddress deliver_address = 12;        // 发货地址
+}
+
+message BuyItemID {
+     optional int64 item_id = 1;        // 商品唯一ID
+     optional int32 count = 2;        // 商品数量
+     optional string remark = 3;        // 备注
+     optional string item_title = 4;        // 商品描述
+     optional string item_name = 5;        // 商品名称
+}
+
+message BuyItemInfo {
+    repeated BuyItemID items = 1;        // 商品列表
+    required ReceiveAddress address = 2;    //收货地址
+}
+
+message BuyItemResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+    optional int64 order_id = 3;        // 成功返回订单ID
+}
+
+message SettlementItemID {
+     required int64 item_id = 1;        // 商品唯一ID
+     required int32 count = 2;        // 商品数量
+     required string item_title = 3;        // 商品描述
+     required string item_name = 4;        // 商品名称
+}
+
+message SettlementInfo {
+    repeated SettlementItemID items = 1;        // 商品列表
+}
+
+message SettlementResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    repeated string no_sale_messages = 2;        // 成功返回下架错误信息
+    repeated string no_stock_messages = 3;        // 成功返回下架错误信息
+    repeated string black_messages = 4;        // 成功返回黑名单错误信息
+}
+
+message OrderInfo{
+    required BuySell_Type type = 1;            //参照枚举定义 买家 0, 卖家 1
+    required SearchOrder_Con item_type = 2;       //参照枚举定义
+    required int32 page = 3;            // 分页
+    required int32 page_size = 4;       // 每分页物品数量
+}
+
+message OrderDetailInfoPara{
+    required BuySell_Type type = 1;            // 参照枚举定义 买家 0, 卖家 1
+    required int64 order_id = 2;        // 订单ID
+}
+
+message OrderID{
+    required int64 order_id = 1;        // 订单ID
+}
+
+message EditOrderAddress{
+    required int64 order_id = 1;        // 订单ID
+    required ReceiveAddress address = 2;        // 地址
+}
+
+message EditOrderAddressResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+}
+
+message EditDeliverAddress{
+    required int64 order_id = 1;        // 订单ID
+    required DeliverAddress address = 2;        // 发货地址
+}
+
+message EditDeliverAddressResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+}
+
+message ShopAddressResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+    optional DeliverAddress deliver_address = 3;        // 商品中的发货地址
+}
+
+message ShopAddressInfo{
+    required int64 item_id = 1;        // 商品ID
+}
+
+message ConfirmReceiveResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+}
+
+message DelayReceiveResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+}
+
+message NotifySendItemResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+}
+
+message ReceiveAddress{
+    optional string name = 1;                   // 名字
+    optional string phone = 2;                  // 手机号
+    optional string region = 3;                 // 地区
+    optional string detail_address = 4;         // 详细地址
+    optional int32 default_flag=5;				//默认地址标识 0不默认 1默认
+}
+
+message ReceiveAddressInfo{
+    required int64 address_id = 1;              // 地址ID
+    required ReceiveAddress address = 2;        // 地址信息
+}
+
+message ReceiveAddressList{
+    repeated ReceiveAddressInfo list = 1;       // 地址列表
+}
+
+message ReceiveAddressID{
+    required int64 address_id = 1;              // 地址ID
+}
+
+message PlayerID{
+    required int64 player_id = 1;              // 玩家ID
+}
+
+message ReceiveAddressAddResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+    optional int64 address_id = 3;        // 成功返回地址ID
+}
+
+message ReceiveAddressRemoveResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+
+}
+
+message ReceiveAddressEditResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+}
+
+message DeliverAddress{
+    optional string name = 1;                   // 名字
+    optional string phone = 2;                  // 手机号
+    optional string region = 3;                 // 地区
+    optional string detail_address = 4;         // 详细地址
+    optional int32 default_flag=5;				//默认地址标识 0不默认 1默认
+}
+message DeliverAddressInfo{
+    required int64 address_id = 1;              // 地址ID
+    required DeliverAddress address = 2;        // 地址信息
+}
+
+message DeliverAddressList{
+    repeated DeliverAddressInfo list = 1;       // 地址列表
+}
+
+message DeliverAddressID{
+    required int64 address_id = 1;              // 地址ID
+}
+
+message DeliverAddressAddResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+    optional int64 address_id = 3;        // 成功返回地址ID
+}
+
+message DeliverAddressRemoveResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+
+}
+
+message DeliverAddressEditResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;             // 错误提示
+}
+
+message OrderDetailInfo{
+    required int64 order_id = 1;                // 订单ID
+    required BuyItem item = 2;                 // 订单物品列表
+    required int32 state = 3;                   // 订单状态 0 待支付 1已过期 2已取消 3待发货 4待收货 5已完成 6已评价 7后台取消
+    optional ReceiveAddress address = 4;        // 收货地址
+    optional string express_code = 5;           // 快递单号
+    optional string express_com = 6;           // 快递公司代码
+    optional string express_name = 7;          // 快递公司名称
+    optional int64 create_time = 8;            // 创建订单时间
+    optional int64 server_now_time = 9;        // 服务器当前时间
+    optional int64 pay_time = 10;             // 付款时间
+    optional int64 send_time = 11;            // 发货时间
+    optional int64 finish_time = 12;            // 完成时间
+    repeated QueryExpressBody expressInfos = 13;    // 物流信息列表
+    optional string expressPhone = 14;              // 快递电话号码
+}
+
+message OrderDetailInfoShow{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    optional OrderDetailInfo orderDetailInfo = 3;    // 返回订单详情的内容
+}
+
+message ExpressMsg{
+    optional string info = 1;                   // 物流信息
+    optional int64 time = 2;                    // 时间
+}
+
+message CancelOrderResult{
+     required int32 result = 1;          // 错误码 0成功 0以外失败
+     required string msg = 2;             // 错误提示
+}
+
+message DeleteOrderResult{
+     required int32 result = 1;          // 错误码 0成功 0以外失败
+     required string msg = 2;             // 错误提示
+}
+
+message CheckoutResult{
+    required int32 result = 1;          // 错误码 0成功 0以外失败
+    required string msg = 2;            // 错误提示
+    optional int64 order_id = 3;        // 成功返回订单ID
+}
+
+message ShopItemID{
+    required int64 item_id = 1;         // 商品唯一ID
+}
+
+message ShopItemInfo{
+    required int64 item_id = 1;         // 商品唯一ID
+    required BuySell_Type flag = 2;            // 0是买家 1是卖家
+    optional int32 page_view_flag = 3;            // 0当天未浏览 1当天已经浏览
+}
+
+message ShopItemType
+{
+    optional int32 type = 1;
+    // 手机 1
+    // 农用物资 2
+    // 生鲜水果 3
+    // 童鞋 4
+    // 园艺植物 5
+    // 五金工具 6
+    // 游戏 7
+    // 电子零件 8
+    // 动漫/周边 9
+    //================ 图书 10(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    //================  宠物/用品  11(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    // 网络设备 12
+    // 服饰配件 13
+    // 家装/建材 14
+    // 家纺布艺 15
+    // 珠宝首饰 16
+    // 钟表眼镜 17
+    // 古董收藏 18
+    // 女士鞋靴 19
+    // 箱包 20
+    // 男士鞋靴 21
+    // 办公用品 22
+    // 游戏设备 23
+    // 运动户外 24
+    // 实体卡/券/票 25
+    // 工艺礼品 26
+    //================  玩具乐器 27(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    //================ 母婴用品 28(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    // 童装 29
+    // 女士服装 30
+    // 家具 31
+    // 居家用品 32
+    // 家用电器 33
+    //=============== 个护美妆 34(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    //=============== 保健护理 35(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    // 摩托车/用品 36
+    // 自行车/用品 37
+    // 汽车/用品 38
+    // 电动车/用品 39
+    // 3C数码 40
+    // 男士服装 41
+    // 其他闲置 42
+    // 音像 43
+    // 演艺/表演类门票 44
+    // 点卡 45
+    repeated string other_type = 2;
+
+}
+message ShopItemTypeName
+{
+    optional string typeName = 1;
+    // 手机 1
+    // 农用物资 2
+    // 生鲜水果 3
+    // 童鞋 4
+    // 园艺植物 5
+    // 五金工具 6
+    // 游戏 7
+    // 电子零件 8
+    // 动漫/周边 9
+    //================ 图书 10(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    // ================宠物/用品  11(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    // 网络设备 12
+    // 服饰配件 13
+    // 家装/建材 14
+    // 家纺布艺 15
+    // 珠宝首饰 16
+    // 钟表眼镜 17
+    // 古董收藏 18
+    // 女士鞋靴 19
+    // 箱包 20
+    // 男士鞋靴 21
+    // 办公用品 22
+    // 游戏设备 23
+    // 运动户外 24
+    // 实体卡/券/票 25
+    // 工艺礼品 26
+    //=============== 玩具乐器 27(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    //=============== 母婴用品 28(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    // 童装 29
+    // 女士服装 30
+    // 家具 31
+    // 居家用品 32
+    // 家用电器 33
+    //=============== 个护美妆 34(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    //=============== 保健护理 35(为了应对通联支付审核,目前页面删除,但不改变其他分类的type值)
+    // 摩托车/用品 36
+    // 自行车/用品 37
+    // 汽车/用品 38
+    // 电动车/用品 39
+    // 3C数码 40
+    // 男士服装 41
+    // 其他闲置 42
+    // 音像 43
+    // 演艺/表演类门票 44
+    // 点卡 45
+    repeated string other_type = 2;
+
+}
+
+message ShopItemUploadInfo{
+    required string title = 1;       // 文字描述
+    repeated ItemFile item_files = 2;      // 文件(包括图片和视频)
+    required int32 price = 3;        // 现价
+    optional int32 origin_price = 4; // 原价(商城2.0页面去掉项目,数据结构保留)
+    required string user_name = 5;     // 发货人姓名
+    required string phone = 6;         //发货人手机号
+    required string address = 7;     // 发货人地区
+    required string detail_address = 8;  //发货人详细地址
+    required ShopItemTypeName type  = 9;  // 类型的字符串
+    required int32 stock_count = 10;        // 库存数量
+    required string name = 11;          //商品名字(商城2.0页面增加项目即商品标题)
+}
+
+message ShopItemUploadResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    optional int64 item_id = 3;        // 成功返回物品ID
+}
+
+message ShopItemDeleteResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+}
+
+message ShopItemSoldOutResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+}
+
+message ShopItemEditInfo{
+    required int64 item_id = 1;       // 商品唯一ID
+    required ShopItemUploadInfo info = 2; // 上架商品信息
+}
+
+
+message ShopItemDetail{
+    optional int64 item_id = 1;         // 商品唯一ID
+    optional int32 price = 2;           // 价格
+    optional int32 origin_price = 3;    // 原价
+    repeated ItemFile item_files = 4;      // 文件url(包括图片和视频)
+    optional string title = 5;          // 商品描述
+    optional int64 player_id = 6;        // 玩家ID
+    optional string nickname = 7;        // 昵称
+    optional string avatar = 8;          // 头像
+    optional string short_address = 9;         // 头部显示商品短地址
+    optional int32 store_count = 10;     // 收藏数
+    optional int64 create_time = 11;     // 发布时间
+    optional ShopItemType type = 12;     // 类型
+    optional int32 stock_count = 13;     // 库存数量
+    optional string time_long = 14;         // 时间
+    optional string address = 15;         // 商品发货全地址
+    optional string detail_address = 16;         //商品发货详细地址
+    optional string name = 17;         //商品名字
+    optional int32 sex = 18;			//性别
+    optional int32 state = 19;		    // 状态   0 上架 1下架 2删除 3审核中 4审核失败
+    optional string user_name = 20;         // 商品发货人姓名
+    optional string phone = 21;         //商品发货手机号
+    optional bool store_flag = 22;         //是否收藏 false未收藏  true已经收藏
+    optional string point_card_name = 23;         //点卡名称
+    optional string copy_name = 24;         //商品名字备份(因为在点卡的时候,为了客户端不改代码,会用点卡名称覆盖商品名称)
+    repeated RelatedShopItem relatedShopItems = 25;         //点卡的时候h5显示同类商品的信息
+    optional int32 Types = 26;         //
+}
+
+message RelatedShopItem{
+    optional int64 item_id = 1;         // 商品id
+    repeated ItemFile item_files = 2;      // 文件url(包括图片和视频)
+}
+
+message SellerInfo{
+    optional string nickname = 1;        // 昵称
+    optional string avatar = 2;          // 头像
+    optional int32 register_day = 3;         // 注册天数
+    optional int32 sell_item_count = 4;     // 卖出的宝贝数
+    optional int32 name_auth = 5;     // 实名认证是否通过 0没有实名  1实名认证用户
+    optional int64 player_id = 6;        // 玩家ID
+    optional string account  = 7;        // 账户名
+    optional string phone  = 8;        // 电话号码
+    optional string Photo = 9;          //相片
+    optional string Signature = 10; //个性签名
+    optional int32 sex = 11;			//性别
+    optional int32 payment_count = 12;			//付款数
+    optional int32 page_views = 13;			//浏览数
+    optional int32 Types = 14;			//性别
+}
+
+message ShopItemShowDetail{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    optional ShopItemDetail shopItemDetail = 3;    // 返回商品详情的内容
+    optional SellerInfo sellerInfo = 4;    // 返回卖家信息的内容
+    optional CommInfoForDetail commentInfo = 5;    // 留言
+}
+
+message CommInfoForDetail
+{
+    optional CommentInfo comment_info = 1;    // 留言
+    optional int32 comment_count = 2;		//留言总数
+    optional int32 good_comment_rate = 3;	//好评率
+}
+
+message CommentInfo
+{
+    optional int64 comment_id = 1;           // 评论评价唯一ID
+    optional int64 player_id = 2;           // 玩家唯一ID
+    optional string avatar = 3;            // 玩家头像
+    optional string nickname = 4;            // 玩家名字
+    optional string content = 5;            // 内容
+    optional int64 item_id = 6;            // 商品唯一ID
+    optional string time_long = 7;         // 时间
+    optional int32 sex = 8;			        //性别
+    optional int32 star_level=9;		//星级 0 普通留言 1差评 2中评 3好评
+    optional int32 like_count =10;		//点赞数
+    optional string reContent=11;	//回复内容(备用)
+    optional int32 status=12;		//状态0未回复，1已回复(备用)
+    optional string re_time = 13;         // 回复时间
+    optional bool isLike = 14;         // 是否点赞 false未点赞 true已经点赞
+}
+
+message UploadComment{
+     required int64 item_id = 1;         // 商品唯一IDd
+     required string content = 2;            // 内容
+     required int64 sponsor_Id = 3;      // 卖家id
+}
+
+message UploadEvalute{
+     required int64 item_id = 1;         // 商品唯一ID
+     required string content = 2;            // 内容
+     required int64 order_id = 3;            // 订单唯一id
+     required int32 star_level=4;		//星级 0 普通留言 1差评 2中评 3好评
+}
+message UploadCommentResult
+{
+    required int32 result = 1;         // 错误码 0成功
+    required string msg = 2;           // 错误提示
+    optional CommInfoForDetail comment = 3;    // 留言
+}
+
+message LikeCommentResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+}
+
+message LikeCommentInfo{
+     required int64 comment_id = 1;      // 评论评价唯一ID
+     required bool like_type = 2;    // true点赞,false取消点赞
+}
+
+message ShopCommentList{
+     required int64 item_id = 1;         // 商品唯一IDd
+     required int64 sponsor_Id = 2;      // 卖家id
+     required CommQuery_Con queryCon = 3;     //查询条件
+     required int32 page = 4;            // 分页
+     required int32 page_size = 5;       // 每分页物品数量
+}
+
+message ShopCommentListResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    repeated CommentInfo comments = 3;    // 留言列表
+    optional int32 AllCommCount = 4;    // 全部留言个数
+    optional int32 page = 5;            // 分页
+    optional int32 page_size = 6;       // 每分页物品数量
+    optional int32 count = 7;       // 查询的总数量
+}
+
+message ExpressCodeResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+}
+
+message StoreItemList{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    repeated ShopItem storeItems = 3;          //购物车物品列表
+}
+
+message AddStoreResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    optional int64 item_id = 3;        // 商品ID
+}
+
+message RemoveStoreResult
+{
+    required int32 result = 1;         // 错误码 0成功  0以外失败
+    required string msg = 2;           // 错误提示
+}
+
+message BatchAddStoreResult
+{
+    required int32 result = 1;         // 错误码 0成功  0以外失败
+    required string msg = 2;           // 错误提示
+}
+
+message CartItem
+{
+    required int64 item_id = 1;        // 商品ID
+    required string title = 2;         // 商品描述
+    required ItemFile item_file = 3;      // 文件url(包括图片和视频)
+    optional int32 price = 4;          // 价格
+    optional int32 add_count = 5;      // 同一个商品加购的数量
+    optional int32 origin_price = 6;   // 原来的价格
+    optional string name = 7;   // 商品名称
+    optional int32 flag = 8;   // 物品可选的状态 0 可选 1 不可选
+    optional string err_content = 9;   // 不可选显示的文本内容
+}
+
+message CartItemInfo{
+    repeated CartItem cartItems = 1;          //购物车物品列表
+    optional int64  seller_playerId = 2;    // 卖家的唯一ID
+    optional string  seller_nickName = 3;    // 卖家的昵称
+}
+
+message CartItemInfoList{
+    repeated CartItemInfo cartItemInfos = 1;          //购物车列表(包括卖家信息)
+}
+
+message AddCartResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    optional int64 item_id = 3;        // 商品ID
+    optional int32 add_count = 4;      // 同一个商品加购的数量
+}
+
+message SubCartResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    optional int64 item_id = 3;        // 商品ID
+    optional int32 add_count = 4;      // 同一个商品加购的数量
+}
+
+message ItemIdList{
+    repeated int64 itemIds = 1;         // 商品唯一ID数组
+}
+
+message RemoveCartResult
+{
+    required int32 result = 1;         // 错误码 0成功  0以外失败
+    required string msg = 2;           // 错误提示
+}
+
+message SelectCartItemResult
+{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    repeated int64 item_ids = 3;         // 黑名单商品id数组
+}
+
+message SelectCartInfo{
+    repeated int64 item_id = 1;         // 商品唯一ID数组
+}
+
+message SearchInfo{
+    required string content = 1;       // 内容
+    required int32 page = 2;            // 分页
+    required int32 page_size = 3;       // 每分页物品数量
+    optional Search_Type search_flag = 4;       //参照枚举定义
+}
+
+message SearchResult {
+    repeated ShopItem items = 1;        // 商品列表
+    required int32 page = 2;            // 分页
+    required int32 page_size = 3;       // 每分页物品数量
+    required int32 count = 4;       // 查询的总数量
+}
+
+message OrderItem{
+    required int64 order_id = 1;                // 订单ID
+    required BuyItem item = 2;                  // 订单物品列表
+    required int32 state = 3;                   // 订单状态
+    optional ReceiveAddress address = 4;        // 收货地址
+    optional string express_code = 5;           // 快递单号
+    optional string express_com = 6;           // 快递公司代码
+    optional int64 create_time = 7;            // 创建订单时间
+    optional int64 server_now_time = 8;        // 服务器当前时间
+    optional int32 delay_receive = 9;        // 延长发货 0未延长 1已延长
+}
+
+message OrderItemList{
+    repeated OrderItem items = 1;        // 订单列表
+    required int32 page = 2;             // 分页
+    required int32 page_size = 3;        // 每分页物品数量
+    required int32 count = 4;            // 查询的总数量
+}
+
+message ExpressInfo{
+    required int64 order_id = 1;                // 订单ID
+    required string code = 2;                   // 快递单号
+    required string com = 3;                   // 快递公司
+    required string send_phone = 4;                   // 发件人手机号
+}
+
+message ShopItemMessageListInfo{
+    required BuySell_Type type = 1;                     // 0买家 1卖家 参照枚举定义
+    required int64 increment_time = 2;                       // 增量查询用时间
+}
+
+message ShopItemMessageList{
+    repeated ShopItemMessage list = 1;          // 列表
+    required bool increment_flag = 2;          // 是否有增量数据 false 无  true 有
+}
+
+message ShopItemMessage{
+    required int64 message_id  = 1;                 //消息id
+    optional BuySell_Type type = 2;              // 0买家 1卖家 参照枚举定义
+    optional ItemFile file = 3;                  // 资源
+    optional string nickname = 4;               // 昵称
+    optional string avatar = 5;                 // 头像
+    optional string item_name=6;				//商品名称
+    optional string item_title=7;				//商品正文描述
+    optional string content = 8;                 // 内容
+    optional int64 create_time = 9;              // 该时间用户缓存增量查询用
+    optional int64 order_id = 10;                 // 订单唯一ID
+    optional string show_time =11;				//页面显示的时间
+    optional bool view_flag = 12;              // 是否阅读 未读false  已读true
+    optional string copy_name = 13;     // 备份商品名称(点卡的时候为了客户端不改代码,会把商品名称覆盖掉,该字段备用)
+}
+
+message ShopItemMessageInfo{
+    required BuySell_Type type = 1;                     // 0买家 1卖家 参照枚举定义
+    required ShopItemMessage shopMessage = 2;           //推送时候的消息
+}
+
+message ShopItemMessageInfoWithWho{
+    required BuySell_Type type = 1;                     //0买家 1卖家 参照枚举定义
+    required int64 player_id = 2;                // 玩家ID
+    required ShopItemMessage shopMessage = 3;           //推送时候的消息
+}
+
+message ShopOrderNotifyInfoWithWho{
+    required int64 player_id = 1;                // 玩家ID
+    optional int64 order_id = 2;              //订单号
+}
+
+message ShopOrderNotifyInfo{
+     optional int64 order_id = 1;              //订单号
+}
+
+message ShopOrderIdList{
+    repeated int64 order_ids = 1;         // 取得唯读取或有状态变更的订单id
+}
+
+message ShopOrderNotifyFlgUpdInfo{
+    repeated int64 order_ids = 1;                        // 已读需要更新的订单id
+    optional BuySell_Type buySell_Type = 2;               //用户类型 详细见枚举
+}
+
+message MessageIdList{
+    repeated int64 message_ids = 1;         // 消息唯一ID数组
+}
+
+message PaySellerInfo{
+    required int64 order_id = 1;                // 订单ID
+    required int32 money = 2;                   // 金额
+    required int64 sponsor_Id = 3;              // 卖家
+    required int64 receiver_id = 4;             // 买家
+    required int32 pay_type = 5;             // 0确认收货  1后台取消收货
+}
+
+message UploadAuthResult{
+    required int32 upload_auth_flag = 1;                // 发布商品认证flag 0:未认证 1:认证
+}
+
+//这个枚举只用于页面传参数
+enum CommQuery_Con {
+	ALL = 0; //全部
+	NEW = 1; //最新
+	GOOD = 2; //好评
+	MIDDLE = 3; //中评
+	BAD = 4; //差评
+}
+
+enum BuySell_Type {
+	Buyer = 0; //买家
+	Seller = 1; //卖家
+}
+
+enum Search_Type {
+	Composite = 0; //综合
+	PriceAsc = 1; //价格升序
+	PriceDesc = 2; //价格降序
+	NewSort = 3; //新品优先
+	SalesSort = 4; //销量
+	StoreSort = 5; //收藏数
+}
+
+//这个枚举只用于页面传参数
+enum SearchOrder_Con {
+	ALL_ORDER = 0; //全部
+	WAIT_PAY = 1; //待支付
+	WAIT_SEND = 2; //待发货
+	WAIT_RECEIVE = 3; //待收货
+	FINISH_ORDER = 4; //已完成(包括订单状态是已完成和已评价)
+}
+
+message QueryExpressInfo{
+     required int64 order_id = 1;        // 订单ID
+}
+
+message QueryExpressBody{
+    optional string dateTime = 1;                // 时间
+    optional string remark = 2;                  // 具体信息
+    optional Express_Status status = 3;          // 状态
+}
+
+message QueryExpressInfosResult{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    repeated QueryExpressBody expressInfos = 3;                // 物流信息列表
+    optional string expressPhone = 4;                  // 快递电话号码
+    optional string expressName = 5;                  // 快递公司名字
+    optional int64 userId = 6;                  // 保存后台管理用户id 后台查询物流信息时候用
+}
+
+enum Express_Status {
+    PENDING = 0; //待查询
+    NO_RECORD = 1; //无记录
+    ERROR = 2; //查询异常
+    IN_TRANSIT = 3; //运输中
+    DELIVERING = 4; //派送中
+    SIGNED = 5; //已签收
+    REJECTED = 6; //拒签
+    PROBLEM = 7; //疑难件
+    INVALID = 8; //无效件
+    TIMEOUT = 9; //超时件
+    FAILED = 10 ;//派送失败
+    SEND_BACK = 11 ;//退回
+    TAKING = 12; //揽件
+}
+
+message ExpressCom{
+    optional string code = 1;                // 快递公司代码
+    optional string name = 2;                  // 快递公司名称
+}
+
+message ExpressComInfosResult{
+    required int32 result = 1;         // 错误码 0成功 0以外失败
+    required string msg = 2;           // 错误提示
+    repeated ExpressCom commonUseComInfos = 3;                // 常用快递公司一栏表
+    repeated ExpressCom comInfos = 4;                // 快递公司一栏表
+}
+
+message ShopPointCardInfo
+{
+    optional int64 card_id = 1;         // 点卡id
+    optional string card_no = 2;    // 点卡号
+    optional string card_password = 3;    // 点卡密码
+    optional string key = 4;             // 卡密的key(每个卡不一样)
+}

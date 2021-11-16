@@ -1,0 +1,201 @@
+// 许愿池活动相关proto
+package share_message;
+import "ggotag.proto";
+
+//付费用户地理位置分布日志
+message PayPlayerLocationLog{
+	optional string Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+	optional int64 DayTime=2;		//报表日期 0点时间戳
+	optional string Position=3;		//位置 国内省，国外国家
+	optional string Piece=4;		//国家代码 CN
+	optional int32 DeviceType=5;	//设备类型 1 IOS，2 Android，3 other
+	optional int64 PlayerId=6;      //用户ID
+}
+
+
+//wish_player_activity 玩家扩展表
+message WishPlayerActivity{
+    optional int64 PlayerId = 1[(gogoproto.jsontag) = "_id,omitempty"];         //玩家id
+    repeated ActivityData Data = 2;  // 天数,次数
+    optional int64 Diamond =4; // 消耗钻石
+    optional int64 WeekPrize = 5; // 每周更新一次的周榜数据.
+    optional int64 MonthPrize =6; // 每月更新一次的月榜数据.
+    optional int64 UpdateTime = 8; // 上一次更新时间
+    optional int64 WeekUpdateTime = 9; // 周的更新时间,上一次更新时间 毫秒
+    optional int64 MonthUpdateTime = 10; // 月的更新时间,上一次更新时间 毫秒
+
+    optional int64 UpdateDiamondTime = 15; // 上一次更新钻石的时间,排行重名的时候使用.
+
+    optional int64 LastWeekDiamond = 16; // 上个星期周消费钻石
+    optional int64 LastMonthDiamond = 17; // 上个月消费的钻石
+
+}
+//活动数据
+message ActivityData{
+    optional int64 PoolRuleId =   1; // 奖池id
+    optional int64 Value = 2;           // 当前值,天: 当前的累计天数,次:累计次数.
+    optional int32 Type = 4;           // 规则类型： 1、次数 2、天数 3、周排名 4、月排名
+    optional int64 UpdateTime = 8; // 上一次更新时间毫秒
+    optional int32 DayLun = 14;          // 天数类型的轮数.
+}
+
+
+
+
+//活动奖项日志记录:wish_acitvity_prize_log
+message WishActivityPrizeLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 PlayerId =2;         //玩家Id
+    optional int32 Type = 3;            //活动大类型:1连续抽奖次数,2、天数 3、周排名 4、月排名
+    optional string PlayerAccount=4;    //玩家柠檬号
+    optional int64  ActType=5;          // 规则表中的key
+    optional int64 PrizeType = 6;       //奖项类型:1钻石，2实物
+    optional int64 PrizeValue = 7;      //奖项值:当奖项类型=1时，该值表示钻石，当奖项类型=2时，该值表示WishItemId
+//    optional int64 WishActPoolId = 8;   // 奖池id
+    optional int64 WishActPoolRuleId = 15;   // 奖池规则id
+    optional int32 Status = 9;          //奖项状态:0待领取，1已领取
+    optional int64 CreateTime = 10;     //创建时间 达到时间
+    optional int64 FinishTime = 11;     //领奖时间
+    optional string Note=12;            //备注
+    optional string ActTypeTitle=13[(gogoproto.jsontag) = "-"];    //活动规则ID对应的标题名称 后台显示使用
+    optional int32 DayLun = 14;          // 天数类型的轮数.
+}
+
+// 活动奖池管理  wish_act_pool
+message WishActPool {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional string Name = 5; // 名称
+    optional int32 BoxNum = 6; // 包含盲盒数量
+    optional int64 CreateTime = 7; // 创建时间
+    repeated int64 BoxIds = 8; // 盲盒列表
+}
+
+// 累计规则  wish_act_pool_rule
+message WishActPoolRule {
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 WishActPoolId = 2; // 奖池id
+    optional int32 Key = 11; // 累计次数/天数/周排名/月排名 根据Type来决定,Type为1,那么这字段就是次数的类型多少次 // 20
+    optional int64 Diamond = 12; // 赠送钻石数
+    optional int64 WishItemId =13 ; // 实物奖励(wish_item表的id)
+    optional int32 AwardType = 14; // 奖励类型：1、钻石奖励 2、实物奖励
+    optional int32 Type = 15; // 规则类型： 1、次数 2、天数 3、周排名 4、月排名
+}
+//充值活动配置表wish_coin_recharge_act_cfg
+message WishCoinRechargeActivityCfg{
+    //硬币额度
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //人民币额度 单位分
+    optional int64 Amount=2;
+    //首充赠送钻石数
+    optional int64 FirstDiamond=3;
+    //是否首充送展示
+    optional bool IsFirstDiamond=4;
+    //首充赠送电竞币数
+    optional int64 FirstEsCoin=5;
+    //是否首充赠送电竞币数
+    optional bool IsFirstEsCoin=6;
+    //首充赠送比例
+    optional int64 FirstRatio=7;
+    //日常赠送钻石数
+    optional int64 DailyDiamond=8;
+    //是否日常赠送钻石数
+    optional bool IsDailyDiamond=9;
+    //日常赠送电竞币数
+    optional int64 DailyEsCoin=10;
+    //是否日常赠送电竞币数
+    optional bool IsDailyEsCoin=11;
+    //日常赠送比例
+    optional int64 DailyRatio=12;
+
+}
+
+//用户访问记录表 wish_player_access_log
+message WishPlayerAccessLog{
+    optional int64 PlayerId = 1[(gogoproto.jsontag) = "_id,omitempty"];         //玩家id
+    optional int64 WishTime = 2;                      //上次访问许愿池日期（天）
+    optional int64 ExchangeTime = 3;                  //上次访问兑换钻石页日期（天）
+    optional int64 DareTime = 4;                      //上次访问挑战赛日期（天）
+    optional int64 ChallengeTime = 5;                 //上次点击挑战赛盲盒日期（天）
+    optional int64 VExchangeTime = 6;                 //上次兑换钻石成功日期（天）
+    optional int32 RetainedDay = 7;                   //最新留存天数
+}
+
+//埋点统计许愿池访问报表 report_wish_log
+message WishLogReport{
+    optional int64 CreateTime = 1 [(gogoproto.jsontag) = "_id,omitempty"];  //
+    optional int64 WishTime = 2;                 //访问许愿池次数
+    optional int32 NewPlayer = 3;                //访问许愿池新用户数
+    optional int32 OldPlayer = 4;                //访问许愿石旧用户数
+    optional int64 ExchangeMen = 5;             //访问兑换钻石页人数
+    optional int64 VExchangeTime = 6;            //成功兑换钻石次数
+    optional int32 VExchangeMen = 7;             //成功兑换钻石人数
+    optional int32 DareMen = 8;                  //访问挑战页人数
+    optional int32 ChallengeMen = 9;             //点击挑战盲盒人数
+    optional int32 TwoDayKeep = 10;              //次日留存天数
+    optional int32 ThreeDayKeep = 11;            //三日留存天数
+    optional int32 SevenDayKeep = 12;            //七天留存天数
+    optional int32 FifteenDayKeep = 13;          //十五天留存天数
+    optional int32 ThirtyDayKeep = 14;           //三十天留存天数
+}
+
+//用户首充记录 player_recharge_first
+message PlayerRechargeActFirst{
+    optional int64 PlayerId = 1[(gogoproto.jsontag) = "_id,omitempty"];    //玩家id
+    repeated int64 Levels = 2;                          //已首充挡位
+}
+
+//用户充值活动日志表 player_recharge_act_log
+message PlayerRechargeActLog{
+    optional int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];    //id
+    optional int64 PlayerId = 2;        //玩家ID
+    optional int64 CreateTime = 3;      //充值时间
+    optional int64 Money = 4;           //消耗金额
+    optional int64 Coin = 5;            //充值硬币
+    optional int64 GiveCoin = 6;        //赠送币数，根据类型区分
+    optional int32 GiveType = 7;        //赠送币类型，1-钻石 2-电竞币
+}
+
+
+// 许愿池活动后台报表 report_wish_activity
+message WishActivityReport{
+    optional int64 CreateTime = 1 [(gogoproto.jsontag) = "_id,omitempty"];  //
+    optional int64 InPoolCount = 2;                 //访问许愿池次数
+    optional int32 InPoolPlayerCount = 3;                //访问许愿池用户数
+    repeated WishActivityUnit DayCountData = 4; // 累计完成天数的用户数
+    repeated WishActivityUnit CounterData = 5; // 累计完成次数的用户数
+}
+// 许愿池活动累计完成天/次数数的用户数
+message WishActivityUnit {
+    optional int64 WishActPoolRuleId = 1;
+    optional int64 ActPoolId = 2;   //许愿池id
+    optional int32 Count = 3;       //多少天或者多少次
+    optional string Key = 4;        //前端显示用（eg:许愿池A-7天）
+    optional int64 Value = 5;       // 用户数
+}
+
+// 周排名 wish_week_top
+message WishWeekTop{
+    optional int64 PlayerId = 1[(gogoproto.jsontag) = "_id,omitempty"];         //玩家id
+    optional int64 WeekPrize =4; // 消耗钻石
+    optional int64 WeekPrizeId = 16; // 周榜奖项id
+    optional int64 CreateTime = 8; // 上一次更新时间
+    optional int64 Status = 9; // 0-不能领取;1能领取
+}
+
+// 月排名 wish_month_top
+message WishMonthTop{
+    optional int64 PlayerId = 1[(gogoproto.jsontag) = "_id,omitempty"];         //玩家id
+    optional int64 MonthPrize =4; // 消耗钻石
+    optional int64 MonthPrizeId = 16; // 周榜奖项id
+    optional int64 CreateTime = 8; // 上一次更新时间
+    optional int64 Status = 9; // 0-不能领取;1能领取
+}
+
+// 玩家抽奖记录,去重天数的.  wish_day_activity_log
+message WishDayActivityLog{
+    optional int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];    //id
+    optional int64 PlayerId = 3;         //玩家id
+    optional int64 WishActPoolId =  2; // 奖池id
+    optional int64 CreateTime = 8; // 零点时间戳.
+}
+

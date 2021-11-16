@@ -1,0 +1,295 @@
+// 如果仅用于通讯的 message,别放在这里
+package share_message; 
+
+import "ggotag.proto";
+// import "allcommon.proto";
+
+enum AddFriend_Type{
+	ACCOUNT = 1;//柠檬号搜索
+	PHONE = 2;//手机号码
+	CODE = 3;//二维码添加
+	WECHAT = 4;//微信好友
+	TEAM = 5;//群聊添加
+	NEARBY = 6;//附近的人
+	PLAYERID = 7;//玩家id
+	CARD = 8;//名片添加
+	STRANGER = 9;//陌生人
+	REGISTER = 10;//注册推荐
+	SQUARE = 11;// 社交广场.
+	VOICE_CARD = 12; //语音名片
+}
+
+
+//玩家登录表  player_account
+message PlayerAccount{
+	required int64 PlayerId = 1 [(gogoproto.jsontag) = "_id,omitempty"];
+	optional string Account = 2;//手机号码
+	optional string Email = 3;//电子邮箱
+	optional string Password = 4;//手机帐号密码
+	//optional string Token = 5;//随机生成码
+	optional string PayPassword = 6;//支付密码
+	optional string OpenId = 7;//微信openId
+	optional int64 CreateTime = 8;//注册时间
+	optional bool IsBind = 9; //是否已绑定过
+	optional string AreaCode = 10;  //国际区号
+	optional string UnionId=11; //微信uid
+}
+
+message BankInfo{
+	optional string BankId = 1;// 银行卡号
+	optional string BankCode = 2;// 银行卡编码
+	optional int64 Time =3;// 绑定时间
+	optional string SignNo = 4; // 签约号
+	optional string BankName = 5;// 银行名称
+	optional string BankPhone = 6;// 银行签约手机
+	optional string Provice = 7;    // 开户省份 如:广东省
+	optional string City = 8;    // 开户市 如:广州市
+	optional string Area = 9;    //开户区:天河区
+}
+
+message PlayerSetting{
+	optional bool IsSafePassword = 1;//是否开启安全密码
+	optional bool IsNewMessage = 2;//新消息通知
+	optional bool IsMusic = 3;//声音开关
+	optional bool IsShake = 4;//震动开关
+	optional bool IsAddFriend = 5;//好友认证-新版是否允许招呼
+	optional bool IsPhone = 6;//手机号码添加
+	optional bool IsAccount = 7;//闲聊号码添加
+	optional bool IsTeamChat = 8;//群聊添加-新版是否允许招呼
+	optional bool IsCode = 9;//二维码添加-新版是否允许招呼
+	optional bool IsCard = 10;//名片添加-新版是否允许招呼
+	optional string SafePassword = 11;//安全密码
+	optional bool IsSafeProtect = 12;//安全防护
+	optional bool IsTouch = 13;//是否戳一戳
+	optional bool IsMessageShow = 14;//消息预览
+
+	optional bool IsOpenSquare = 15;// 是否关闭社交广场总开关,false 表示开启.
+	optional bool IsOpenZanOrComment = 16; // 点赞或评论我的动态开关
+	optional bool IsOpenRecoverComment = 17; // 回复我的评论开关
+	optional bool IsOpenMyAttention = 18; // 我关注的人发布新动态开关
+	optional bool IsOpenRecommend = 19; // 人气动态推荐
+
+	optional bool IsOpenCoinShop = 20; //  硬币商城 ,false 表示开启.
+	optional bool IsBanSayHi = 21;     //是否禁止陌生人打招呼，false 不禁止，true 禁止
+}
+
+//收藏的信息
+message CollectInfo{
+	repeated Collect Collect =1;//
+	optional int32 Index = 2;//
+	optional string Name = 3;//	来源于哪里
+	optional int64 Time = 5;//
+}
+
+message Collect{
+	optional int32 Type = 1;//	1:图片 2:视屏 3:文件 4:连接 5:文字 6:语音
+	optional string Content = 2;//文件名字
+	optional int64 Time = 3;//
+	optional string Name = 4;//
+	optional string Data = 5;//文件数据
+	optional string HeadIcon = 6;//
+}
+
+//玩家基础表  player_base
+message PlayerBase {
+	required int64 PlayerId = 1 [(gogoproto.jsontag) = "_id,omitempty"];
+	optional string Password = 24 [(gogoproto.jsontag) = "-"];				//密码
+	optional string NickName = 2;				//昵称
+	optional string HeadIcon = 3;				//头像
+	optional int32 Sex = 4;						//性别 1男 2女
+	optional int64 Gold = 5;					//玩家携带的金币
+	optional bool IsRobot = 6;					//是否是机器人
+	optional int64 LastOnLineTime = 7;			//最后上线时间
+	repeated string Photo = 8;					//相片
+	optional string Email = 9;					//邮箱
+	optional string PeopleId = 10;				//身份证id
+	optional string Account = 11;				//闲聊号
+	optional string Phone = 12;					//手机号
+	optional int64 CreateTime = 13;				//注册时间
+	repeated int64 TeamIds = 15;				//群id
+	optional bool IsOnline = 16;				//是否在线
+	repeated BankInfo BankInfo = 17;			//银行卡
+	optional string RealName = 18;				//真实姓名
+	optional string Signature = 19;				//个性签名
+	optional string Provice = 20;				//省
+	optional string City = 21;					//市
+	optional string Area = 22;					//区
+	optional bool IsRecommend=23;				//是否推荐
+	optional PlayerSetting PlayerSetting = 25;	//玩家个人设置
+	repeated int64 BlackList = 26;				//黑名单
+	optional int64 LastLogOutTime = 27;			//最后下线时间
+	optional int32 LoginTimes=28;				//登录次数
+	optional int64 OnlineTime=30;				//在线时长
+	optional double X = 31;						//X坐标
+	optional double Y = 32;						//Y坐标
+	optional int32 DeviceType=33;				//设备类型 1 IOS，2 Android，3 PC
+	optional bool IsNearBy = 34;				//是否有附近的人的打招呼消息
+	optional string Channel = 35;				//渠道 注册来源
+	optional int32 Types=36;					//用户类型 1普通用户,2营销运营,3商城账号,4管理运营,5官方运营,6运营测试
+	optional int64 LastAssistantTime = 37;      //最后一次取畅聊助手的时间
+	optional string  WXOpenId = 38;
+	optional string  WXSessionKey = 39;
+	optional string WXUnionid = 40;
+	optional int64 ClearLocalLogTime = 41;		//清除本地聊天记录时间
+	optional int64 ComplaintTime = 42;			//上次投诉意见的时间
+	optional bool IsVisitor = 43;				//是否是游客
+	repeated CollectInfo CollectInfo = 45; 		//收藏信息
+	optional int32 Sid = 46;                	//所在大厅sid
+	optional int64 TodayOnlineTime=47;			//当日在线时长
+	optional string CreateIP=48;				//注册IP
+	optional string LastLoginIP=49;				//最后登陆IP
+	optional string ApiUrl=50;					//用户后台api地址
+	optional string SecretKey=51;				//用户后台apiKey
+	optional int32 FreeTimes = 52;             	//提现免手续费次数:默认初始3次
+	optional int64 AutoLoginTime = 53;			//自动登录设置时间
+	optional string AutoLoginToken = 54;		//自动登录的token
+	optional int32 Status=55;					//用户状态 0 正常 1用户冻结,2后台冻结，3注销中，4已注销
+	optional int32 is_friend = 56 [(gogoproto.jsontag) = "-"];				//后台(不用存库) 0不是好友 1是好友
+	optional string DeviceCode=57;				//最后登录设备码
+    optional CallInfo CallInfo = 58;			//正在拨打电话的信息
+	repeated int32 Label = 59;					//兴趣标签
+	optional bool IsRecommendOver = 60;			//是否选择了推荐好友和群信息
+	optional string Note=61;					//备注
+	repeated int32 CustomTag=62;				//自定义标签
+	optional int32 GrabTag=63;					//抓取标签
+	optional string Token = 64;					//登陆token
+	optional string PayPassword = 65;			//支付密码
+	optional string Version = 66;				//当前客户端使用版本
+	optional string Brand = 67; 				//登陆设备品牌
+
+	repeated int64 AttenList = 68 ;				//用户社交广场关注id列表
+	repeated int64 DynamicList = 69; 			//自己发表的动态id列表
+	optional int64 Zan = 70;					//社交广场被点赞数
+	repeated int64 FansList = 71;				//粉丝列表
+	optional int32 RegType = 72 [(gogoproto.jsontag) = "-"];	//注册方式:  7 手机号码注册,8 一键登录注册,9 微信登录注册
+	optional int64 VerifiedTime=73; 			//实名认证时间
+	optional int64 Coin = 74;                   //硬币，充值获得
+	optional int64 CheckNum=75;					//过审广场动态数量 大于50 自动审核 违规重置为0
+
+	optional string AreaCode = 76;  //国际区号
+	optional string BackgroundImageURL = 77;// 我的主页的背景图
+	optional bool IsBrowse2Square = 78;  //  是否连续浏览2层屏内容,如果是false,后端不处理,直接查询,如果是true,后端埋点
+	optional int32 ApkCode = 79;              //登录appid版本:100 用旧版，101用新版
+	optional bool FirstAddSquareDynamic = 80;  //  该用户是否已第一次发布动态
+	optional GeoJson Points1 = 81; // 当前玩家坐标的经纬度点.
+//	repeated double Points = 81; // 当前玩家坐标的经纬度点.
+	optional bool IsCheckChatLog=82;		//聊天记录查询白名单 true不允许直接查询聊天记录
+	optional double Distance = 83; //  经纬度距离
+	optional int64 BCoin = 84;     //  绑定硬币，非充值获得
+	optional double NearSort = 85[(gogoproto.jsontag) = "-"];	// 附近的人排序字段
+	optional int32 OnlineStatus = 86;	// 在线状态
+	optional string YoungPassWord = 87;  //青少年保护密码
+	optional bool IsLoadedAllSessions = 88 ;    //是否已经加载过所有会话，仅可以加载一次
+	optional bool IsCanRoam =89;            //是否开启记录漫游
+
+	optional int64 VCZanNum = 90;            //玩家名片被点赞数量
+    optional string BgImageUrl = 91;         //背景图
+    optional int64 MixId = 92;              //录音ID
+    repeated int32 PersonalityTags =93;        //个性化标签
+    optional int32 Constellation =94;        //星座信息
+	optional int64 BsVCZanNum=95;			//后台设置的玩家名片被点赞数量
+	optional int64 ReadLoveMeLogTime = 96;   //读取喜欢我列表消息时间
+	optional int64 ConstellationTime =97;        //修改星座的时间
+
+    optional int64 ESportCoin = 98;				//电竞币
+	optional string Operator=99;				//操作人
+	optional int64 BanOverTime=100;				//封禁结束时间
+
+	optional int64 Diamond = 500; // 钻石（许愿池）
+}
+
+message GeoJson{
+	optional string type = 1; // 值为Point
+	repeated double coordinates = 2; // [经度,维度]
+}
+
+message CallInfo{
+    optional int64 PlayerId = 1;//
+    optional string sMsg = 2;//json结构的字符串
+}
+
+message FriendBase{
+	repeated FriendInfo Friends = 2;			//好友列表信息
+}
+
+message FriendInfo{
+	optional int64 PlayerId = 1;//
+	optional string ReName = 2;//备注
+	optional FriendSetting Setting = 3;//好友设置
+	optional int32 Type = 4;//添加类型
+	optional int64 CreateTime = 5; //添加时间
+}
+
+message FriendSetting{
+	optional bool IsTopChat = 1;//置顶聊天
+	optional bool IsNoDisturb = 2;//消息免打扰
+	optional bool IsAfterReadClear = 3;//阅后即焚
+	optional bool IsScreenShotNotify = 4;//截屏通知
+}
+
+message AllAddPlayerMsg{
+	repeated AddPlayerRequest AddPlayerRequest = 1;//所有好友申请
+}
+
+message AddPlayerRequest{
+	required int64 PlayerId = 1;	//申请加好友的id
+	optional int64 Time = 2;	    //申请的时间戳
+	optional string Phone = 3;	//申请人的手机号码
+	optional string Text = 4;		//申请信息
+	optional AddFriend_Type Type = 5;//申请类型 1：账号（手机号）2：手机通讯录 3：扫一扫（二维码）4：邀请手机联系人 5：邀请微信好友 6:附近的人
+	optional int32 Result = 6;//    1:未处理  2:接受 3:过期
+	optional int64 Id = 7;//        请求id
+	optional bool IsRead = 8;//     是否已读
+	optional string NickName = 9;// 昵称
+	optional string HeadIcon = 10;//头像
+	optional string Account = 11;   //闲聊号
+	optional string Signature = 12;//个性签名
+	optional string Photo = 13;//相片
+	optional int32 Sex = 14;//
+	optional int32 Types = 15;//
+}
+
+//玩家推文表  player_tweets
+message PlayerTweets{
+    required int64 PlayerId = 1 [(gogoproto.jsontag) = "_id,omitempty"];
+    repeated int64 TweetsIdList = 2;    //推文ID列表
+    optional int64 CreateTime = 3;      //创建时间
+    optional int64 UpdateTime = 4;      //更新时间
+}
+
+//玩家自定义表情 player_emoticon
+message PlayerEmoticon{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 PlayerId = 2;    //玩家id
+    optional int32 TypeId = 3;      //表情类型
+    optional string Data =4;        //表情数据
+    optional bool IsSave = 5 ;      //是否需要存储
+}
+
+//玩家装备表 player_equipment
+message PlayerEquipment{
+    optional int64 PlayerId = 1 [(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 GJ =2;  //挂件
+    optional int64 QP =3;  //气泡
+    optional int64 MP =4;  //铭牌
+    optional int64 QTX =5;  //群特效
+    optional int64 MZBS =6;  //名字变色
+}
+
+//玩家绑定硬币获得记录表 player_bcoin_log
+message PlayerBCoinLog{
+    optional int64 Id = 1 [(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 PlayerId =2; //玩家id
+    optional int32 Way = 3; //获得方式
+    optional int64 OverTime = 4; //过期时间
+    optional int32 Status = 5;  //0未使用，1已使用，2已过期
+    optional int64 CreateTime = 6; //创建时间
+    optional int64 BCoin  =7;   //获得硬币
+    optional int64 CurBCoin = 8;  //当前硬币
+    optional bool IsSend = 9;  // 是否已经通知过了
+}
+//玩家拥有的会话列表 player_chat_session
+message PlayerChatSession{
+    optional int64 PlayerId =1 [(gogoproto.jsontag) = "_id,omitempty"];
+    repeated string SessionIds = 2;  //会话列表
+}

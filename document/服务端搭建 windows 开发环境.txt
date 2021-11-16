@@ -1,0 +1,130 @@
+﻿. 分配代码权限
+	注册一个 GitHub 帐号或是把已有 GitHub 帐号发给负责人
+
+. Git 工具相关
+	Git 最新版 (强烈建议) https://git-scm.com/downloads
+		装完后设置一下
+		git config --global core.autocrlf false # 禁止回车换行变来变去
+		git config --global core.safecrlf true # 检查混用多种格式的换行符
+
+		git config --global --list # 查看是否生效，看到以下结果表示成功
+		core.autocrlf=false
+		core.safecrlf=true
+
+	Sourcetree 最新版 (强烈建议) https://www.sourcetreeapp.com/
+	TortoiseGit 最新版 (强烈建议) 注意不是 TortoiseSVN 哦. https://tortoisegit.org/download/
+
+
+. 数据库
+	. MongoDB
+		mongodb-win32-x86_64-2008plus-ssl-4.0.5-signed
+		命令行连入数据库加一个用户，大家统一密码，不要改
+		估计你的客户端装在 C:\Program Files\MongoDB\Server\4.0\bin\mongo.exe
+			use admin
+			db.createUser({ user: "root", pwd: "MongoDB.2019", roles: ["root"] }) 
+			db.auth("root", "MongoDB.2019")  # 如果返回1，则表示成功
+
+	. MySQL (可不装，已不再使用 MySQL)
+		mysql-installer-community-5.7.25.0.msi    密码统一成  MySQL.2019
+		ALTER USER 'root'@'localhost' IDENTIFIED BY 'MySQL.2019';
+
+
+
+. MongoDB 数据库界面工具
+	Studio 3T (要收费，需定时破解)
+	Robo 3T (免费)
+
+. python 3 最新版,最好装 64 位 (编译 *.proto 用)
+
+. Golang  
+	安装最新版  https://studygolang.com/dl 
+		最好选择 *.msi 安装包，但是一定要选择 x86-64 架构
+		文件名估计是 *windows-amd64.msi
+	修改 GOPATH ,建议是磁盘根目录,比如 D:\ 或 E:\ 或 F:\
+	增加 PATH 环境变量，指向 %GOPATH%\bin (有些工具执行 go get 会装到这里)
+
+. IDE	
+	. Visual Studio Code (建议)
+	. jetbrains Goland (建议)
+	. Sublime Text 3 (可装可不装)
+	. Notepad++ (可装可不装)
+
+
+. 写 Golang 代码的各种辅助插件
+	在 $GOPATH/src/golang.org/x/ 目录下执行以下命令（没有的目录自己手工加）
+	git clone https://github.com/golang/tools.git
+
+
+. proto 编译工具 protoc-gen-gogofast.exe (会安装在 %GOPATH%/bin 目录下)
+	go get github.com/akqp2019/protobuf/protoc-gen-gogofast
+	(此包是基于 github.com/gogo/protobuf/protoc-gen-gogofast 改了一下的)
+
+
+
+服务端各种依赖包
+
+	. protobuf
+		go get github.com/akqp2019/protobuf/proto
+		(此包是基于 github.com/gogo/protobuf/proto 改了一下的)
+
+	. websocket 包
+		go get github.com/gorilla/websocket
+
+	. 配置文件包
+		go get gopkg.in/yaml.v2
+
+	. 日志包
+		go get github.com/astaxie/beego/logs
+
+	. 管理后台用的二维码校验包
+		github.com/tuotoo/qrcode
+
+	. 定时任务包
+		go get github.com/robfig/cron
+
+	. MongoDB 驱动	
+		go get  github.com/akqp2019/mgo
+		(此包是基于 gopkg.in/mgo.v2 改了一下的)
+		
+	. MySQL 驱动包(可不装，不再使用 MySQL 了)
+		go get github.com/go-sql-driver/mysql
+
+	. 阿里云第三方库(短信服务)
+		go get github.com/aliyun/alibaba-cloud-sdk-go/sdk
+
+	. 令牌桶限速器
+		go get github.com/juju/ratelimit
+
+	. 死锁检测
+		go get github.com/sasha-s/go-deadlock
+
+	. redis 驱动(可以先不装，后续才需要用的)
+		go get github.com/gomodule/redigo/redis
+
+	. 基于 etcd 的分布式锁
+		go get go.etcd.io/etcd/clientv3
+
+	. 序列化库和编译工具 (msgp.exe 会安装在 %GOPATH%/bin 目录下)
+		go get github.com/tinylib/msgp
+
+	.转换字符串编码
+		go get github.com/axgle/mahonia	
+                .腾讯sdk接口第三方库
+		go get -u github.com/tencentcloud/tencentcloud-sdk-go
+----------------------------------------
+
+下面的可以先不装，后续才需要用的
+
+	. 打 Linux 包工具
+		7z 压缩工具 https://www.7-zip.org/download.html 选 *.msi 文件， 64-bit x64 架构
+		安装后增加系统环境变量 PATH，一般你是安装在 C:\Program Files\7-Zip
+
+	. 终端 https://www.netsarang.com/zh/free-for-home-school/
+		建议选 XSHELL PLUS, 是 xshell 和 xftp 二合一的包 (免费版)
+
+
+	. redis windows 版(里面的版本都比较低)
+		https://github.com/microsoftarchive/redis/releases
+
+	. etcd etcd-v3.3.13
+		https://github.com/etcd-io/etcd/releases

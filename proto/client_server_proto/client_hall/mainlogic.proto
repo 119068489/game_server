@@ -1,0 +1,897 @@
+package client_hall; //
+import "base.proto";
+import "common.proto";
+import "game_server/proto/share_message/allcommon.proto";
+import "game_server/proto/share_message/table_struct.proto";
+import "game_server/proto/share_message/table_struct_player_base.proto";
+import "game_server/proto/share_message/ShopCommon.proto";
+
+message LoginMsg {
+	required string Account = 1;            // 手机号 或 邮件 或 一串字符
+	optional string Token = 2;              //登陆token
+	optional string RegistrationId = 3;     //极光id
+	optional string Channel = 4;            //渠道
+	optional int32 login_type= 5;           // 0直接重连 1登录页
+	optional int32 device_type = 6;         //设备类型 1 IOS，2 Android，3 PC
+	optional int32 Type = 7;// 1:密码登录  2:验证码登录 4.一键登录 5.微信登录 6.自动登录
+	optional int64 PlayerId = 8; //玩家id
+	optional string VersionNumber = 9;		//版本号
+	optional string Brand = 10;//登陆设备品牌
+	optional bool IsAppAct=11; 		//是否是有效激活设备
+	optional bool IsUserReg=12;		//是否是有效注册人数
+	optional bool IsLoginMan=13;    	//是否是有效登录人数
+	optional bool IsLoginFreq=14;	//是否是有效登录次数
+
+}
+
+message UpdateGold{
+	optional int64 Gold =1;//
+}
+
+message AddPlayerInfo{
+	required string Account = 1;//添加的手机账号
+	optional share_message.AddFriend_Type Type = 2;//添加好友的渠道 1：柠檬号 2：账号（手机号) 3：扫一扫（二维码）4：微信好友 5：群添加好友 6:附近的人 7:人物id
+	optional string Text = 3;//申请信息
+	optional int64 PlayerId = 4;//
+	optional bool Mark = 5;//自己是否弹弹窗
+}
+
+message AccountInfo{
+	optional string Account = 1;//手机  账号
+	optional share_message.AddFriend_Type Type = 2;//添加好友的渠道 1：柠檬号 2：账号（手机号) 3：扫一扫（二维码）4：微信好友 5：群添加好友 6:附近的人 7:人物id
+	optional int64 PlayerId = 3;//
+}
+
+message AddBookInfo{
+	repeated string PhoneList = 1;//手机号码列表
+}
+
+
+message CreateTeam{
+	optional int32 Mark = 1;//1 全选 2 添加下面玩家id列表  3不添加下面的玩家id列表
+	repeated int64 PlayerList = 2;//玩家id列表
+	optional string TeamName = 3;//
+	optional int64 AdminId = 4;// 后台操作id
+	optional string HeadUrl = 5;// 群头像
+    optional string Topic = 6;  //话题，没有值表示普通群，反之话题群
+    optional string TopicDesc = 7; //话题群简介
+}
+
+message PeopleIdInfo{
+	optional string Name = 1;//
+	optional string PeopleId = 2;//
+}
+
+message BankMessage{
+	optional string UserName = 1;   //持卡人姓名
+	optional string IdType = 2;     //证件类型://1身份证，2军官证，3，士兵证，4护照，5港澳通行证，6临时身份证，7户口本8，警官证，9外国人永久居留证，10其他，11外国护照，12营业执照
+	optional string IdNo = 3;       //证件号
+	optional string BankCardNo = 4; //支付银行卡号
+	optional string MobileNo = 5;   //银行卡绑定的手机号
+	optional string ExpireDate = 6; //选填:信用卡有效期:YY/MM
+	optional string Cvv = 7;        //选填:信用卡cvv安全码
+	optional string BankCode = 8;   //银行编码:参考银行编码附录
+	optional string JPOrderNo = 9;  //汇聚流水号
+	optional string OrderNo = 10;   //内部订单号，服务器返回，前端需原值传回服务器
+	optional string MsgCode =11;    //短信验证码
+	optional string SignNo = 12;    //签约id，后续支付用
+	optional string Provice = 13;    // 开户省份 如:广东省
+	optional string City = 14;    // 开户市 如:广州市
+	optional string Area = 15;    //开户区:天河区
+	optional bool IsModify = 16;     //是不是更新卡
+}
+
+message VersionInfo{
+	optional string Version = 1;//
+}
+
+message DelFriendInfo{
+	optional int64 PlayerId = 1;//
+	optional bool IsBlack = 2;//是否添加进黑名单
+}
+
+message BlackInfo{
+	optional int32 Type = 1;//1:添加进黑名单  2:移除黑名单
+	optional int64 PlayerId = 2;//玩家id
+}
+
+
+
+message MoneyAssistantInfo{
+	required int64 LogId = 1 ;
+	optional int64 PlayerId = 2;			//用户ID
+	optional int64 ChangeGold = 3;			//变化金币
+	optional int32 SourceType = 4;			//源类型(支付类型) 101:充值 102:收红包 103:转入 104:收款 111:红包退款 112:转账退款 113:商家退款 201:提现 202:发红包 203:转出 204:付款 215:罚没 216:手续费
+	optional string Note=5;					//备注
+	optional int64 CreateTime = 6;			//流水时间
+	optional int64 Gold = 7;//		余额
+	optional string OrderId = 8;//	交易单号
+}
+
+message AllMoneyAssistantInfo{
+	repeated MoneyAssistantInfo Info = 1;
+}
+
+message LocationInfo{
+	optional double X = 1;//
+	optional double Y = 2;//
+	optional string Province = 3;//
+	optional string City = 4;//
+	optional int64 PlayerId = 5;//
+	optional int32 Type = 6;//	0:默认 1:只看男  2:只看女
+	optional string Area = 7;//
+}
+message LocationInfoByPage{
+	optional double X = 1;//
+	optional double Y = 2;//
+	optional string Province = 3;//
+	optional string City = 4;//
+	optional int64 PlayerId = 5;//
+	optional int32 Type = 6;//	0:默认 1:只看男  2:只看女
+	optional string Area = 7;//
+	optional int32 Page = 8;//	当前页
+	optional int32 PageSize = 9;//	页面大小
+}
+
+message AllLocationPlayerInfo{
+	repeated LocationPlayerInfo PlayerInfo = 1;
+}
+
+message LocationPlayerInfo{
+	optional int64 PlayerId = 1;//
+	optional int32 Sex = 2;//
+	optional double Distance = 3;//距离
+	optional string Signature = 4;//个性签名
+	optional bool IsFriend = 5;// 是否是朋友
+	optional string HeadIcon = 6;//头像
+	optional string Name = 7;//
+	optional string Province = 8;//
+	optional string City = 9;//
+	optional string Account = 10;//柠檬号
+	optional string Photo = 11;//相片
+	optional string Area = 12;//地区
+	optional int32 Types = 13;//
+	repeated share_message.LabelInfo LabelInfo = 31;// 标签信息
+}
+
+message NearByMessage{
+	required int64 PlayerId = 1; // 玩家 id
+	optional string Content = 2;//消息
+	optional string NickName = 3;// 玩家呢称
+	optional string HeadIcon = 4;// 玩家头像
+	optional int32 Sex = 5;// 性别 0:默认 1：男 2:女
+	optional string Provice = 6;//省
+	optional string City = 7;//市
+	optional string Photo = 8;//相片
+	optional string Account = 9;//柠檬号
+	optional int64 Time = 10;//打招呼时间
+	optional bool IsAdd = 11;//是否已添加为好友
+	optional string Signature = 12;//个性签名
+	optional int32 Types = 13;//
+}
+
+message AllNearByMessage{
+	repeated NearByMessage NearByMessage = 1;//所有附近的人打招呼信息
+}
+message NearByInfoReply{
+	optional AllLocationPlayerInfo AllNearByInfo = 1;//所有在附近的人给我打招呼的信息
+	repeated NearByMessage AllNewNearByInfo = 2;//附近的人打招呼信息
+}
+message NearByInfoReplyByPage{
+	optional AllLocationPlayerInfo AllNearByInfo = 1;//所有在附近的人给我打招呼的信息
+	repeated NearByMessage AllNewNearByInfo = 2;//附近的人打招呼信息
+	optional int32 Count = 3;// 总条数.
+}
+
+message PageInfo{
+	optional int32 Page = 1;//
+	optional int32 Num = 2;//
+}
+
+message MoneyType{
+	optional int32 Type = 1;//0：全部 1：充值提现 2：零钱红包  3：商户消费 4:退款  5:二维码收款 6:转账 7:其他
+	optional int32 Year = 2;//年份
+	optional int32 Month = 3;//月份
+	optional int32 Page = 4;//
+	optional int32 Num = 5;//
+}
+
+message OrderInfo{
+	optional string Name = 1;//
+	optional int64 Time = 2;//
+	optional int64 Money = 3;//
+	optional string HeadIcon = 4;//
+	optional int32	Type = 5;//类型
+	optional int32  Statue = 6;//状态  0未处理，1已完成，3已取消
+	optional string Text = 7;//备注
+	optional string OrderId = 8;//交易单号
+	optional share_message.RedPacket RedPacket = 9;//红包详情
+	optional string PayName = 10;//
+	optional int64 ServiceCharge = 11;//手续费
+	optional int64 ReceiveTime = 12;//到账时间
+	optional string TransferText = 13;//转账说明
+	optional string ShopName = 14;//商品名称
+	optional string BankName = 15;//提现银行名字
+}
+
+message AllOrderInfo{
+	repeated OrderInfo OrderInfo = 1;
+}
+
+message CashInfo{
+	optional string OrderId =1;//
+	optional int64 Time = 2;//
+	optional int64 ChangeGold = 3;//
+	optional int64 Gold = 4;//
+	optional int32 Type = 5;//
+}
+
+message AllCashInfo{
+	repeated CashInfo CashInfo =1;//
+}
+
+
+message RedPacketInfo{
+	optional int32 Type = 1;//1:收红包  2：发红包
+	optional int32 Year = 2;//年份
+	optional int32 Month = 3;//月份
+	optional int32 Page = 4;//
+	optional int32 Num = 5;//
+}
+
+message AllRedPacketInfo{
+	repeated share_message.RedPacket AllInfo = 1;//
+	optional int32 LuckCnt = 2;//手气最佳次数
+	optional int32 TotalCnt = 3;//总数
+	optional int64 TotalGold = 4;//总金额
+	optional int32 Type = 5;//类型 1:收红包  2：发红包
+}
+
+message WithdrawInfo{
+	optional string BankCode =1;     //银行代码，参照接入文档6.3
+	optional string AccountType =2;  //账号类型：00 银行卡，01 存折。
+	optional string AccountNo = 3;   //账号：银行卡或存折号码
+	optional string AccountName =4;  //账号名:银行卡或存折上的所有人姓名
+	optional string AccountProp =5;  //账号属性:0 私人，1 公司
+	optional int64  Amount = 6;      //代付金额，分为单位
+	optional bool   Result = 7;      //是否成功
+	optional string OrderId =8;      //代付订单号
+	optional int64 StartTime = 9;    //开始时间
+	optional int64 Tax = 10;         //手续费
+}
+
+message CheckPeopleInfo{
+	optional int32 Type = 1; //1:位数不是18位  2:身份证id已被用过  3:有效id
+}
+
+message FirstInfo{
+	optional string Password = 1;//
+	repeated int32 Label = 2;//标签
+	optional int32 Sex = 3;//
+	optional string NickName = 4;//
+	optional string Signature = 5;//
+	optional string HeadIcon = 6;//
+}
+
+message FirstReturnInfo{
+    optional int32 Type = 1;//  0:成功  1:手机号码被绑定过  2:验证码错误
+    optional string Content = 2;//
+}
+
+message PayInfo{
+    optional int64 PlayerId = 1;//收款id
+    optional int64 Gold = 2;//金额
+    optional int32 Type = 3;//付款类型 99零钱 1微信 2支付宝  3银行卡
+    optional string Content = 4;//
+	optional share_message.PayOrderInfo PayOrderInfo = 5;//
+	optional bool IsWay = 6;//是否是充值发送
+	optional string Password = 7;//
+	optional string BankInfo = 8;//  充值用
+	optional string OrderId = 9; //充值订单
+}
+
+message AllCollectInfo{
+	repeated share_message.CollectInfo CollectInfo =1;//收藏信息
+}
+
+message DelCollectInfo{
+	optional int32 Index = 1;//
+}
+
+message GetCollectInfo{
+	optional int32 Page = 1;//
+	optional int32 Num = 2;//
+	optional int32 Type = 3;//0:没限定类型 1:图片 2:视屏 3:文件 4:连接
+}
+
+message SearchCollectInfo{
+	optional string Content = 1;//
+}
+
+message PayForCodeInfo{
+	optional int32 Type =1;// 1成功  2:调起支付
+}
+
+message CodeInfo{
+	optional int64 PlayerId = 1;// 收款人id
+	optional int64 Gold = 2;//
+	optional string Name = 3;//
+	optional string HeadIcon = 4;//
+	optional int64 TeamId = 5;//如果是群收款码就不为0
+	optional string FailReason = 6;//失败原因
+	optional string Code = 7;//
+}
+
+message AInfo{
+    required int32 type = 1;        // 0 不设为已读 1 设为已读
+}
+
+message UnGetMoneyInfo{
+	optional int64 TargetId = 1;// 私聊id 或者群id
+	optional bool  IsHave = 2;// true 有未领取的
+	optional int32 Type = 3;//1私聊 2群聊
+}
+
+message CollectIndex{
+	repeated int32 IndexList = 1;//
+}
+
+message  BankPaySMS{
+    optional string OrderNo = 1;     //订单号,服务器返回，原样传给服务器
+    optional string SMS = 2;        //短信码
+    optional int32 PayId =3;        //支付渠道，原样返回
+}
+
+message RecommendMsg{
+	repeated int64 PlayerIds = 1;//
+}
+
+message RecommendRefreshInfo{
+	optional int32 Type =1;//1:玩家  2:群
+}
+
+message AddGoldInfo{
+	optional int64 Gold = 1;//
+	optional string Name = 2;//
+//	optional int32 Type =3;//
+	optional int64 PlayerId = 3;//
+}
+
+message WechatInfo{
+	optional string Code = 1;//
+	optional int32 Type = 2;// 1:绑定 2:解绑
+	optional string PhoneCode = 3;//手机验证码
+	optional int32 ApkCode = 4;  //appid
+}
+
+message MarkName{
+    optional int64 PlayerId = 1;  //玩家id
+    optional string Name  =2;      //备注名
+}
+
+message ArticleOptRequest{
+	optional int64 ArticleId = 1;	//文章ID
+	optional int32 Type = 2;// 1:点击 2:跳转
+}
+
+message NoticeOptRequest{
+	optional int32 Id = 1;	//通知ID
+	optional int32 Type = 2;// 1:点击 2:跳转
+}
+
+
+
+message MainInfo{
+	optional int32 Type = 1;//1：粉丝 2：关注
+	optional int64 PlayerId = 2;//操作人的id
+	optional int32 Page = 3;//第几页
+	optional int32 Count = 4;//每页请求多少个
+}
+
+message FansInfo{
+	optional int64 PlayerId = 1;//
+	optional int32 Sex = 2;//
+	optional string Signature = 3;//
+	optional string Name = 4;//
+	optional string HeadIcon = 5;//
+	optional int32 Types = 6;//
+}
+
+message AllFansInfo{
+	repeated FansInfo FansInfo = 1;
+}
+
+message DynamicIdInfo{
+	optional int64 PlayerId = 1;//
+	optional int64 LogId = 2;//
+	optional int32 Type = 3;//1 请求最新  2:请求旧数据
+}
+
+message DynamicInfo{
+	repeated share_message.DynamicData DynamicData = 1;//动态数据
+}
+
+message TeamMembers{
+    optional int64 TeamId = 1;
+    repeated share_message.PersonalTeamData members =2;
+    optional int32 Way = 3; //请求方式
+}
+message CheckDirtyWord{
+    repeated string Words = 1;   //请求列表
+    repeated string DirtyWords = 2; //检测到脏词列表
+}
+message CheckCancelAccount{
+    optional bool ThirtyDays =1;        //绑定创建30天
+    optional bool PhoneState =2;        //绑定手机状态
+    optional bool PeopleIdState =3;        //实名认证状态
+    optional bool AccountState = 4;     //账号状态
+    optional bool TradeState =5;        //交易状态
+    optional bool BalanceState = 6;     //余额状态
+    optional bool FriendState=7;        //好友和群信息状态
+}
+message CancelAccountData{
+    optional string RealName= 1;            //真实姓名
+    optional string PeopleId = 2;           //身份证
+    optional string PeopleIdBeforeUrl= 3;   //正面图
+    optional string PeopleIdBackUrl= 4;     //反面图
+    optional string PeopleIdHandUrl = 5;    //手持图
+    optional string PhoneCode = 6;          //短信验证码
+}
+message OpenMyMainPageByPageReq {
+	optional int32 Page = 1; // 当前页
+	optional int32  PageSize= 2; //页面大小
+	required int64 PlayerId = 3;// 玩家id
+}
+
+message NewUnReadMessageResp{
+	optional int32 UnreadComment = 1;// 未读评论数量
+	optional int32 UnreadZan =2;//未读赞数量
+	optional int32 UnreadAttention = 3;//未读关注信息数量
+}
+
+message ComplaintID{
+    required int64 ComplaintId = 1;        // 投诉ID
+}
+
+message ShopOrderComplaintDetailRsp{
+    optional string sponsor_nickname = 1;       // 卖家昵称
+    optional string sponsor_avatar = 2;         //卖家头像
+    optional share_message.ItemFile item_file = 3;      // 文件url(包括图片和视频)
+    optional string item_name = 4;           // 商品名字
+    optional string item_title = 5;           // 商品正文描述
+    optional int64 order_create_time = 6;              // 订单创建订单时间
+    optional int64 order_id = 7;              // 投诉的订单号
+    optional string complaint_avatar = 8;         // 投诉人头像
+    optional string complaint_nickname = 9;       // 投诉人昵称
+    optional string complaint_content = 10;              // 投诉内容
+    optional string complaint_reContent = 11;              // 回复内容
+}
+
+message AdvSettingRequest{
+	optional int32 Location=1;			// 位置类型：1社交动态信息流广告，2启动页广告，3banner位横幅广场页广告，4banner位横幅个人页广告
+}
+
+
+message AdvSettingResponse{
+	repeated share_message.AdvSetting List=1;
+}
+
+message DelNewFriendListReq{
+	repeated int64 PlayerIds = 1;
+}
+
+// 群设置后下行给前端刷新数据.
+message TeamSettingNotify{
+	optional int64 TeamId = 1; // 群id
+	optional string WelcomeWord = 2; // 群欢迎语
+	optional share_message.MessageSetting  MessageSetting = 3;//群消息设置
+}
+message  NewTeamSettingReq{
+	optional int64 TeamId = 1; // 群id
+}
+// 附近的人新版本
+message LocationInfoNewReq{
+	optional double X = 1;// 经度
+	optional double Y = 2;// 维度
+	optional int32 Sex = 3;//	0:全部 1:只看男  2:只看女
+	optional int32 Sort = 4;//	1:距离优先  2:在线优先
+	optional int64 Page = 5;//	当前页
+	optional int64 PageSize = 6;//	页面大小
+	optional bool IsNewFlush = 7; // 是否新的刷新, true的时候服务器重新拉取新数据.
+}
+message LocationInfoNew{
+	optional int64 PlayerId = 1;// 玩家id
+	optional string HeadIcon = 2;// 头像
+	optional string NickName = 3; // 昵称
+	optional int32 Sex = 4;// 性别
+	optional int32 OnlineStatus =5; //  在线状态 1-在线;2-在线新人(注册不满7天);3-刚刚(下线不超过1小时);4-离线(超过一小时)
+	optional string Signature = 6;// 个性签名
+	optional double Distance = 7;// 距离
+	optional bool IsFriend = 8;// 是否是朋友
+
+	repeated share_message.DynamicData DynamicList = 9;// 个人动态展示
+	optional int32 DataType = 10; // 1-普通信息;2-引导区域信息
+	optional bool IsRobot = 11;// 是否机器人
+	optional share_message.NearSet NearSet = 12;// 引导区内容
+	optional string Account = 13;				// 柠檬号
+	optional int32 Types = 14; //
+}
+message LocationInfoNewResp{
+	repeated LocationInfoNew LocationInfo = 1; // 附近人信息.
+	optional int32 Count = 2; // 总条数
+}
+
+// 附近的人推荐用户列表
+message NearRecommendReq{
+	optional double X = 1;// 经度
+	optional double Y = 2;// 维度
+	optional int64 Page = 5;//	当前页
+	optional int64 PageSize = 6;//	页面大小
+}
+message NearRecommendResp{
+	repeated client_hall.NearRecommend RecommendList = 1; // 推荐用户列表
+	optional int32 Count = 2; // 总条数
+}
+
+// 附近的人推荐
+message NearRecommend{
+	optional int64 PlayerId = 1;
+	optional string NickName = 2;				//昵称
+	optional string HeadIcon = 3;				//头像
+	optional int32 Sex = 4;						//性别 1男 2女
+	optional string Signature = 5;				//个性签名
+	optional int32 OnlineStatus = 6;	// 在线状态 1-在线;2-在线新人(注册不满7天);3-刚刚(下线不超过1小时);4-离线(超过一小时)
+	optional int64 GJId= 7;//挂件
+	optional int64 QPId =8;  //气泡
+	optional int64 MPId =9;  //铭牌
+	optional int64 QTXId =10;  //群特效
+	optional int64 MZBSId =11;  //名字变色
+	optional bool IsFriend = 12; // 是否是好友
+	optional double Distance = 13;// 距离
+	optional int32 Types = 14;
+}
+
+// 下行消息请求.
+message  NotifyNewSayMessageReq{
+	optional int64 Id = 1;// 内容id
+	optional int64 SendPlayerId = 2; // 打招呼人的id
+	optional string Content = 3; // 打招呼的内容.
+	optional string	ClientUnique = 4; // 通知前端发送成功的唯一标识码
+	optional int32	ContentType = 5; // 消息类型 1-文本内容;2-表情或图片
+	optional int64 PropsId = 6; // 道具id
+}
+
+// 附近的人给我打招呼会话列表.
+message  NearSessionListReq{
+	optional int64 Page = 1;//	当前页
+	optional int64 PageSize = 2;//	页面大小
+	optional int64 QueryTime = 3;//	请求时间 // 第一页的时候不用传给后端
+}
+
+message  NearSessionListResp{
+	repeated client_hall.NearSessionList SessionList = 1;//	内容
+	optional int32 Count = 2;// // 总条数
+	optional int64 QueryTime = 3;//	请求时间 原路传给服务器查询.
+	optional int64 MaxId = 4;//	动态内容id
+}
+message NearSessionList{
+	optional int64 Id = 1; // 内容id
+	optional int64 SendPlayerId = 2;
+	optional string NickName = 3;				//昵称
+	optional string HeadIcon = 4;				//头像
+	optional int32 Sex = 5;						//性别 1男 2女
+	optional string	Content = 6; // 内容
+	optional bool IsRead = 7; // 是否已读
+	optional int32 ContentType = 8;						// 内容类型 1- 普通内容; 2-图片或表情
+	optional double Distance = 9; //  经纬度距离
+	optional bool IsFriend = 10; // 是否是好友.
+	optional int64 PropsId = 11; // 道具id
+	optional int64 CreateTime=12;	// 内容生成时间
+}
+
+message SendPlayerMessageListReq{
+	optional int64 SendPlayerId = 1; // 指的是别人(对方).
+	optional int64 Page = 2;//	当前页
+	optional int64 PageSize = 3;//	页面大小
+	optional int64 MaxId = 4;//	动态内容id
+}
+
+// 附近的人聊天列表
+message GetNearChatListReq{
+	optional int64 ReceivePlayerId = 1; // 指的是对方
+	optional int64 Page = 2;//	当前页
+	optional int64 PageSize = 3;//	页面大小
+	optional int64 MaxId = 4;//	动态内容id
+}
+
+// 删除附近的人打招呼信息
+message DelNearMessageReq{
+	repeated int64 SendPlayerId = 1; // 指的是别人(对方).
+}
+
+// 修改消息已读.
+message UpdateIsReadReq{
+	optional int64 Id = 1; // 内容id
+}
+
+message HasUnReadNearResp{
+	optional bool HasUnReadNear = 1; // true
+}
+message YoungPassWord{
+    optional int32 Opt = 1;   //1开启，2关闭
+    optional string PassWord = 2;   //密码
+}
+message FriendNum{
+    optional int32 Num = 1; //新好友数据
+}
+message TeamChangePos{
+    optional int64 PlayerId = 1; //玩家id
+    optional int32 Position = 2; //变更后职位
+}
+message TeamMembersChange{
+    optional int64 TeamId = 1;      //群id
+    repeated int64 DelList = 2;  //删除的成员
+    repeated share_message.PersonalTeamData AddList = 3; //增加成员
+    optional int64 Time = 4;     //请求时间
+    repeated TeamChangePos   PosChange= 5;  //职位变更的成员
+}
+message GetNewFriends{
+    optional int64 Time = 1;       //时间
+}
+message BankData{
+    optional string Code = 1;  //银行编码
+    optional string Name = 2;      //银行名称
+}
+message SupportBankList{
+    optional int32 PayId = 1;   //支付渠道类型:1秒到,2通联微信）3鹏聚代付,4汇聚支付 （银联）,5汇聚代付付,6汇潮支付(微信),7汇潮支付(支付宝),8汇潮支付(银联),9汇潮代付付,10统统付微信支付,11统统付支付宝支付
+    repeated BankData Banks= 2;
+}
+//埋点结构
+message BuryingPoint{
+    optional int32 EventType =1; //事件类型
+    optional int64 Time = 2;     //事件
+    optional int64 LastTime =3;  //持续时间，退出页面时传
+    optional int64 TargetId = 4; //事件目标id
+}
+//埋点数据
+message BuryingPointList{
+    repeated BuryingPoint Data = 1;  //列表
+}
+//在线人数
+message OnLineNum{
+    optional int64 Num = 1;      //虚拟在线人数
+}
+//消息页 banner广告列表
+message MsgAdv{
+	repeated share_message.AdvSetting Advs = 1;  // 左边服务器随机1个, 左边数组没有的话,前端显示你柠檬花田功能,
+	repeated share_message.AdvSetting RightList=2;// 右边服务器随机1个
+}
+
+message PlayerDiamond{
+    optional int64 PlayerId = 1; //玩家id
+    optional int64 Diamond = 2;  //钻石
+}
+//服务器当前支持的支付渠道
+message PayChannels{
+    optional int32 Type = 1;        //1入款，2出款
+    repeated share_message.PlatformChannel Channels = 2;      //当前支持的渠道
+}
+
+message TopicTeamDynamicReq{
+	optional int64 TopicTeamId = 1; // 话题群id
+	optional int32 Page = 2;// 当前页
+	optional int32 PageSize = 3;// 页面大小
+}
+
+message TopicTeamDynamicResp{
+	optional int64 TopicTeamId = 1; // 话题群id
+	repeated share_message.DynamicData DynamicList = 2;// 动态列表
+	optional int32 count = 3;// 总条数
+}
+//话题群
+message TopicTeams{
+    optional string Topic = 1; //话题
+    repeated share_message.TeamData Teams = 2;    //群信息
+}
+//解散群
+message DefunctTeam{
+    optional int64 TeamId = 1; //要解散的群id
+    optional int32 Result = 2; //结果1成功，其他失败
+}
+//主页菜单
+message MainMenu{
+    optional int32 Id = 1;      //id编号:1谁喜欢我，2热门话题，3柠檬花田，4附近的人，6广告
+    optional int32 Type = 2;    //菜单类型:1前端固定项，2广告
+    optional bool IsOpen = 3;   //是否开启:true开启，false关闭
+    optional share_message.AdvSetting Adv = 4;            //广告内容
+    optional int32 Slot = 5;    //序号：按序号显示
+}
+//所有菜单选项
+message AllMainMenu{
+    repeated MainMenu Menus = 1;  //菜单选项
+}
+//弹窗广告
+message TipAdv{
+    optional int32 Page = 1;        //页面:
+    optional bool Issuspension = 2; //是否悬浮
+    optional bool IsJump = 3;       //是否弹出
+    optional share_message.AdvSetting Adv = 4;  //广告信息
+}
+//所有弹窗广告
+message AllTipAdv{
+    repeated TipAdv Advs = 1;   //弹窗广告
+}
+// 上行(客户端主动发起)
+service AccountClient2Hall { // 登录注册账号相关
+	 rpc RpcLogin(client_hall.LoginMsg)returns(client_hall.LoginMsg); // 登录
+	 //	rpc RpcGMCmd(client_hall.GMCmdData)returns(base.NoReturn);       //GM指令
+	 rpc RpcModifyPlayerMsg(client_server.ChangePlayerInfo)returns(base.Empty);       //修改个人信息
+	 rpc RpcAddFriend(client_hall.AddPlayerInfo)returns(base.Empty);	//添加好友
+	 rpc RpcAgreeFriend(client_hall.AccountInfo)returns(base.Empty);		//同意添加好友
+	 rpc RpcFindFriend(client_hall.AccountInfo)returns(base.Empty);//搜索好友
+	 rpc RpcCreateTeam(client_hall.CreateTeam)returns(base.Empty);                  //请求创建群
+	 rpc RpcCreateTopicTeam(client_hall.CreateTeam)returns(base.Empty);             //请求创建话题群组
+	 rpc RpcGetFriendRequest(base.Empty)returns(share_message.AllAddPlayerMsg);	//获取好友申请信息
+	 rpc RpcNewVersionGetFriendRequest(base.Empty)returns(share_message.AllAddPlayerMsg);	//新版本获取好友申请信息
+	 rpc RpcNewVersionGetFriendNumRequest(base.Empty)returns(client_hall.FriendNum); //获取新好友数量
+	 rpc RpcReadFriendRequest(client_server.ReadInfo)returns(base.Empty);//阅读申请好友信息
+	 rpc RpcSearchAddressBook(client_hall.AddBookInfo)returns(client_server.AllPlayerInfo);//查找通信录中玩家信息
+	 rpc RpcSetPassword(client_server.PasswordInfo)returns(base.Empty);//设置支付安全密码
+	 rpc RpcChangePassword(client_server.PasswordInfo)returns(base.Empty);//修改支付安全密码
+	 rpc RpcForgetPayPassword(client_server.PasswordInfo)returns(base.Empty);//忘记支付密码重新设置
+	 rpc RpcClientGetCode(client_server.GetCodeRequest)returns(base.Empty);//发送短信验证码
+	 rpc RpcCheckMessageCode(client_server.CodeResponse)returns(base.Empty);//检查短信验证码
+	 rpc RpcClosePassword(base.Empty)returns(base.Empty);//关闭安全密码
+	 rpc RpcCheckPlayerPeopleId(client_hall.PeopleIdInfo)returns(base.Empty);//身份验证
+	 rpc RpcSetPeopleAuth(client_hall.PeopleIdInfo)returns(base.Empty);//身份认证
+	 rpc RpcActiveAddTeamMember(client_server.TeamReq)returns(base.Empty);//主动申请进群
+	 rpc RpcLogOut(base.Empty)returns(base.Empty);//退出登录
+	 rpc RpcCheckPassword(client_server.PasswordInfo)returns(base.Empty);//检验密码
+	 rpc RpcFrezzeAccount(client_hall.AccountInfo)returns(base.Empty);//冻结账号
+	 rpc RpcUnFrezzeAccount(client_hall.AccountInfo)returns(base.Empty);//解冻账号
+	 rpc RpcGetVersion(base.Empty)returns(client_hall.VersionInfo);//获取版本号
+	 rpc RpcGetBlackList(base.Empty)returns(client_server.AllPlayerInfo);//获取黑名单
+	 rpc RpcBlackOperate(client_hall.BlackInfo)returns(client_hall.BlackInfo);//黑名单操作
+	 rpc RpcDelFriend(client_hall.DelFriendInfo)returns(client_hall.DelFriendInfo);//删除好友
+	 rpc RpcGetCLAssistant(client_hall.AInfo)returns(client_server.AssistantInfo);//获取畅聊助手消息
+	 rpc RpcGetMoneyAssistant(client_hall.PageInfo)returns(client_hall.AllMoneyAssistantInfo);//获取零钱助手消息
+	 rpc RpcGetLocationInfo(client_hall.LocationInfo)returns(client_hall.AllLocationPlayerInfo);//附近的人
+	 rpc RpcGetAllNearByInfo(base.Empty)returns(client_hall.AllNearByMessage);//所有在附近的人给我打招呼的信息
+	 rpc RpcGetNearByInfo(base.Empty)returns(client_hall.AllNearByMessage);//附近的人打招呼信息
+	 rpc RpcAddNearByMessage(client_hall.NearByMessage)returns(base.Empty);//给附近的人打招呼
+	 rpc RpcDeleteNearByInfo(base.Empty)returns(base.Empty);//清除附近的人消息
+	 rpc RpcDeleteMyNearByInfo(base.Empty)returns(base.Empty);//清除打招呼消息
+	 rpc RpcBindBankCode(client_hall.BankMessage)returns(base.Empty); //获取绑定银行卡短信验证码
+	 rpc RpcAddBank(client_hall.BankMessage)returns(base.Empty);//增加银行卡信息
+	 rpc RpcDelBank(client_hall.BankMessage)returns(base.Empty);//删除银行卡信息
+	 rpc RpcGetBankCode(client_hall.BankMessage)returns(client_hall.BankMessage);//通过银行卡号获取银行名字
+	 rpc RpcSyncTime(base.Empty)returns(client_server.NTP);//同步服务器时间
+	 rpc RpcGetMoneyOrderInfo(client_hall.MoneyType)returns(client_hall.AllOrderInfo);//获取账单交易信息
+	 rpc RpcGetCashInfo(client_hall.PageInfo)returns(client_hall.AllCashInfo);//获取零钱明细
+	 rpc RpcGetRedPacketInfo(client_hall.RedPacketInfo)returns(client_hall.AllRedPacketInfo);//红包明细
+	 rpc RpcClearLocalTime(base.Empty)returns(base.NoReturn);//清除本地聊天记录
+	 rpc RpcRechargeMoney(share_message.PayOrderInfo)returns(share_message.PayOrderResult);            //前端直接发起支付请求
+	 rpc RpcAddComplaintInfo(share_message.PlayerComplaint)returns(base.Empty);//投诉 意见反馈
+	 rpc RpcWithdrawRequest(client_hall.WithdrawInfo)returns(base.Empty);//提现请求
+	 rpc RpcCheckPeopleIdValid(client_hall.PeopleIdInfo)returns(client_hall.CheckPeopleInfo);//检查身份证id有效性
+	 rpc RpcFirstLoginSetInfo(client_hall.FirstInfo)returns(client_hall.FirstReturnInfo);//第一次登录设置登录密码和手机号
+	 rpc RpcAliPay(share_message.AliPayData)returns(base.Empty);    //发起支付宝支付
+	 rpc RpcPayForCode(client_hall.PayInfo)returns(client_hall.PayForCodeInfo); //扫码付款
+	 rpc RpcGetCollectIndexList(base.Empty)returns(client_hall.CollectIndex);	//获取所有收藏信息的索引
+	 rpc RpcGetCollectIndexInfo(client_hall.CollectIndex)returns(client_hall.AllCollectInfo);	//获取索引对应的收藏信息
+	 rpc RpcAddCollectInfo(share_message.CollectInfo)returns(share_message.CollectInfo);	//增加收藏信息
+	 rpc RpcGetCollectInfo(client_hall.GetCollectInfo)returns(client_hall.AllCollectInfo);	//获取所有收藏信息
+	 rpc RpcDelCollectInfo(client_hall.DelCollectInfo)returns(base.Empty);	//删除收藏信息
+	 rpc RpcSearchCollectInfo(client_hall.SearchCollectInfo)returns(client_hall.AllCollectInfo);	//获取收藏信息
+	 rpc RpcCheckout(share_message.OrderID)returns(base.Empty);          // 商城零钱支付
+	 rpc RpcGetCodeInfo(client_hall.CodeInfo)returns(client_hall.CodeInfo);	//扫描二维码获取信息
+	 rpc RpcCheckUnGetMoney(client_hall.UnGetMoneyInfo)returns(client_hall.UnGetMoneyInfo);	//检查是否有未领取的红包和转账
+	 rpc RpcCutBackstage(base.Empty)returns(base.Empty);	//软件切出后台
+	 rpc RpcReturnApp(base.Empty)returns(base.Empty);	//软件切回app
+	 rpc RpcReqPaySMS(share_message.PayOrderInfo)returns(base.Empty);              //请求银行卡支付短信码
+	 rpc RpcReqSMSPay(client_hall.BankPaySMS)returns(base.Empty);              //请求银行卡短信码支付
+	 rpc RpcRecommendRequest(client_hall.RecommendMsg)returns(base.Empty);//推荐好友做操作
+	 rpc RpcFreshRecommendInfo(client_hall.RecommendRefreshInfo)returns(client_server.RecommendInfo);//
+	 rpc RpcRequestCallInfo(base.Empty)returns(share_message.CallInfo);//客户端请求是否有人给他打电话
+	 rpc RpcCheckAccountVaild(client_server.CheckInfo)returns(client_server.CheckInfo);//检验账号是否有效
+	 rpc RpcUserReturnApp(base.Empty)returns(client_server.TweetsListResponse);      //用户切回app信息
+	 rpc RpcOperateBindWechat(client_hall.WechatInfo)returns(base.Empty);//绑定微信
+	 rpc RpcOperateBindPhone(client_hall.WechatInfo)returns(base.Empty);//绑定手机号
+	 rpc RpcDelTweets(client_server.TweetsIdsRequest) returns(base.Empty);                //删除用户推文信息
+	 rpc RpcReturnTweets(base.Empty)returns(client_server.TweetsListResponse);        // 获取用户推文信息
+	 rpc RpcModifyEmoticon(share_message.PlayerEmoticon)returns(base.Empty);         //修改用户自定义表情
+	 rpc RpcDelEmoticon(share_message.PlayerEmoticon)returns(base.Empty);            //删除表情包
+	 rpc RpcMarkPlayer(client_hall.MarkName)returns(base.Empty);                  //备注好友
+	 rpc RpcSumClicksJumps(client_hall.ArticleOptRequest)returns(base.Empty);	//推文客户端操作反馈
+	 rpc RpcNoticeClicks(client_hall.NoticeOptRequest)returns(base.Empty);		//推送通知客户端操作反馈
+	 rpc RpcOpenMyMainPage(client_hall.OpenMyMainPageByPageReq)returns(client_server.MyMainPageInfo);						//打开个人页面
+	 rpc RpcOpenMyMainPageByPage(client_hall.OpenMyMainPageByPageReq)returns(client_server.MyMainPageInfo);						//打开个人页面,分页请求数据
+	 rpc RpcGetMyFansAttentionInfo(client_hall.MainInfo)returns(client_hall.AllFansInfo);//请求我的关注或我的粉丝信息
+	 rpc RpcGetSomeDynamic(client_hall.DynamicIdInfo)returns(client_hall.DynamicInfo);//请求最新动态或者更早的动态
+	 rpc RpcGetPlayerOtherData(base.Empty)returns(client_server.AllPlayerMsg);      //获取玩家其他登录信息
+	 rpc RpcGetTeamMembers(client_hall.TeamMembers)returns(client_hall.TeamMembers);      //获取群成员信息
+	 rpc RpcCheckDirtyWord(client_hall.CheckDirtyWord)returns(client_hall.CheckDirtyWord);    //检测敏感词
+	 rpc RpcCheckCancelAccount(base.Empty)returns(client_hall.CheckCancelAccount);          //检查账号可否注销
+	 rpc RpcSubmitCancelAccount(client_hall.CancelAccountData)returns(base.Empty);    //上传注销账号资料
+	 rpc RpcAttentioPlayer(client_server.AttenInfo)returns(base.Empty);    //关注
+	 rpc RpcESportAttentioPlayer(client_server.AttenInfo)returns(base.Empty);    //关注之电竞入口
+	 rpc RpcZanOperateSquareDynamic(client_server.ZanInfo)returns(base.Empty);    // 点赞
+	 rpc RpcAddCommentSquareDynamic(share_message.CommentData)returns(base.Empty);    // 添加评论
+	 rpc RpcDelCommentSquareDynamic(client_server.IdInfo)returns(base.Empty);    // 删除评论
+	 rpc RpcAddSquareCommentZan(share_message.CommentDataZan)returns(base.Empty);    // 对评论点赞或者取消
+	 rpc RpcDelSquareDynamic(client_server.RequestInfo)returns(base.Empty);    // 删除动态
+	 //rpc RpcGetDynamicInfo(client_server.IdInfo)returns(base.Empty);    // 获取动态详情
+	 //rpc RpcGetDynamicMainComment(client_server.IdInfo)returns(base.Empty);    // 获取下一页动态主评论
+	 //rpc RpcGetDynamicSecondaryComment(client_server.IdInfo)returns(base.Empty);    // 获取动态子评论
+	 rpc RpcShopOrderComplaintDetail(client_hall.ComplaintID)returns(client_hall.ShopOrderComplaintDetailRsp);   // 商城订单投诉详情
+	 rpc RpcGetAdvData(client_hall.AdvSettingRequest)returns(client_hall.AdvSettingResponse);//获取广告数据
+	 rpc RpcGetNearByInfo2(client_hall.LocationInfo)returns(client_hall.NearByInfoReply); //整合附近的人的信息.
+	 rpc RpcGetNearInfoByPage(client_hall.LocationInfoByPage)returns(client_hall.NearByInfoReplyByPage); //整合附近的人的信息.
+	 rpc RpcAddAdvLog(share_message.AdvLogReq)returns(base.Empty); // 添加广告日志
+	 rpc RpcDelNewFriendList(client_hall.DelNewFriendListReq)returns(base.Empty);		// 新的朋友列表中,删除记录.
+	 rpc RpcNewTeamSetting(client_hall.NewTeamSettingReq)returns(client_hall.TeamSettingNotify); // 获取最新的群设置信息.
+	 rpc RpcLocationInfoNew(client_hall.LocationInfoNewReq)returns(client_hall.LocationInfoNewResp); // 2.7.6 附近的人.
+	 rpc RpcNearRecommend(client_hall.NearRecommendReq)returns(client_hall.NearRecommendResp); // 附近的人好友推荐
+	 rpc RpcNearSayMessage(share_message.NearSessionList)returns(base.Empty); // 2.7.6 给附近的人打招呼
+	 rpc RpcNearSessionList(client_hall.NearSessionListReq)returns(client_hall.NearSessionListResp); // 附近的人打招呼列表
+	 rpc RpcSendPlayerMessageList(client_hall.SendPlayerMessageListReq)returns(client_hall.NearSessionListResp); // 具体到某个人打招呼的列表
+	 rpc RpcGetNearChatList(client_hall.GetNearChatListReq)returns(client_hall.NearSessionListResp); // 附近的人聊天列表
+	 rpc RpcDelNearMessage(client_hall.DelNearMessageReq)returns(base.Empty); // 删除附近的人打招呼消息
+	 rpc RpcUpdateIsReadReq(client_hall.UpdateIsReadReq)returns(base.Empty); // 修改聊天内容已读
+	 rpc RpcSetYoungPassWord(client_hall.YoungPassWord)returns(base.Empty); // 设置青少年模式
+	 rpc RpcNearAddAdvLog(share_message.AdvLogReq)returns(base.Empty); // 添加附近的人广告埋点.
+	 rpc RpcGetPlayerOtherDataNew(base.Empty)returns(client_server.AllPlayerMsg);      //获取玩家配置信息
+	 rpc RpcGetPlayerFriends(base.Empty)returns(client_server.AllPlayerMsg);      //获取玩家好友信息
+	 rpc RpcGetPlayerNewFriends(client_hall.GetNewFriends)returns(client_server.NewFriends);      //获取玩家不在线期间新加好友信息
+	 rpc RpcGetTeamMemberChange(client_hall.TeamMembersChange)returns(client_hall.TeamMembersChange);      //获取玩家不在线期间群成员变化
+	 rpc RpcGetSupportBankList(client_hall.SupportBankList)returns(client_hall.SupportBankList);      //获取渠道支持列表
+	 rpc RpcGetOnLineNum(base.Empty)returns(client_hall.OnLineNum);      //获取在线人数
+	 rpc RpcGetMsgPageAdvList(base.Empty)returns(client_hall.MsgAdv);      //获取消息页banner广告信息
+	 rpc RpcGetDiamond(base.Empty)returns(client_hall.PlayerDiamond);      //获取玩家钻石数
+	 rpc RpcGetSupportPayChannel(client_hall.PayChannels)returns(client_hall.PayChannels);  //获取支持的支付方式
+     rpc RpcGetAllLabelMsg(base.Empty)returns(client_server.LabelMsg);   //获取所有标签信息
+	 rpc RpcSetPlayerLabel(client_hall.FirstInfo)returns(base.Empty); 		//设置用户兴趣标签
+	 rpc RpcTopicTeamDynamicList(client_hall.TopicTeamDynamicReq)returns(client_hall.TopicTeamDynamicResp);      // 话题群里面群动态api接口
+	 rpc RpcGetTopicTeams(client_hall.TopicTeams)returns(client_hall.TopicTeams); //获取话题群信息
+	 rpc RpcDefunctTeam(client_hall.DefunctTeam)returns(client_hall.DefunctTeam); //解散群
+	 rpc RpcGetAllMainMenu(base.Empty)returns(client_hall.AllMainMenu); 		//获取主页菜单项内容
+	 rpc RpcGetAllTipAdvs(base.Empty)returns(client_hall.AllTipAdv);          //获取所有弹窗广告
+	 rpc RpcGetStartPageAdvList(base.Empty)returns(client_hall.MsgAdv);      //获取启动页广告
+}
+
+// 下行(服务端主动发起)
+service AccountHall2Client {
+	rpc RpcPlayerLoginResponse(client_server.AllPlayerMsg)returns(base.NoReturn); // 玩家登录之后返回内容
+	rpc RpcUpdateGold(client_hall.UpdateGold)returns(base.NoReturn);//更新金币
+	rpc RpcReLogin(base.Empty)returns(base.NoReturn);   	// 顶号通知
+	rpc RpcKickOut(base.Empty)returns(base.NoReturn);       //服务器踢人通知
+	rpc RpcNoticeAddFriend(share_message.AllAddPlayerMsg)returns(base.NoReturn);			//有新的好友申请
+	rpc RpcNoticeAddFriendNew(share_message.AddPlayerRequest)returns(base.NoReturn);			//有新的好友申请
+	rpc RpcNoticeAgreeFriend(client_server.PlayerMsg)returns(base.NoReturn);		//其他玩家同意添加自己  返回
+	rpc RpcCreateTeamResult(client_server.TeamMsg)returns(base.NoReturn);            //创建群返回
+	rpc RpcAddTeamResult(client_server.TeamMsg)returns(base.NoReturn);	//加群返回
+	rpc RpcFindFriendResponse(client_server.PlayerMsg)returns(base.NoReturn);		//搜索玩家返回
+	rpc RpcAgreeFriendResponse(client_server.PlayerMsg)returns(base.NoReturn);		//点同意添加好友返回
+	rpc RpcNoticeNearByInfo(base.Empty)returns(base.NoReturn);//	有附近的人打招呼信息
+	rpc RpcRechargeMoneyResult(share_message.RechargeOrderResult)returns(base.NoReturn);//发起充值支付 返回
+	rpc RpcRechargeMoneyFinish(share_message.RechargeFinish)returns(base.NoReturn);//发起充值支付 返回
+	rpc RpcAssistantNotify(client_server.AssistantMsg)returns(base.NoReturn);                       // 畅聊助手通知
+	rpc RpcAliPayResult(share_message.AliPayData)returns(base.Empty);    //支付宝支付返回
+	rpc RpcShopItemMessageNotify(share_message.ShopItemMessageInfo)returns(base.NoReturn);                          // 商城消息通知
+	rpc RpcDaiFuResult(client_hall.WithdrawInfo)returns(base.NoReturn);    //代付请求结果返回
+	rpc RpcFreezePlayerLogOut(base.Empty)returns(base.NoReturn);//冻结用户返回登录界面
+	rpc RpcBindBankCodeResult(client_hall.BankMessage)returns(base.NoReturn); //获取绑定银行卡短信验证码
+	rpc RpcReqPaySMSResult(client_hall.BankPaySMS)returns(base.NoReturn);              //请求银行卡支付短信码结果
+	rpc RpcReturnRecommendInfo(client_server.RecommendInfo)returns(base.NoReturn);	//发送推荐好友及群信息
+	rpc RpcAssistantNotifyArticle(client_server.ArticleListResponse)returns(base.NoReturn);         //小助手推文通知
+	rpc RpcRegisterPush(client_server.TweetsListResponse)returns(base.NoReturn);                    //小助手注册通知
+	rpc RpcNoticeAddGold(client_hall.AddGoldInfo)returns(base.NoReturn);//通知玩家有别人扫码付款给自己
+	rpc RpcSysParameterChange(share_message.SysParameter)returns(base.NoReturn);	//系统参数改变
+	rpc RpcPayChannelChange(client_server.AllPlayerMsg)returns(base.NoReturn);	//支付渠道参数变化
+	rpc RpcNewMessage(client_hall.NewUnReadMessageResp)returns(base.NoReturn);	//有新消息显示红点
+	rpc RpcNoNewMessage(base.Empty)returns(base.NoReturn);	//沒有新消息取消红点
+	rpc RpcShopOrderNotify(share_message.ShopOrderNotifyInfo)returns(base.NoReturn);                           // 商城订单通知
+	rpc RpcTeamSettingNotify(client_hall.TeamSettingNotify)returns(base.NoReturn);                           // 群设置后下行给前端刷新数据
+	rpc RpcNotifyNewSayMessage(client_hall.NotifyNewSayMessageReq)returns(base.NoReturn);                           // 2.7.6 附近的人打招呼信息通知显示红点
+	rpc RpcHasUnReadNear(client_hall.HasUnReadNearResp)returns(base.NoReturn);                           // 是否还有未读消息
+}

@@ -1,0 +1,336 @@
+package client_hall; //
+import "base.proto";
+import "common.proto";
+import "game_server/proto/share_message/allcommon.proto";
+import "game_server/proto/share_message/table_struct.proto";
+
+
+//群管理设置
+message CgTeamPerSetting{
+	optional int64 TeamId = 1;//
+	optional int32 Type = 2;// 1:聊天置顶  2：免打扰 3：保存通讯录 4:群昵称，5群备注
+	optional bool Value = 3;
+	optional string Name = 4;
+	optional int64 OptPlayerId = 5;         //被修改人，如果没值就修改自己的
+}
+
+message CgTeamManageSetting{
+	optional int64 TeamId = 1;//
+	optional int32 Type = 2;//1:定时清理 2:阅后 3:截屏通知 4:全员禁言 5:禁止群成员互加好友 6:群聊邀请确认 7:群名称 8:群公告 19：修改群收款二维码 21:禁止主动进群 22:关闭群二维码功能，25:欢迎语开关,26:欢迎语管理员权限开关,27:修改欢迎语,28:设置群头像，29话题群简介
+	optional bool Value = 3;
+	optional int32 Value1 = 4;//
+	optional string Value2 = 5;//
+}
+
+message OpenRedPacket{
+    optional int64 Id = 1;              //红包id
+    optional int64 PlayerId = 2;        //领取人id
+    optional string NickName = 3;       //领取人名字
+    optional int64 Gold = 4;            //领取金额
+    optional int32 Type = 5;            //1领取，2查看
+    optional int64 SenderId = 6;        //发包人id
+    optional string SendName = 7;       //发送人名称
+    optional int64 TeamId = 8;          //群组id
+    optional int64 Time = 9;            //领取时间
+    optional int32 State = 10;          //红包当前状态
+}
+
+message OpenTransfer{
+	optional int64 Id = 1;              //转账id
+	optional string SendName = 2;//发送者的名字
+	optional string NickName = 3;//接受者的名字
+	optional int32 State = 4;//状态 1可领取，2已领取,3退还
+	optional int64 SendId = 5;//
+}
+
+message FriendSetting{
+	optional int32 Type = 1;// 1:置顶聊天  2:消息免打扰 3:阅后即焚 4:截屏通知
+	optional bool	Value = 2;//
+	optional int64 PlayerId = 3;//
+}
+
+message TeamDataInfo{
+	optional share_message.TeamData Team = 1; //群基本信息
+	repeated share_message.PersonalTeamData Members= 3;  //群成员
+	optional int64 PlayerId = 2;//邀请人id
+	optional int32 Type = 4;//类型
+	optional string Name = 5;//邀请人名字
+	optional string HeadUrl = 6; //头像
+	optional int32 Sex =7;      //性别
+}
+
+message AllInviteInfo{
+	repeated share_message.InviteInfo AllInfo = 1;//
+}
+
+
+message DealInviteInfo{
+	optional int64 LogId = 1;
+	optional int32 State = 2;//1：未通过 2：已通过 3:已过期 4:已拒绝
+}
+
+message ChangeNameInfo{
+	optional int64 TeamId = 1;
+	optional int64 PlayerId = 2;//
+	optional string Name = 3;//
+}
+
+message LogInfo{
+	optional int64 LogId = 1;//
+	optional int64 PlayerId = 2;//谁主动撤回
+	optional int64 Time = 3;//
+	optional int64 TargetId = 4;//被撤回
+}
+
+message SpecialChatInfo{
+	optional int32 Type = 1;// 1:私聊 2:群聊
+	optional int64 SendId = 2;//发起人id
+	optional int64 TargetId = 3;//接受人id或者群id
+	optional string Name = 4;//房间名
+	optional int32 ChatType = 5;//10:语音 11:视屏
+	optional int32 Operate = 6;// 1:接受 2:拒绝 3:关闭 4:超时 5:主动取消 6:失败
+	optional int64 Time = 7;//开始时间
+	repeated int64 TargetIds = 8;//群接受人id
+	optional int64 OperateId = 9;//当前操作者id
+	repeated int64 OnLineId = 10;//已经接通群语音的玩家id
+}
+
+message ChatInfo{
+	optional int64 StartId = 1;//
+	optional int64 OverId = 2;//
+	optional int64 TeamId = 3;//
+	optional int32 Count = 4;//
+}
+
+message ReturnChatInfo{
+	repeated share_message.TeamChatLog ChatList = 1;//
+	optional int32 Count = 2;//剩下多少条未读消息
+}
+
+//群封禁信息
+message OperatorMessage{
+	optional string Name = 1;		//后台管理员
+	repeated string Members = 2;	//群成员昵称
+	optional int64 TeamId = 3;		//群ID
+	optional int64 Flag = 4;        //状态：1 解，2 封
+	optional int64 SendTime = 5;    //发送时间
+	optional int64 LogId = 6;       //已未读状态
+	repeated int64 PlayerId = 7;	//群成员id
+	optional int64 CloseTime = 8;   //禁言时间
+}
+
+message PlayerInfo{
+    optional int64 TeamId = 1;      //群Id
+    optional int32 Flag = 2;        //禁言状态：1正常，2禁言
+    optional int64 Time = 3;        //禁言时间(毫秒时间戳)
+    optional int64 PlayerId = 4;    //成员Id
+}
+
+message WaiterMsgRequest{
+	optional int64 Mid=1;		//消息ID
+	optional int32 Type=2;		//查询类型 0全部，1只查新消息
+}
+
+message WaiterMsgResponse{
+	optional int64 WaiterId=1;	//客服ID 如果WaiterId=0客服正忙
+}
+
+message WaiterTypesResponse{
+	repeated share_message.ManagerTypes List=1; //客服类型分类列表
+}
+
+message SearchFaqRequest{
+	optional string Key=1; //搜索关键词
+}
+
+message SearchFaqResponse{
+	repeated share_message.WaiterFAQ List=1; //常见问题列表
+}
+
+message OpenFaqRequest{
+	optional int32 id=1; //常见问题ID
+}
+message BroadCastQTX{
+    optional int64 PlayerId = 1;   //玩家id
+    optional int64 TeamId = 2;     //群id
+    optional int64 PropsId = 3;     //特效道具id
+}
+//前端会话数据
+message SessionData{
+    optional string Id =1 ;    //会话id
+    optional int32 Type = 2; //1、私人会话，2群会话
+    optional int64 TargetId = 3; //会话的对象Id，私聊是个人Id，群聊是群Id
+    optional int32 PlayerNum = 4; //会话成员数量
+    optional string SessionName = 5;    //会话名称
+    optional string SessionHeadUrl = 6; //会话头像
+    optional share_message.PersonalChatLog PersonalChat = 7; //私聊最新聊天内容:有新消息时才会有值
+    optional share_message.TeamChatLog TeamChat = 8; //群聊最新聊天内容：有新消息时才会有值
+    optional bool IsNotice = 9; //是否有人@我
+    optional int64 MaxLogId = 10; // 消息总条数
+    optional int64 ReadId = 11;        //消息已读信息
+    optional int64 NewNum = 12;        //新消息条数
+    optional bool IsTopChat = 13;            //聊天置顶
+    optional bool IsNoDisturb = 14;           //消息免打扰
+    optional bool IsSaveAdd = 15;             //是否保存  群属性
+    optional bool IsAfterReadClear = 16;      //阅后即焚  私聊属性
+    optional bool IsScreenShotNotify = 17;    //截屏通知   私聊属性
+    optional string TeamName = 18;              //群名
+    repeated int64 WithdrawList =19;            //撤回消息id列表，以已读id前5分钟
+    repeated share_message.TeamChatLog TeamOptLog = 20;  //群操作日志
+    optional string Topic = 21;                 //话题
+}
+//所有会话
+message AllSessionData{
+    optional int32 Type = 1; //0全部，1有变化的
+    repeated SessionData Sessions = 2;  //会话列表
+
+}
+//会话的聊天数据
+message SessionChatData{
+    optional string SessionId = 1;    //会话id
+    optional int64 StartId = 2;         //取值开始Id
+    optional int64 EndId = 3;           //取值结束Id 100
+    repeated share_message.PersonalChatLog PersonalChatLogs =4;     //私聊内容
+    repeated share_message.TeamChatLog TeamChatLogs =5;     //私聊内容
+}
+//获取群成员数据
+message TeamMemberData{
+    optional int64 TeamId = 1;  //群Id
+    optional int32 Page = 2;    //页码，每页30个
+    repeated share_message.PersonalTeamData Data= 3; //成员数据
+}
+message TeamDetailData{
+    optional int64 TeamId = 1;  //群Id
+    optional share_message.TeamData Team = 2;  //群基础信息
+}
+//群@数据请求
+message TeamAtData{
+    optional int64 TeamId = 1; //群id
+    repeated AtData Data = 2; //@返回数据
+    optional int32 Page = 3;   //页数
+}
+message AtData{
+    optional int64 PlayerId = 1;
+    optional string Name = 2;   //名字
+    optional string HeadUrl = 3; //头像
+    optional int32 Sex = 4;     //性别
+    optional int32 Position = 5; //职位
+}
+message CheckTeamMember{
+    optional int64 PlayerId = 1;        //玩家id
+    optional int64 TeamId = 2;          //群id
+    optional bool IsMember = 3;         //结果:true是，false不是
+    optional SessionData session= 4;    //群会话
+    optional AtData Owner = 5;          //群主信息
+}
+message CheckIsMySession{
+    optional int64 PlayerId = 1;   //玩家id
+    optional string SessionId = 2;  //会话id
+    optional bool Result = 3;       //true:是，false不是
+}
+message GetOneShowLog{
+    optional int64 LogId = 1;   //隐藏日志id
+    optional string SessionId = 2;  //会话id
+    optional share_message.TeamChatLog Log = 3;  //能显示的日志
+    optional int64 ReadId = 4;      //读取到id
+}
+
+//聊天框内动态结构
+message ChatDynamic{
+    optional int64 LogId  = 1;          //动态id
+    optional int64 PlayerId = 2;        //玩家id
+    optional string HeadIcon = 3;       //头像
+    optional int32 Sex = 4;             //性别
+    optional string Content = 5;        //文本内容
+    repeated  string Photo = 6;         //图片
+    optional string Voice = 7;          //语音
+    optional string Video = 8;          //视频
+    optional int64 VoiceTime = 9;       //录音时长
+    optional string NickName = 10;      //昵称
+    optional string VideoThumbnailURL = 11; //视频缩略图
+    optional int64 SendTime = 12 ; //发布时间
+    repeated int64 TopicId = 13;  //话题id
+    repeated share_message.Topic TopicList = 14; //话题列表
+}
+// 上行(客户端主动发起)
+service ChatClient2Hall { // 登录注册账号相关
+	rpc RpcChat(share_message.Chat)returns(base.Empty); // 发送聊天
+	rpc RpcReadMessage(client_server.ReadInfo)returns(base.Empty);//阅读某条信息
+	rpc RpcSendRedPacket(share_message.RedPacket)returns(base.Empty);//发红包
+	rpc RpcAddTeamMember(client_server.TeamReq)returns(base.Empty);//邀请成员
+	rpc RpcRemoveTeamMember(client_server.TeamReq)returns(base.Empty);//删除成员
+	rpc RpcGetTeamSetting(client_server.TeamInfo)returns(base.Empty);//获取群设置主界面信息   2.7.7版本后废弃
+	rpc RpcGetTeamManageSetting(client_server.TeamInfo)returns(base.Empty);//获取群设置管理信息   2.7.7版本后废弃
+	rpc RpcChangeTeamPersonalSetting(client_hall.CgTeamPerSetting)returns(client_hall.CgTeamPerSetting);//修改群个人设置
+	rpc RpcChangeTeamManageSetting(client_hall.CgTeamManageSetting)returns(client_hall.CgTeamManageSetting);//修改群管理设置
+	rpc RpcAddTeamManager(client_server.TeamReq)returns(base.Empty);//添加群管理成员
+	rpc RpcDelTeamManager(client_server.TeamReq)returns(base.Empty);//删除群管理成员
+	rpc RpcChangeTeamOwner(client_server.TeamReq)returns(base.Empty);//转让群主
+	rpc RpcOpenRedPacket(client_hall.OpenRedPacket)returns(base.Empty);//领取红包
+	rpc RpcCheckRedPacket(client_hall.OpenRedPacket)returns(base.Empty);//查看红包
+	rpc RpcTransferMoney(share_message.TransferMoney)returns(base.Empty);//发起转账
+	rpc RpcOpenTransferMoney(share_message.TransferMoney)returns(base.Empty);//领取转账
+	rpc RpcAcceptAddTeam(client_server.TeamInfo)returns(base.Empty);//通过玩家进群请求
+	rpc RpcRefuseAddTeam(client_server.TeamInfo)returns(base.Empty);//拒绝玩家进群请求
+	rpc RpcChangeFriendSetting(client_hall.FriendSetting)returns(client_hall.FriendSetting);//修改私聊设置
+	rpc RpcExitTeam(client_server.TeamInfo)returns(base.Empty);//退出群聊
+	rpc RpcGetTeamPlayerInfo(client_server.TeamInfo)returns(share_message.TeamPlayerInfo);//获取群中玩家信息
+	rpc RpcGetBaseTeamInfo(client_server.TeamReq)returns(client_hall.TeamDataInfo);//获取群基本信息
+	rpc	RpcGetPlayerCardInfo(client_server.PlayerReq)returns(share_message.TeamPlayerInfo);//获取个人主页信息
+	rpc	RpcWithdrawMessage(client_server.ReadInfo)returns(client_hall.LogInfo);//撤回消息
+	rpc RpcRequestSpecialChat(client_hall.SpecialChatInfo)returns(base.Empty);//请求语音或者视屏聊天
+	rpc RpcOperateSpecialChat(client_hall.SpecialChatInfo)returns(base.Empty);//语音或者视屏聊天操作
+	rpc RpcRequestChatInfo(client_hall.ChatInfo)returns(base.Empty);//请求聊天记录
+	rpc RpcGetWaiterMsg(client_hall.WaiterMsgRequest)returns(share_message.IMmessage);					//查询客服消息
+	rpc RpcSendWaiterMsg(share_message.IMmessage)returns(share_message.IMmessage);						//玩家发送客服消息
+	rpc RpcRequestWaiterTypes(base.Empty)returns(client_hall.WaiterTypesResponse);						//请求人工客服类型列表
+	rpc RpcRequestWaiterService(client_hall.WaiterMsgRequest)returns(client_hall.WaiterMsgResponse);	//请求人工客服服务  传Type参数对应客服类型
+	rpc RpcWaiterGrade(share_message.IMmessage)returns(base.Empty);										//玩家给客服评分 只传Id，WaiterId，Grade字段
+	rpc RpcSearchForKey(client_hall.SearchFaqRequest)returns(client_hall.SearchFaqResponse);			//搜索常见问题
+	rpc RpcOpenFaqById(client_hall.OpenFaqRequest)returns(share_message.WaiterFAQ);						//打开常见问题详情
+	rpc RpcBroadCastQTX(client_hall.BroadCastQTX)returns(base.Empty);	                //广播群特效请求
+
+	rpc RpcChatNew(share_message.Chat)returns(share_message.Chat); // 新版发送聊天
+	rpc RpcGetSessionData(client_hall.AllSessionData)returns(client_hall.AllSessionData);               //获取会话数据
+	rpc RpcGetSessionDetail(client_hall.SessionData)returns(client_hall.SessionData);                   //获取指定会话的详细数据
+	rpc RpcGetSessionChat(client_hall.SessionChatData)returns(client_hall.SessionChatData);             //会话聊天数据
+	rpc RpcGetTeamMemberData(client_hall.TeamMemberData)returns(client_hall.TeamMemberData);            //获取群成员信息
+	rpc RpcGetTeamDetailData(client_hall.TeamDetailData)returns(client_hall.TeamDetailData);            //获取群详细数据
+	rpc RpcGetTeamAtData(client_hall.TeamAtData)returns(client_hall.TeamAtData);            //获取@数据
+	rpc RpcDeleteMessage(client_server.ReadInfo)returns(base.Empty);  //删除对话
+	rpc RpcGetTeamSettingNew(client_server.TeamInfo)returns(share_message.TeamSetting);//获取群设置主界面信息
+	rpc RpcGetTeamManageSettingNew(client_server.TeamInfo)returns(client_server.TeamManagerSetting);//获取群设置管理信息
+	rpc RpcGetOneSessionData(client_hall.SessionData)returns(client_hall.SessionData);               //获取指定会话详细数据
+	rpc RpcCheckIsTeamMember(client_hall.CheckTeamMember)returns(client_hall.CheckTeamMember);       //检测玩家是否是指定群成员
+	rpc RpcGetSaveTeamSessions(base.Empty)returns(client_hall.AllSessionData);       //获取玩家保存的群会话
+	rpc RpcCheckIsMyTeamSession(client_hall.CheckIsMySession)returns(client_hall.CheckIsMySession);       //检测是否是自己的群会话
+	rpc RpcGetOneShowLog(client_hall.GetOneShowLog)returns(client_hall.GetOneShowLog);       //获取自己最新能显示的消息
+}
+
+// 下行(服务端主动发起)
+service ChatHall2Client {
+    rpc RpcChatToClient(share_message.Chat)returns(base.NoReturn); // 聊天返回
+    rpc RpcChatNewSession(client_hall.SessionData)returns(base.NoReturn); // 新会话变动
+	rpc	RpcTeamSettingResponse(client_server.TeamMsg)returns(base.NoReturn);//	返回群设置主界面信息    2.7.7版本后废弃
+	rpc	RpcTeamManageSettingResponse(client_server.TeamManagerSetting)returns(base.NoReturn);//	返回群设置管理信息  2.7.7版本后废弃
+	rpc RpcTeamOutPlayer(client_server.TeamInfo)returns(base.NoReturn);//退出或者被踢出群聊
+	rpc RpcOpenRedPacketResult(client_hall.OpenRedPacket)returns(base.NoReturn);//领取红包
+	rpc RpcCheckRedPacketResult(share_message.RedPacket)returns(base.NoReturn);//领取查看红包结果
+	rpc RpcOpenTransferMoneyResult(share_message.TransferMoney)returns(base.NoReturn);//领取转账
+	rpc RpcTeamNoticeMessage(share_message.TeamMessage)returns(base.NoReturn);//群变动消息提示
+	rpc RpcRequestADDTeamInviteSuccess(base.Empty)returns(base.NoReturn);//申请信息加群成功
+	rpc RpcRefreshTeamInviteInfo(client_hall.AllInviteInfo)returns(base.NoReturn);//刷新群申请信息
+	rpc RpcDealAddTeamRequest(client_hall.DealInviteInfo)returns(base.NoReturn);//处理进群请求返回
+	rpc	RpcRefreshTeamPersonalName(client_hall.ChangeNameInfo)returns(base.NoReturn);//刷新群昵称
+	rpc RpcTunedUpPayInfo(share_message.PayOrderInfo)returns(base.NoReturn);//通知客户端调起支付
+	rpc RpcWithdrawMessageResponse(client_hall.LogInfo)returns(base.NoReturn);//撤回消息
+	rpc RpcRequestSpecialChatResponse(client_hall.SpecialChatInfo)returns(base.NoReturn);//通知语音或者视屏聊天
+	rpc RpcOperateSpecialChatResponse(client_hall.SpecialChatInfo)returns(base.NoReturn);//语音或者视屏聊天操作
+	rpc RpcReturnChatInfo(client_hall.ReturnChatInfo)returns(base.NoReturn);//语音或者视屏聊天操作
+	rpc RpcTeamChangeInfo(client_hall.OperatorMessage)returns(base.NoReturn);//群封禁消息提示(后台)
+	rpc RpcTeamMemChangeInfo(client_hall.OperatorMessage)returns(base.NoReturn);//群成员封禁消息提示(后台)
+
+	rpc RpcNewWaiterMsg(share_message.IMmessage)returns(base.NoReturn); 	//新消息推送
+	rpc RpcEndWaiterMsg(share_message.IMmessage)returns(base.NoReturn);		//结束IM对话消息
+	rpc RpcBroadCastQTXResp(client_hall.BroadCastQTX)returns(base.NoReturn);	                //广播群特效
+}

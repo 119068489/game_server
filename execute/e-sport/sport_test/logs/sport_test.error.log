@@ -1,0 +1,17 @@
+2021/01/21 20:27:01.415 [E] [TableESPortsFlowInfo_dal.go:106]  $sort key ordering must be 1 (for ascending) or -1 (for descending)
+2021/01/21 20:32:16.767 [E] [TableESPortsFlowInfo_dal.go:106]  Bad projection specification, cannot include fields or add computed fields during an exclusion projection: { union: 0, _id: 1 }
+2021/01/22 10:14:20.942 [E] [TableESPortsFlowInfo_dal.go:116]  Bad projection specification, cannot include fields or add computed fields during an exclusion projection: { union: 0, _id: 1 }
+2021/01/22 14:27:59.400 [E] [TableESPortsRealTimeInfo_dal.go:187]  $elemMatch needs an Object
+2021/01/22 16:08:03.649 [E] [common_dal.go:83]  Can't marshal string as a BSON document
+2021/01/22 16:13:59.382 [E] [common_dal.go:95]  multi update only works with $ operators
+2021/01/22 18:05:01.971 [E] [common_dal.go:63]  Invalid namespace specified 'ningmeng.'
+2021/01/22 18:12:52.887 [E] [common_dal.go:63]  Invalid namespace specified 'ningmeng.'
+2021/01/22 19:43:02.399 [E] [common_dal.go:63]  Invalid namespace specified 'ningmeng.'
+2021/01/22 19:44:46.495 [E] [common_dal.go:63]  Invalid namespace specified 'ningmeng.'
+2021/01/22 19:46:26.911 [E] [common_dal.go:63]  Invalid namespace specified 'ningmeng.'
+2021/01/22 19:48:14.536 [E] [common_dal.go:63]  Invalid namespace specified 'ningmeng.'
+2021/01/22 19:49:46.845 [E] [common_dal.go:63]  Invalid namespace specified 'ningmeng.'
+2021/01/29 15:15:05.030 [E] [TableESPortsFlowInfo_dal.go:208]  unknown top level operator: $esports_videoStatus
+2021/01/29 15:15:16.186 [E] [TableESPortsFlowInfo_dal.go:208]  unknown top level operator: $esports_video.Status
+2021/01/29 16:14:41.175 [E] [TableESPortsFlowInfo_dal.go:197]  Invalid $project :: caused by :: FieldPath field names may not start with '$'.
+2021/01/29 16:31:57.636 [E] [TableESPortsFlowInfo_dal.go:201]  unknown top level operator: $esports_video.Status

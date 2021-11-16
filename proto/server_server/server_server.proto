@@ -1,0 +1,221 @@
+package server_server; //
+import "base.proto";
+import "game_server/proto/share_message/allcommon.proto";
+import "game_server/proto/share_message/table_struct_player_base.proto";
+
+message NotifyAddCoinReq{
+	optional string NotifyAddCoin =1;
+}
+
+message MsgToHall{
+    optional int64 PlayerId = 1;            //玩家id
+    optional string RpcName = 2;            //rpc名字
+    optional string MsgName = 3;            //消息体结构名
+    optional bytes Msg = 4;                 //序列化后的消息
+}
+
+message AddFriend{
+    optional int64 PlayerId = 1;
+    optional int64 FriendId = 2;
+    optional int32 Type = 3;
+    optional int32 OpenWindows = 4;//	添加好友用 添加成功后  1:不打开好友窗口
+}
+
+message PlayerIdInfo{
+    optional int64 PlayerId = 1;
+    optional bool Success = 2;//
+}
+
+message ChatToOtherReq {
+    optional share_message.Chat Chat = 1;
+    optional int64 PlayerId = 2;
+}
+message ReloadDynamicReq{
+    optional int64 PlayerId = 1;            //玩家id
+}
+message ShopOrderRequest{
+	optional int64 OrderId=1;			//订单ID
+	optional int32 Types=2;				// 1取消订单，2完成发货
+	optional int64 UserId=3;			//订单ID取得物流信息时候用
+}
+
+message AdminInfo{
+	optional int64 UserId=1;
+	optional int32 ServerId=2;
+}
+message Recharge {
+	required int64 PlayerId = 1;
+	required int64 RechargeGold = 2; 				// 成功充值了多少金币
+	optional string OrderId=3;	//订单号
+	optional int32  SourceType=4;//操作类型
+	optional string Note=5;
+}
+
+message AuditOrder {
+	required string OrderId=1;	//订单号
+}
+message SysteamModId {
+	required string Id=1;	//修改系统配置的id
+}
+
+message PlayerSI {
+	optional int64 PlayerId = 1;
+	optional int64 Count=2;
+	optional string Account=3;
+}
+
+message EndWaiterMessage {
+	optional int64 Mid = 1;
+}
+
+message PlayerIds {
+	repeated int64 PlayerIds = 1;
+	optional string Node=2;
+	optional string Operator=3;
+	optional int64 BanOverTime=4;
+}
+
+message TeamBan {
+	repeated int64 Ids = 1;			//群ID
+	optional int64 BanTime=2;		//封禁时长 -1 永久封禁
+	optional int32 Status=3;		//封禁状态	1 封禁，2 解封
+	optional string Node=4;			//封禁原因
+}
+
+message CreatePlayer {
+	required string Site = 1;
+	required share_message.PlayerBase PlayerBase = 2;
+	optional int64 ParentId=3;
+	optional string CreateIp=4;
+	optional string Phone=5;
+}
+
+//修改群资料请求
+message EditTeam{
+	optional int64 Id = 1;					//群ID
+	optional string Name = 2;               //群名称
+	optional int32 MaxMember = 3;			//最大人数
+	optional string GongGao = 4;            //群公告
+	optional bool IsRecommend=5;			//是否推荐
+	optional int32 Level=6;					//群等级
+}
+
+//增减群成员请求
+message MemberOptRequest{
+	optional int64 TeamId=1;		//群id
+	repeated int64 PlayerIds=2;		//待操作成员列表
+	optional int32 Types=3;			//操作类型 1增加，2删除
+	optional int64 AdminID = 4;     //管理员ID
+	optional int64 PlayerID = 5;    //群主ID
+}
+
+
+message ShopOrderExpressBody{
+    optional string dateTime = 1;                // 时间
+    optional string remark = 2;                  // 具体信息
+}
+
+
+message ShopOrderExpressInfos{
+       repeated ShopOrderExpressBody expressInfos = 1;                // 物流信息列表
+       optional string expressPhone = 2;                          // 快递电话号码
+       optional string expressName = 3;                           // 快递公司名字
+       optional int64 userId = 4;                           // 保存后台管理的用户id
+}
+//=====商城结构体  ==结束
+
+message AddPlayerFriendInfo{
+    optional int64 PlayerID = 1;                            //玩家ID
+    repeated int64 list = 2;                                //添加的玩家列表
+}
+
+message CreateTeamInfo{
+    optional int64 PlayerID = 1;                            //群主ID
+    optional string team_name = 2;                          //群名称
+    optional int64 AdminID = 3;                             //管理员ID
+    optional string AdminName = 4;                          //管理员名字
+}
+
+message CreateTeamResult{
+    optional int64 TeamID = 1;                              //群ID
+    optional string Reason = 2;                             //结果
+}
+
+message DynamicData{
+	optional int64 LogId = 1;//
+	optional int64 PlayerId = 2;
+	optional string HeadIcon = 3;//
+	optional int32 Sex = 4;//
+	optional string Content = 5;//
+	repeated string Photo = 6;//
+	optional int32 Zan = 7;// 赞的数量
+	optional bool IsAtten = 9;//是否关注
+	optional string Voice = 10;//
+	optional string Video = 11;//
+	optional int64 CreateTime = 12;//
+    optional int64 CommentNum = 13;//评论数量
+    optional CommentList CommentList = 14;//评论信息
+}
+
+
+//群管理
+message TeamManager{
+    repeated int64 TeamIds = 1;             //群号/群成员列表
+    optional int32 Flag = 2;                //解禁：1 解，2 封
+    optional int32 Hour = 3;                //小时
+    optional int32 Minutes = 4;             //分钟
+    optional string Reason = 5;             //原因
+    optional string Name = 6;               //后台管理员
+    optional int64 TeamId = 7;              //群Id
+    repeated string NickName = 8;           //群昵称
+    optional int64 CloseTime = 9;           //禁言时间
+    optional int64 SendTime = 10;           //发送时间
+    optional int32 Day = 11;                //天
+    optional int64 LogId = 12;
+    optional int64 PlayerId = 13;
+}
+message CommentList{
+	repeated CommentData CommentInfo = 1;//评论信息
+	optional int32 count = 2;               //总数
+}
+
+message CommentData{
+	optional int64 Id = 1;//
+	optional int64 LogId = 2;//广场动态id
+	optional int64 PlayerId = 3;// 谁评论的
+	optional string Content = 4;//评论内容
+	optional int64 BelongId = 5;// 属于哪个评论底下的子评论  如果等于0 代表是主评论
+	optional int64 CreateTime = 6;
+	optional int64 TargetId = 7;// 被评论的人物id
+    optional int32 Sex = 8;//
+    optional string Name = 9;// 评论人名字
+    optional string OtherName = 10;//被评论的名字
+	optional int32 OtherSex = 11;//被评论的性别
+    optional int64 TotalNum = 12;// 总共有多少条子评论
+	optional int64 OwnerId = 13;//这条评论是属于谁发布的动态
+}
+//后台置顶社交动态
+message TopRequest{
+	optional int64 LogId=1;
+}
+message SysGivePropsRequest{
+	optional int64 PlayerId = 1;    // 获得道具的玩家id
+	optional int64 ProductId=2; 	// 赠送的商品id
+	optional int64 Num=3;			// 赠送数量
+	optional string Operator=4;		// 操作人
+
+}
+
+//推送话题动态置顶/取消置顶信息小助手
+message TopicDynamicTopLittleHelper {
+    optional int64 PlayerId = 1;    //用户id
+    optional string Title = 2;       //消息标题
+    optional string Content = 3;       //消息内容
+}
+
+
+// 服务器之间通讯
+service Server2Server {
+	rpc RpcMsgToHallClient(share_message.MsgToClient)returns(base.NoReturn); // 通过大厅，发送给客户端
+	rpc RpcMsgToOtherServer(share_message.MsgToServer)returns(share_message.MsgToServer); // 发送给其他服务处理
+}

@@ -1,0 +1,95 @@
+package client_hall;
+import "base.proto";
+import "game_server/proto/share_message/table_struct.proto";
+import "game_server/proto/share_message/table_struct_coin_shop.proto";
+message PropsItemList{
+    repeated share_message.PropsItem Items = 1;
+}
+
+message CoinRechargeList{
+    optional int32 way = 1;   //请求列表:1-android,2-ios
+    repeated share_message.CoinRecharge Items = 2;  //充值列表
+}
+
+message CoinShopList{
+    optional int32 Type = 1;  //1礼包，2挂件，3气泡，4铭牌，5进群特效，6名字变色卡
+    repeated share_message.CoinProduct Items = 2;
+}
+message CoinRechargeReq{
+    optional int64 Id = 1;  //兑换id
+    optional string PassWord = 2;  //支付密码
+    optional bool IsCheck = 3; //是否检测满足购买：true需要检测
+}
+message CoinRechargeResp{
+    optional int64 Id = 1;  //兑换id
+    optional int32 Result = 2;  //结果:1成功，2零钱不足，3道具不存在,4扣除零钱失败，5增加硬币失败，6、支付密码错误,7、支付密码未设置，8青少年模式下无法兑换
+}
+message BuyCoinItem{
+    optional int64 Id = 1;  //购买商品id
+    optional int32 Num = 2; //购买数量
+    optional int32 Way = 3; //购买方式:1硬币，2零钱
+    optional int32 Result = 4;  //结果:1成功，2钱不足，3道具不存在，4已经拥有该道具永久，5扣除钱失败，6未设置购买数量，7、已经拥有礼包内永久道具（是否确认购买），8、支付密码错误，9青少年模式下无法购买，10商品已下架
+    optional bool IsBuy = 5; //确认购买重复物品时设值true，否则false
+    optional string Reason = 6; //结果描述
+    optional string PassWord = 7;  //支付密码，如果用零钱支付，需要传密码
+    optional bool IsCheck = 8; //是否检测满足购买:true需要检测
+}
+message UseCoinItem{
+    optional int64 Id = 1;  //背包道具id
+    optional int32 Way = 2;  //1使用，2卸下
+    optional int32 Result = 3;  //结果:1成功，2使用失败，3道具已过期，7重复使用
+}
+//装备属性,返回前端用
+message Equipment{
+    optional int64 BagId = 1;     //道具id,0表示没装备
+    optional int64 PropsId = 2;   //道具id,0表示没装备
+}
+message EquipmentReq{
+    optional int64 Id = 1;  //玩家id，不传默认查看自己
+    optional Equipment GJ= 2;//挂件
+    optional Equipment QP =3;  //气泡
+    optional Equipment MP =4;  //铭牌
+    optional Equipment QTX =5;  //群特效
+    optional Equipment MZBS =6;  //名字变色
+}
+message BagItems{
+    optional int32 Type = 1;   //0全部,1礼包，2挂件，3气泡，4铭牌，5进群特效，6名字变色卡
+    repeated share_message.PlayerBagItem items=2;
+}
+message NewBagItemsTip{
+    repeated int32 Types = 1;  //2挂件，3气泡，4铭牌，5进群特效，6名字变色卡
+}
+
+// 用户充值活动请求
+message RechargeActReq{
+    optional int64 ActCfgId = 1;           	//商品id
+    optional int32 GiveType = 2;						//赠送币种 1-钻石 2-电竞币
+    optional string PassWord = 3;						//支付密码，零钱支付时使用
+    optional int32 PayWay = 4;              //支付类型，仅活动使用（付款类型 99零钱 1微信 2支付宝  3银行卡）
+    optional share_message.PayOrderInfo PayInfo = 5 ; //非零钱支付使用，使用时ExtendValue为Activity
+    //以下参数无需传递
+    optional string OrderId = 20;						 //订单ID
+    optional string BankCard = 21;           //银行卡号
+    optional int64 OrderAmount = 22;       //订单生成的金额
+}
+
+// 上行(客户端主动发起)
+service CoinShopClient2Hall {
+    rpc RpcGetPropsItems(base.Empty)returns(client_hall.PropsItemList); // 获取道具配置
+	rpc RpcGetCoinRechargeList(client_hall.CoinRechargeList)returns(client_hall.CoinRechargeList); // 硬币充值商店
+	rpc RpcGetCoinShopList(client_hall.CoinShopList)returns(client_hall.CoinShopList); // 硬币商品商店
+	rpc RpcCoinRecharge(client_hall.CoinRechargeReq)returns(client_hall.CoinRechargeResp); // 兑换硬币
+	rpc RpcBuyCoinItem(client_hall.BuyCoinItem)returns(client_hall.BuyCoinItem); // 购买虚拟商品
+	rpc RpcUseCoinItem(client_hall.UseCoinItem)returns(client_hall.UseCoinItem); // 使用虚拟商品
+	rpc RpcGetPlayerEquipment(client_hall.EquipmentReq)returns(client_hall.EquipmentReq);  //玩家装备信息请求
+	rpc RpcGetPlayerBagItems(client_hall.BagItems)returns(client_hall.BagItems);  //获取用户背包道具信息
+  rpc RpcCoinRechargeAct(client_hall.RechargeActReq)returns(client_hall.CoinRechargeResp); // 兑换硬币活动
+}
+
+// 下行(服务端主动发起)
+service Hall2CoinShopClient {
+    rpc RpcDelBagItem(share_message.PlayerBagItem)returns(base.NoReturn); //删除背包道具
+    rpc RpcModifyBagItem(client_hall.BagItems)returns(base.NoReturn); //背包修改变化通知:新增和修改
+    rpc RpcModifyEquipment(client_hall.EquipmentReq)returns(base.NoReturn); //装备修改变化通知
+    rpc RpcNewBagItemsTip(client_hall.NewBagItemsTip)returns(base.NoReturn); //新道具通知
+}

@@ -1,0 +1,362 @@
+package client_hall;
+import "game_server/proto/share_message/table_struct_e-sports.proto";
+import "game_server/proto/share_message/esportCommon.proto";
+import "game_server/proto/share_message/table_struct_e-sports_api.proto";
+//比赛列表请求参数
+message ESportGameListRequest {
+   //类型Type
+   optional int32 LabelType = 1;
+   //labelId
+   optional int64 LabelId = 2;
+   //比赛查询分类
+   optional Game_Class GameClass = 3;
+   //页码
+   optional int32 Page = 4;
+   //页尺寸
+   optional int32 PageSize = 5;
+}
+
+enum Game_Class {
+    //今日
+    GAME_TODAY = 0;
+    //赛前
+    GAME_BEFORE= 1;
+    //滚盘
+    GAME_ROLL = 2;
+    //已结束
+    GAME_OVER = 3;
+}
+
+//比赛列表返回的实体
+message ESportGameObject {
+   //数据库对应的比赛表中id
+   optional int64 UniqueGameId = 1;
+   //比赛图标
+   optional string GameIcon = 2;
+   //比赛名称
+   optional string GameName = 3;
+   //队伍A信息
+   optional TeamObject TeamAInfo = 4;
+   //队伍A得分
+   optional string ScoreA = 5;
+   //队伍B得分
+   optional string ScoreB = 6;
+   //队伍B信息
+   optional TeamObject TeamBInfo = 7;
+   //比赛开始时间(时间戳)
+   optional int64 BeginTime = 8;
+   //比赛开始时间string
+   optional string BeginTimeStr = 9;
+   //比赛状态 0 未开始，1 进行中，2 已结束
+   optional string GameStatus = 10;
+   //是否有滚盘 0 否 ,1 是(目前可不用)
+   optional int32 HaveRoll = 11;
+   //是否有放映厅 0否,1是(详情也用于判断放映厅按钮):该值不是轮询的值
+   optional int32 HaveVideoHall = 12;
+   //以下数据是给予轮询以及查询别的表用(app用不到可以忽视)
+   //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+   optional int32 AppLabelId = 13;
+   //api接口来源 90001:野子科技
+   optional int32 ApiOrigin = 14;
+   //比赛 id(api过来的内部id)
+   optional string GameId = 15;
+   //是否开奖 0：未开奖 1:已开奖
+   optional int32 IsLottery  = 16;
+   //历史记录id(绑定两队历史数据的id)
+   optional int64 HistoryId=17;
+}
+
+//战队信息结构
+message TeamObject {
+	optional string TeamId = 1;    //战队 id
+	optional string Name   = 2;    //战队名称
+	optional string Icon   = 3;    //战队队标
+}
+
+//比赛列表结果信息
+message ESportGameListResult
+{
+    // 错误码 1成功 1以外失败
+    optional int32 Code = 1;
+    // 错误提示
+    optional string Msg = 2;
+    //数据总数
+    optional int32 Total =3;
+    //返回的比赛列表
+    repeated ESportGameObject GameList = 4;
+}
+
+//获取比赛详情数据请求
+message GameDetailRequest {
+    //列表中对应的
+    optional int64 UniqueGameId = 1;
+
+    //轮询标识 0:否 1:轮询
+    optional int32 PollFlag = 2;
+}
+
+//竞猜购物车请求的结构
+message GameGuessCartRequestObj {
+    //列表中对应的
+    optional int64 UniqueGameId = 1;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 AppLabelId = 2;
+    //api接口来源 90001:野子科技
+    optional int32 ApiOrigin = 3;
+    //比赛 id(api过来的内部id)
+    optional string GameId = 4;
+    //动态盘口表中的唯一的id
+    optional int64 UniqueGameGuessId = 5;
+    //竞猜项 id(全局唯一)
+    optional string BetNum = 6;
+    //1:早盘,2:滚盘(app内部区分用)
+    optional int32 MornRollGuessFlag = 7;
+}
+
+//竞猜购物车轮询请求
+message GameGuessCartRequest {
+
+    repeated GameGuessCartRequestObj guessCartsReq = 1;
+
+}
+
+//竞猜购物车返回的结构体
+message GameGuessCartResultObj {
+    //列表中对应的
+    optional int64 UniqueGameId = 1;
+    //竞猜项 id(全局唯一)
+    optional string BetNum = 2;
+    //实时赔率
+    optional string Odds = 3;
+    //比赛状态 0 未开始，1 进行中，2 已结束(后端通过begin_time组合封装过)
+    optional string GameStatus = 4;
+    //投注状态(1:可投注,2:封盘):这个是通过组合判断过的值给app页面用
+    optional string BetStatus = 5;
+}
+
+//竞猜购物车轮询返回结果
+message GameGuessCartResult {
+      // 错误码 1成功 1以外失败
+      optional int32 Code = 1;
+      // 提示
+      optional string Msg = 2;
+      //返回结果
+      repeated GameGuessCartResultObj guessCartsRst = 3;
+}
+
+//返回详情页数据
+message ESportGameDetailResult
+{
+    // 错误码 1成功 1以外失败
+    optional int32 Code = 1;
+    // 错误提示
+    optional string Msg = 2;
+    //返回详情页头部数据
+    optional ESportGameObject GameDetailHead = 3;
+
+    //竞猜内容相关数据
+    //最大限额:该值不是轮询的值
+    optional int64 MaxAmount = 4;
+
+    //动态盘口表中的唯一的id
+    optional int64 UniqueGameGuessId = 5;
+    //1:早盘,2:滚盘(app内部区分用)
+    optional int32 MornRollGuessFlag = 6;
+    //竞猜局数
+    repeated share_message.GameGuessOddsNumObject guessOddsNums = 7;
+}
+
+
+//投注请求参数
+message GameGuessBetRequest {
+
+    repeated GameGuessBetObject guessBets = 1;
+
+}
+
+//投注请求结构体
+message GameGuessBetObject {
+
+    //竞猜中返回的UniqueGameId即比赛表中的唯一主键id
+    optional int64 UniqueGameId = 1;
+    //竞猜中返回的1:早盘,2:滚盘(app内部区分用)
+    optional int32 MornRollGuessFlag = 2;
+    //竞猜中返回的动态盘口表中的唯一的id
+    optional int64 UniqueGameGuessId = 3;
+    //传页面显示的比赛名称(比赛表中赛事名+赛事阶段+"-BO"+赛制)
+    optional string gameName = 4;
+    //传页面显示的队伍A名称
+    optional string teamAName = 5;
+    //传页面显示的队伍B名称
+    optional string teamBName = 6;
+    //竞猜内容 id
+    optional string BetId = 7;
+    //竞猜内容
+    optional string BetTitle = 8;
+    //竞猜项 id(全局唯一)
+    optional string BetNum = 9;
+    //竞猜项名称
+    optional string BetName = 10;
+    //实时赔率
+    optional string Odds = 11;
+    //用户投注金额
+    optional int64 BetAmount =12;
+}
+
+//投注返回结果
+message GameGuessBetResult {
+      // 错误码 1成功 1以外失败
+      optional int32 Code = 1;
+      // 提示
+      optional string Msg = 2;
+      //最大限额:当后端确认超额就返回最新的限制额度 Code=11的时候
+      optional int64 MaxAmount = 3;
+}
+
+//比赛历史数据请求
+message GameHistoryRequest {
+
+    //历史记录id
+    optional int64 HistoryId = 1;
+
+}
+
+//比赛历史数据返回
+message GameHistoryResult {
+
+    // 错误码 1成功 1以外失败
+    optional int32 Code = 1;
+    // 提示
+    optional string Msg = 2;
+    //比赛历史数据
+    optional share_message.RecentData HisData = 3;
+
+}
+
+//比赛实时数据请求
+message GameRealTimeRequest {
+
+     //比赛的唯一id
+     optional int64 UniqueGameId = 1;
+     //比赛的局数
+     optional int32 game_round = 2;
+
+}
+
+//比赛实时数据返回
+message GameRealTimeResult {
+    //错误码 1成功 1以外失败
+    optional int32 Code = 1;
+    // 提示
+    optional string Msg = 2;
+    //当前局数的比赛实时数据
+    optional GameRealTimeData RealTimeData = 3;
+    //比赛的局数
+    optional int32 gameRounds = 4;
+}
+
+//总局数redis结构
+message GameRounds{
+    //总局数
+	optional int32 GameRounds = 1;
+}
+
+//实时数据结构
+message GameRealTimeData{
+    //当前局数
+	optional int32 game_round = 1;
+    //比赛状态(当前局数的比赛状态:1:进行中 2:已结束)
+    optional int32 game_status = 2;
+    //本局用时:单位秒(对应数据库:持续时间)
+    optional int32 duration = 3;
+    //战队a信息
+    optional RealTimeTeamObject team_a = 4;
+    //战队b信息
+    optional RealTimeTeamObject team_b = 5;
+    //战队a队员信息
+    repeated RealTimePlayerObject player_a_info = 6;
+    //战队b队员信息
+    repeated RealTimePlayerObject player_b_info = 7;
+    //(扩展字段)一塔 0:无、1:A队一塔 2:B队一塔
+    optional int32 first_tower = 8;
+    //(扩展字段)一小龙  0:无、1:A队一小龙 2:B队一小龙
+    optional int32 first_small_dragon = 9;
+    //(扩展字段)先五杀  0:无、1:A队先五杀 2:B队先五杀
+    optional int32 first_five_kill = 10;
+    //(扩展字段)一大龙  0:无、1:A队一大龙 2:B队一大龙
+    optional int32 first_big_dragon = 11;
+    //(扩展字段)先十杀  0:无、1:A队先十杀 2:B队先十杀
+    optional int32 first_ten_kill = 12;
+}
+//实时数据战队信息结构
+message RealTimeTeamObject {
+    //战队类型:blue蓝队、red:红队
+	optional string faction = 1;
+	//击杀人头
+    optional int32 score = 2;
+    //当前经济
+    optional int32 glod = 3;
+    //塔状态:推掉对方塔数
+    optional int32 tower_state = 4;
+    //击杀小龙数
+    optional int32 drakes = 5;
+    //击杀大龙数
+    optional int32 nahsor_barons = 6;
+    //选取的英雄
+	repeated share_message.RealTimeHeroObject pickInfos = 7;
+	//禁用的英雄
+    repeated share_message.RealTimeHeroObject banInfos = 8;
+
+    //经济曲线数据
+    repeated share_message.GoldTimeData gold_time_data = 9;
+}
+
+//实时数据中队员信息结构
+message RealTimePlayerObject {
+    //队员名称
+	optional string name = 1;
+	//队员使用英雄
+	optional share_message.RealTimeHeroObject heroInfo = 2;
+    //击杀(KDA中的K)
+    optional int32 kills = 3;
+    //死亡(KDA中的D)
+    optional int32 death = 4;
+    //助攻(KDA中的A)
+    optional int32 assists = 5;
+    //队员的经济
+    optional int32 gold = 6;
+    //补刀数(WZRY没有值)
+    optional int32 subsidy = 7;
+    //装备栏道具
+    repeated share_message.RealTimeItemObject itemInfos = 8;
+    //队员照片
+    optional string photo  = 9;
+}
+
+
+// 上行(客户端主动发起)
+service Client2ESportsGame {
+    //获取比赛列表
+    rpc RpcESportGetGameList(client_hall.ESportGameListRequest)returns(client_hall.ESportGameListResult);
+
+    //获取比赛详情
+    //轮询标识PollFlag 0:否 1:轮询(轮询暂定3秒)
+    rpc RpcESportGetGameDetail(client_hall.GameDetailRequest)returns(client_hall.ESportGameDetailResult);
+
+    //竞猜购物车轮询(轮询暂定3秒)
+    rpc RpcESportGetGameGuessCartPoll(client_hall.GameGuessCartRequest)returns(client_hall.GameGuessCartResult);
+
+    //投注
+    //额度:后端确认后超额会把最新的限额值返回
+    rpc RpcESportGameGuessBet(client_hall.GameGuessBetRequest)returns(client_hall.GameGuessBetResult);
+
+    //比赛历史数据
+    rpc RpcESportGameHistoryData(client_hall.GameHistoryRequest)returns(client_hall.GameHistoryResult);
+
+    //比赛实时数据(LOL、王者荣耀)(轮询暂定3秒)
+    rpc RpcESportGameRealTimeData(client_hall.GameRealTimeRequest)returns(client_hall.GameRealTimeResult);
+}
+
+// 下行(服务端主动发起)
+service ESportsGame2Client {
+}

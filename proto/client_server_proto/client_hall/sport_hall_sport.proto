@@ -1,0 +1,43 @@
+package client_hall; //
+//import "base.proto";
+import "sport_apply.proto";
+import "game_server/proto/share_message/allcommon.proto";
+import "game_server/proto/share_message/table_struct_e-sports.proto";
+message ESPortRoomMsg{
+    //接收者Id 多个
+    repeated int64 RecipientPlayerIds =1;
+    //消息
+    optional string Msg = 2;
+    //发送者ID
+    optional int64 SenderPlayerId = 3;
+    //放映厅ID
+    optional int64 VideoId = 4;
+    //消息ID
+    optional int64 MsgId = 5;
+}
+
+message LotteryRequest {
+	optional int64 UniqueGameId = 1;
+}
+
+//开奖投注项的结果体
+message ItemResult {
+    //竞猜项 id
+	optional string BetNum = 1;
+	//竞猜项是否有结果(0 否 1 是)
+    optional string Status = 2;
+	//该竞猜项是否达成(0未达成，1达成 , -1 无结果)
+    optional string Win = 3;
+	//投注状态从1到0  或  从1到3记录; 其他不变(开奖的时候这个时间的前n秒投注为无效单)
+    optional int64 StatusTime = 4;
+}
+
+// 上行(大厅发给电竞)
+service Hall2ESports {
+    rpc RpcESPortsPlayerOnLine(share_message.PlayerState)returns(client_hall.ESportCommonResult); //玩家上线
+    rpc RpcESPortsPlayerOffLine(share_message.PlayerState)returns(client_hall.ESportCommonResult); //玩家下线
+    rpc RpcESPortsPushGameOrderSysMsg(share_message.TableESPortsGameOrderSysMsg)returns(client_hall.ESportCommonResult); //推送比赛竞猜数据
+    //某个menuId的数据状态更改
+    rpc RpcESportDataStatusInfo(client_hall.ESportDataStatusInfo)returns(client_hall.ESportCommonResult);
+}
+

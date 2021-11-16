@@ -1,0 +1,88 @@
+package share_message;
+import "ggotag.proto";
+
+//竞猜局数的结构体
+message GameGuessOddsNumObject {
+    //竞猜所属节数:0:全场;1:第一局;2:第一局（依次类推）
+    optional string Num  = 1;
+    //竞猜节数名
+    optional string NumName = 2;
+    //竞猜内容
+    repeated GameGuessOddsContentObject Contents = 3;
+}
+
+//竞猜内容的结构体
+message GameGuessOddsContentObject {
+    //竞猜内容id
+    optional string BetId = 1;
+    //竞猜内容
+    optional string BetTitle = 2;
+    //app后台设置竞猜内容的盘口状态 1:封盘 2:开盘(给后台管理用)
+    optional int32 AppGuessFlag = 3;
+    //app后台设置竞猜内容的显示状态 1:关闭 2:开启(给后台管理用)
+    optional int32 AppGuessViewFlag = 4;
+    //竞猜项
+    repeated GameGuessOddsItemObject Items = 5;
+}
+
+//竞猜项的结构体
+message GameGuessOddsItemObject {
+    //竞猜项 id(全局唯一)
+    optional string BetNum = 1;
+    //竞猜项是否有结果(0 否 1 是)
+    optional string Status = 2;
+    //该竞猜项是否达成(0未达成，1达成 , -1 无结果)
+    optional string Win = 3;
+    //实时赔率
+    optional string Odds = 4;
+    //竞猜项名称(某些竞猜项目要通过组合计算得到)
+    optional string BetName = 5;
+    //投注状态(1:可投注,2:封盘):这个是通过组合判断过的值给app页面用
+    optional string BetStatus = 6;
+    //是否选中(false:没选中,true:选中)(给app页面字段)
+    optional bool ItemChecked = 7;
+    //赔率是否变化1:上升 2:下降
+    optional int32 OddsChanged = 8;
+    //竞猜项的结果(0未达成，1达成 , -1 无结果):这个是通过Status、Win组合判断过的值给app页面用
+    optional string Result = 9;
+    //竞猜项的封盘时间(后台管理用)
+    optional string StatusTime = 10;
+    //竞猜项的结果的时间(后台管理用)
+    optional string ResultTime = 11;
+}
+
+//竞猜共通结构
+message GameGuessDetailObject {
+      // 竞猜表中的唯一自增id
+      optional int64 UniqueGameGuessId = 1;
+      //比赛状态 0 未开始，1 进行中，2 已结束
+      optional string GameStatus = 2;
+      //比赛开始时间
+      optional string BeginTime = 3;
+      // 竞猜内容、竞猜项信息
+      repeated GameGuessOddsNumObject guessOddsNums = 4;
+}
+
+//实时数据中队伍选取装备的结构
+message RealTimeItemObject {
+    //id
+	optional int32 id = 1;
+	//英文名
+	optional string name_en = 2;
+    //中文名
+	optional string name_zh = 3;
+	//图标
+    optional string icon = 4;
+}
+
+//实时数据中队伍选取英雄的结构
+message RealTimeHeroObject {
+    //id
+	optional int32 id = 1;
+	//英文名
+	optional string name_en = 2;
+    //中文名
+	optional string name_zh = 3;
+	//图标
+    optional string icon = 4;
+}

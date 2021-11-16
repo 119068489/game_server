@@ -1,0 +1,49 @@
+
+# Linux运行环境
+## 1. 安装MongoDB数据库
+服务端数据库使用MongoDB存储数据，安装[MongoDB](http://www.runoob.com/mongodb/mongodb-linux-install.html)。
+
+## 2. 设置数据库
+进入Mongo安装路径，在Mongo安装路径`./bin`下，添加一个`mongod.cfg`文件。文件内容如下：
+```Mongo
+journal=true
+quiet=true
+logpath=/usr/local/mongodb/bin/logs/mongodb.log
+logappend=true
+port=27017
+bind_ip=127.0.0.1
+dbpath=/usr/local/mongodb/bin/data
+fork=true
+```
+
+创建logpath和dbpath文件夹
+```
+mkdir logs
+mkdir data
+```
+
+接着启动MongoDB：
+```
+mongod -f mongod.cfg
+```
+
+接着设置MongoDB用户密码：
+```
+mongo --port 27017
+use admin
+db.createUser({ user: "root", pwd: "MongoDB.2019", roles: ["root"] })
+db.auth("root", "MongoDB.2019") //验证用户添加是否成功,如果返回1，则表示成功。
+```
+
+修改mongod.cfg,在原有基础上添加:
+```MongoDB
+auth=true
+```
+重启MongoDB
+```
+mongo --port 27017
+db.shutdownServer()
+mongod -f mongod.cfg
+```
+
+

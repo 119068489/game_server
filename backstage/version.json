@@ -1,0 +1,93 @@
+{
+  "Android": {
+    "Version": "2.5.10",
+    "Url": "http://lemonchat.cn/download/lemon.apk",
+    "TestVersion": "2.5.12",
+    "Urls": [
+      {
+        "Channel": "00003",
+        "Url": "https://android.myapp.com/myapp/detail.htm?apkName=com.silbermond.tktalk\u0026ADTAG=mobile"
+      },
+      {
+        "Channel": "00004",
+        "Url": "https://appgallery1.huawei.com/#/app/C101623255"
+      },
+      {
+        "Channel": "00005",
+        "Url": "https://m.pp.cn/detail.html?appid=8095803\u0026ch_src=pp_dev\u0026ch=default"
+      },
+      {
+        "Channel": "00006",
+        "Url": "http://lemonchat.cn/download/lemon.apk"
+      },
+      {
+        "Channel": "00007",
+        "Url": "https://h5coml.vivo.com.cn/h5coml/appdetail_h5/browser_v2/index.html?appId=2861521\u0026resource=301\u0026source=1"
+      },
+      {
+        "Channel": "00008",
+        "Url": "http://zhushou.360.cn/detail/index/soft_id/4202567"
+      },
+      {
+        "Channel": "00009",
+        "Url": "http://app.mi.com/details?id=com.silbermond.tktalk"
+      },
+      {
+        "Channel": "00010",
+        "Url": "http://app.flyme.cn/apps/public/detail?package_name=com.silbermond.tktalk"
+      },
+      {
+        "Channel": "00011",
+        "Url": "http://zhushou.sogou.com/apps/detail/683114.html"
+      },
+      {
+        "Channel": "00012",
+        "Url": "https://shouji.baidu.com/software/27004933.html"
+      },
+      {
+        "Channel": "00013",
+        "Url": "http://lemonchat.cn/download/lemon.apk"
+      }
+    ]
+  },
+  "Ios": {
+    "Version": "2.5.11",
+    "Url": "https://apps.apple.com/cn/app/%E6%9F%A0%E6%AA%AC%E7%95%85%E8%81%8A/id1494075366",
+    "Appid": "1494075366",
+    "TestVersion": "2.5.12",
+    "Urls": [
+      {
+        "Channel": "",
+        "Url": ""
+      },
+      {
+        "Channel": "",
+        "Url": ""
+      },
+      {
+        "Channel": "",
+        "Url": ""
+      },
+      {
+        "Channel": "",
+        "Url": ""
+      },
+      {
+        "Channel": "",
+        "Url": ""
+      }
+    ]
+  },
+  "NeedForceUpdate": false,
+  "BuildUpdateDescription": "5pu05paw5YaF5a6577yaDQoxLuabtOaNouaWsGljb27vvJsNCjIu6IGK5aSp55u45YWz5Yqf6IO95pu05paw77ybDQozLuaWsOWinuaUtuiXj+ihqOaDheWMheWKn+iDvQ==",
+  "IosTest": false,
+  "IosTestVer": true,
+  "AndroidTestVer": true,
+  "isPayTest": false,
+  "TestShortUrl": "http://47.115.72.88:4501/shorturl?url=",
+  "ShortUrl": "http://api.lemonchat.cn/shorturl?url=",
+  "Debugmode": true,
+  "LastForceVer": "2.5",
+  "Banner": "{\"id\":1,\"advertisingTitle\":\"测试1\",\"advertisingUrl\":\"https://www.baidu.com/index.php?tn=monline_3_dg\",\"advertisingImageUrl\":\"https://im-resource-1253887233.cos.ap-guangzhou.myqcloud.com/dev/ceshi.png\"},\n{\"id\":2,\"advertisingTitle\":\"test2\",\"advertisingUrl\":\"https://mbd.baidu.com/newspage/data/landingsuper?context=%7B%22nid%22%3A%22news_9720581330993229149%22%7D\u0026n_type=0\u0026p_from=1\",\"advertisingImageUrl\":\"https://im-resource-1253887233.cos.ap-guangzhou.myqcloud.com/dev/ceshi1.png\"}",
+  "IsOpenWish": true
+}

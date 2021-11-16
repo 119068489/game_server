@@ -1,0 +1,845 @@
+// 如果仅用于通讯的 message,别放在这里
+package share_message;
+import "ggotag.proto";
+
+//api字段不要改动,不然接api的时候接不到数据
+//API比赛表
+message TableESPortsGame{
+    //唯一自增ID (app_label_id,game_id,api_origin的组合)
+    required int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 app_label_id = 2;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional string app_label_name = 3;
+    //api接口来源 90001:野子科技
+    optional int32 api_origin = 4;
+    //api接口来源名称 90001:野子科技
+    optional string api_origin_name = 5;
+    //发布状态 1:未发布 2:已发布
+    optional int32 release_flag = 6;
+    //比赛维度 1 两组对决 2 多组混战 3 多个人(api字段)
+    optional string dimension = 7;
+    //对阵名称 如:总决赛(api字段)
+    optional string fight_name = 8;
+    //项目名称(api字段)
+    optional string	event_name = 9;
+    //项目名称(英)(api字段)
+    optional string	event_name_en = 10;
+    //项目 id(api字段)
+    optional string	event_id = 11;
+    //赛事阶段(api字段)
+    optional string	match_stage = 12;
+    //赛事阶段 id(api字段)
+    optional string	match_stage_id = 13;
+    //赛事名称(api字段)
+    optional string	match_name  = 14;
+    //赛事名称(英)(api字段)
+    optional string	match_name_en = 15;
+    //赛事 id(api字段)
+    optional string	match_id = 16;
+    //比赛类型 战队赛，个人赛(api字段)
+    optional string	game_type = 17;
+    //a 队比分(api字段)
+    optional string score_a  = 18;
+    //b 队比分(api字段)
+	optional string score_b = 19;
+	//是否有直播 0 否，1 是(api字段)
+	optional int32 is_live  = 20;
+	//赛制 如:5(api字段)
+	optional string bo     = 21;
+	//是否热门 0 否，1 是(api字段)
+	optional string hot_game  = 22;
+	//是否有赔率 0 否，1 是(api字段)
+	optional int32 is_bet  = 23;
+	//比赛开始时间(api字段,yyyy-mm-dd hh-mm-ss)
+	optional string begin_time  = 24;
+	//比赛 id(api字段)
+	optional string game_id = 25;
+	//比赛状态 0 未开始，2 已结束(api字段)(0和1的时候结合begin_time判断,数据库中不记录1进行中)
+	optional string game_status  = 26;
+	//比赛状态描述 0 默认，1 正常结束，2 延时结束， 3 取消结束(api字段)
+	optional string game_status_type = 27;
+	//是否有推流 0 否 ，1 是(只有比赛开始后才能用)(api字段)
+	optional int32 have_live  = 28;
+	//是否有滚盘 0 否 ， 1 是(api字段)
+	optional int32 have_roll  = 29;
+	//队员信息A(api字段)
+    repeated ApiPlayer player_a  = 30;
+    //队员信息B(api字段)
+	repeated ApiPlayer player_b = 31;
+	//战队信息A(api字段)
+	optional ApiTeam team_a = 32;
+	//战队信息B(api字段)
+	optional ApiTeam team_b = 33;
+	// 创建时间
+    optional int64 create_time = 34;
+    // 更新时间
+    optional int64 update_time = 35;
+    //比赛状态从0到2的变化时间即比赛的结束时间(跟详情一致,各个开奖模块重启的时候需要补开奖可能用)
+    //该值为0时候、可以取over_time来显示
+    optional int64 game_status_time  = 36;
+    //比赛开始时间int64(方便过滤查询)
+    optional int64 begin_time_int  = 37;
+    //是否开奖 0：未开奖 1:已开奖
+    optional int32 is_lottery  = 38;
+    //历史记录id(绑定两队历史数据的id)
+    optional int64 history_id=39;
+    //比赛结束时间  (废弃、不要用、详情的比赛结束时间)
+    optional string over_time = 40;
+}
+
+//API队员信息结构(比赛表用)
+message ApiPlayer {
+    //玩家在游戏中id或者名称(外号)(api字段)
+	optional string sn = 1;
+	//队员 id(api字段)
+	optional string player_id = 2;
+	//队员真实名(api字段)
+	optional string name = 3;
+}
+
+//API战队信息结构(比赛表用)
+message ApiTeam {
+    //战队 id(api字段)
+	optional string team_id = 1;
+	//战队名称(api字段)
+	optional string name   = 2;
+	//战队名称(英)(api字段)
+	optional string name_en = 3;
+	//战队队标(api字段)
+	optional string icon   = 4;
+}
+
+//API比赛详情表
+message TableESPortsGameDetail{
+    //唯一自增ID (app_label_id,game_id,api_origin的组合)
+    required int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 app_label_id = 2;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional string app_label_name = 3;
+    //api接口来源 90001:野子科技
+    optional int32 api_origin = 4;
+    //api接口来源名称 90001:野子科技
+    optional string api_origin_name = 5;
+    //比赛 id(api字段)
+	optional string game_id   = 6;
+	//赛事 id(api字段)
+	optional string match_id  = 7;
+	//A队伍编号即A队team_id(api字段)
+	optional string team_a   = 8;
+	//B队伍编号即B队team_id(api字段)
+	optional string team_b   = 9;
+	//比赛结束时间  (废弃、不要用)(api字段)
+	optional string over_time = 10;
+	//即A玩家id数组(api字段)
+	repeated string player_a = 11;
+	//即B玩家id数组(api字段)
+	repeated string player_b = 12;
+	//对阵名称 如:总决赛(api字段)
+	optional string fight_name =13;
+	//是否有直播 0 否，1 是(api字段)
+	optional int32 is_live   = 14;
+	//是否有赔率 0 否，1 是(api字段)
+	optional int32 is_bet    = 15;
+	//项目 id(api字段)
+	optional string event_id = 16;
+	//项目名称(api字段)
+	optional string event_name = 17;
+	//项目名称（英）(api字段)
+	optional string event_name_en = 18;
+	//赛事名称(api字段)
+	optional string match_name = 19;
+	//赛事名称（英）(api字段)
+	optional string match_name_en = 20;
+	//赛事阶段(api字段)
+	optional string match_stage = 21;
+	//赛事阶段(英)(api字段)
+	optional string match_stage_en = 22;
+	//赛事阶段 id(api字段)
+	optional string match_stage_id = 23;
+	//比赛开始时间(api字段)
+	optional string begin_time = 24;
+	//比赛类型如个人赛、战队赛(api字段)
+	optional string game_type  = 25;
+	//比赛状态 0 未开始，2 已结束(api字段)(0和1的时候结合begin_time判断,数据库中不记录1进行中)
+	optional string game_status = 26;
+	//赛制(api字段)
+	optional string bo = 27;
+	//是否是热门 0 否，1 是(api字段)
+	optional string hot_game= 28;
+	//A 队详情(api字段)
+    optional APITeamInfo team_a_info = 29;
+    //B 队详情(api字段)
+    optional APITeamInfo team_b_info = 30;
+    //A 队局分(api字段)
+	optional string score_a = 31;
+	//B 队局分(api字段)
+    optional string score_b = 32;
+    //A 队出场队员详情(api map转结构体)
+    repeated  APIPlayerDetail api_team_a_players =33;
+    //B 队出场队员详情(api map转结构体)
+    repeated  APIPlayerDetail api_team_b_players =34;
+    //直播信号源(api map转结构体)(api map转结构体)
+    repeated  APILiveURL  api_live_urls =35;
+    //各局得分,胜者(api字段)
+    optional  APIScore score = 36;
+    //视频录像地址(api字段)
+    optional  APIVideoURL video_url = 37;
+    //两队历史交锋和当前赛事的胜率(api map转结构体)
+    optional  APIWinPB api_win_probability=38;
+    //比赛结束状态0 默认值（未结束时返回），1 正常结束，2 延时结束，3 取消结束(api字段)
+    optional string game_status_type = 39;
+    //是否有滚盘 0 否 ， 1 是(api字段)
+    optional int32 have_roll = 40;
+    //是否有推流  0 否 ，1 是(api字段)
+    optional int32 have_live = 41;
+    // 创建时间
+    optional int64 create_time = 42;
+    // 更新时间
+    optional int64 update_time = 43;
+    // 专题id(api字段)
+    optional string special_id = 44;
+    // 项目id-赛事id-阶段id(可忽略)(api字段)
+    optional string match = 45;
+    // 项目名称-赛事名称(可忽略)(api字段)
+    optional string match_info = 46;
+    // (可忽略)(api字段)
+    optional string match_info_en = 47;
+    //比赛状态从0到2的变化时间(第一记录api推送时间、没有就记录本地的时间、开奖可能用到)
+    optional int64 game_status_time  = 48;
+    //15.0接口中的对象推流直播地址(api字段)
+    optional ESPortsGameLivePathObj live_paths  = 49;
+}
+
+//API战队详细信息结构(比赛详情表用)
+message APITeamInfo {
+    //队伍编号(api字段)
+	optional string team_id = 1;
+	//队名(api字段)
+	optional string name   = 2;
+	//队标(api字段)
+	optional string icon   = 3;
+	//全名(api字段)
+	optional string full_name  = 4;
+	//队名(英)(api字段)
+	optional string name_en   = 5;
+	// 国家(api字段)
+	optional string country_name  = 6;
+	//参与项目(api字段)
+	repeated APIMatch matches = 7;
+}
+
+//API赛事结构(比赛详情表用)
+message APIMatch {
+    //赛事 id(api字段)
+	optional string match_id = 1;
+	//赛事名称(api字段)
+	optional string name   = 2;
+	//赛事名称（英）(api字段)
+	optional string name_en  = 3;
+	//赛事标图(api字段)
+	optional string pic     = 4;
+	//赛事标(api字段)
+	optional string icon   = 5;
+}
+
+//API队员信息详细结构(比赛详情表用)
+message APIPlayerDetail  {
+    //队员 id(api字段)
+	optional string player_id  = 1;
+	//战队 id(api字段)
+	optional string team_id    = 2;
+	//游戏账号id或外号(api字段)
+	optional string id         = 3;
+	//队员姓名(api字段)
+	optional string name       = 4;
+	//赛事id(api字段)
+	optional string match      = 5;
+	//国家id(api字段)
+	optional string country    = 6;
+	//队员照片(api字段)
+	optional string photo      = 7;
+	//(api字段)
+	optional string position   = 8;
+	//游戏账号id或外号(同id)(api字段)
+	optional string sn         = 9;
+	//国家名称(api字段)
+	optional string country_name = 10;
+}
+
+//API直播信号源结构(比赛详情表用)
+message APILiveURL {
+    //直播url名称(api字段)
+    optional string name = 1;
+    //直播url(api字段)
+    optional string url = 2;
+    //直播url_h5(api字段)
+    optional string url_h5 = 3;
+    //直播url_h5名称(api字段)
+    optional string name_h5 = 4;
+}
+
+//API各局得分,胜者结构(比赛详情表用)
+message APIScore {
+    //a队各局分数(api字段)
+    repeated string a = 1;
+    //b队各局分数(api字段)
+    repeated string b = 2;
+    //a,b队各局胜者(api字段)
+    repeated string win = 3;
+}
+
+//API视频录像地址结构(比赛详情表用)
+message APIVideoURL {
+    //svu地址(api字段)
+    repeated string svu = 1;
+    //svu_h5地址(api字段)
+    repeated string svu_h5 = 2;
+}
+
+
+//API两队交锋胜率结构(比赛详情表用)
+message APIWinPBObject {
+    //队伍id
+    optional string team_id = 1;
+    //队伍胜率
+    optional string win_rate = 2;
+}
+
+//API两队历史交锋胜率结构(比赛详情表用)
+message APIWinPB {
+    //两队历史交锋胜率(api字段)
+    repeated APIWinPBObject this_two_team = 1;
+    //两个队伍在当前比赛所处的赛事下的胜率(api字段)
+    repeated APIWinPBObject all = 2;
+}
+
+//API两队历史交锋、两队胜败统计、两队天敌克制统计
+message TableESPortsTeamBout{
+    //唯一自增ID (app_label_id,game_id,api_origin的组合)
+    required int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 app_label_id = 2;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional string app_label_name = 3;
+     //api接口来源 90001:野子科技
+    optional int32 api_origin = 4;
+    //api接口来源名称 90001:野子科技
+    optional string api_origin_name = 5;
+    //比赛 id
+	optional string game_id   = 6;
+	//两队各自的历史比赛记录(api字段)
+	optional APITeamBoutHis history = 7;
+	//a队、b队的历史交锋(api字段)
+	repeated APITeamBoutObject	vs  = 8;
+	//队伍a连胜败统计信息
+    optional APITeamWinFaiObject team_a_win_fail = 9;
+    //队伍b连胜败统计信息
+    optional APITeamWinFaiObject team_b_win_fail = 10;
+    //队伍a天敌克制信息
+    optional APITeamNatResObject team_a_nat_res = 11;
+    //队伍b天敌克制信息
+    optional APITeamNatResObject team_b_nat_res = 12;
+    // 创建时间
+    optional int64 create_time = 13;
+     // 更新时间
+    optional int64 update_time = 14;
+}
+
+//API两队交锋结构(比赛历史表用)
+message APITeamBoutObject {
+    //a队得分(api字段)
+	optional string	 score_a  = 1;
+	//b队得分(api字段)
+	optional string	 score_b  = 2;
+	//比赛开始时间 时间戳精确到秒(api字段)
+	optional string	 begin_time    = 3;
+	//a战队名称(api字段)
+	optional string	 team_a_name   = 4;
+	//b战队名称(api字段)
+	optional string	 team_b_name    = 5;
+}
+
+//API两队历史交锋结构(比赛历史表用)
+message APITeamBoutHis {
+    //a队历史交锋(api字段)
+	repeated APITeamBoutObject	  team_a  = 1;
+	//b队历史交锋(api字段)
+	repeated APITeamBoutObject    team_b  = 2;
+}
+
+//API两队胜败统计
+message APITeamWinFaiObject {
+    //连胜连败(-1：无 1： 连胜 0：连败)(api字段)
+	optional int32 is_continue_win = 1;
+	//连胜记录数(api字段)
+	optional int32 num            = 2;
+	//队伍id(api字段)
+	optional string team_id       = 3;
+}
+
+//API两队胜败天敌克制统计
+message APITeamNatResObject {
+    //天敌(api字段)
+	optional string natural_team = 1;
+	//克制(api字段)
+	optional string restrain_team  = 2;
+	//队伍id(api字段)
+	optional string team_id       = 3;
+}
+
+//API比赛动态信息表(早盘、滚盘)
+message TableESPortsGameGuess{
+    //唯一自增ID (app_label_id,game_id,api_origin,mornRoll_guess_flag的组合)
+    required int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //1:早盘,2:滚盘(app内部区分用)
+    required int32 mornRoll_guess_flag = 2;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 app_label_id = 3;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional string app_label_name = 4;
+    //api接口来源 90001:野子科技
+    optional int32 api_origin = 5;
+    //api接口来源名称 90001:野子科技
+    optional string api_origin_name = 6;
+    //比赛 id(api字段)
+    optional string game_id   = 7;
+    //开始时间(api字段)
+    optional string begin_time = 8;
+  	//比赛状态 0 未开始，2 已结束(api字段)(0和1的时候结合begin_time判断,数据库中不记录1进行中)
+    optional string game_status = 9;
+    //已结束比赛结束状态说明(0 默认，1 正常结束，2 延时结束，3 取消结束)(api字段)
+    optional string game_status_type = 10;
+    //竞猜内容结(api字段)
+    repeated ApiGuessObject guess = 11;
+    // 创建时间
+    optional int64 create_time = 12;
+    // 更新时间
+    optional int64 update_time = 13;
+}
+
+//API竞猜内容结构体(比赛动态信息表用)
+message ApiGuessObject {
+    //竞猜所属局数:0:全场;1:第一局;2:第二局（依次类推）(api字段)
+	optional string num  = 1;
+	//竞猜内容 id(api字段)
+	optional string bet_id = 2;
+	//竞猜内容(api字段)
+	optional string bet_title = 3;
+	//竞猜内容（英）(api字段)
+	optional string bet_title_en = 4;
+	//风险等级(A,B,C,D,E从高到低,越高代表赛事假的程度越高,风险越高)(api字段)
+	optional string risk_level = 5;
+	//竞猜投注项结构体(api字段)
+	repeated ApiItemObject items = 6;
+	//app后台设置竞猜内容的盘口状态 1:封盘 2:开盘(设置该项所有投注项有效)
+	optional int32 app_guess_flag = 7;
+	//app后台设置竞猜内容的显示状态 1:关闭 2:开启(设置该项所有投注项有效)
+    optional int32 app_guess_view_flag = 8;
+}
+
+//API竞猜投注项结构体(比赛动态信息表用)
+message ApiItemObject {
+    //竞猜项 id(在同一个来源同一个比赛中可以确定唯一的投注项)(api字段)
+	optional string bet_num = 1;
+	//队伍id(api字段)
+	optional string team_id = 2;
+	//竞猜项是否有结果(0 否 1 是)(api字段)
+	optional string status = 3;
+	//某些竞猜会有用到(api字段)
+	optional string player_id = 4;
+	//该竞猜项是否达成(0未达成，1达成 , -1 无结果)(api字段)
+	optional string win = 5;
+	//实时赔率(api字段)
+	optional string odds = 6;
+	//竞猜类型(1 队伍，2 选手，3 自定义,5: 让分 6: 战队数组 7: 大小数组)(api字段)
+	optional string bet_type = 7;
+	//竞猜项名称(api字段)
+	optional string odds_name = 8;
+	//是否限制投注(0 否，1 是)(api字段)
+	optional int32  limit_bet = 9;
+	//是否支持水位控制(0 否 1 是)(api字段)
+	optional int32  can_custom = 10;
+	//建议投注状态(0 关闭，1 开放 ，3 暂停)(api字段)
+	optional string odds_status = 11;
+	//分组id(api字段)
+	optional string group_id = 12;
+	//分组内容如:让分：0.5,大小数组：10,战队数组：10(api字段)
+	optional string group_value = 13;
+	//分组表示1,2(组合竞猜类型用)如：让分:(1:+0.5,2:-0.5);大小数组:(1:大于10,2:小于10);战队数组时不用该值(api字段)
+	optional string group_flag = 14;
+	//暂时不可用(废弃)(api字段)
+	optional string bet_start = 15;
+	//暂时不可用(废弃)(api字段)
+	optional string bet_over = 16;
+	//暂时不可用(废弃)(api字段)
+	optional string odds_time = 17;
+	//投注状态从1到0  或  从1到3记录; 其他不变(开奖的时候这个时间的前n秒投注为无效单)
+	optional int64 status_time = 18;
+	//结果产生时间(结合status和win一起判断)
+    optional int64 result_time = 19;
+}
+
+//记录某场比赛10.1接口调用
+message TableESPortsUseRollGuess{
+    //唯一自增ID (app_label_id,game_id,api_origin的组合)
+    required int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 app_label_id = 2;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional string app_label_name = 3;
+    //api接口来源 90001:野子科技
+    optional int32 api_origin = 4;
+    //api接口来源名称 90001:野子科技
+    optional string api_origin_name = 5;
+    //比赛 id
+    optional string game_id   = 6;
+    // 创建时间
+    optional int64 create_time = 7;
+     // 更新时间
+    optional int64 update_time = 8;
+}
+
+//推流直播地址对象
+message ESPortsGameLivePathObj{
+    //地址1(api字段)
+    optional string flvUrl = 1;
+    //地址2(api字段)
+    optional string m3u8Url = 2;
+    //地址3(api字段)
+    optional string rtmpUrl = 3;
+}
+
+
+//API游戏实时数据的结构
+//API=======DOTA2游戏实时数据
+message TableESPortsDOTARealTimeData{
+    //唯一自增ID (game_id,api_origin,game_round的组合)
+    required int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //api接口来源 90001:野子科技
+    optional int32 api_origin = 2;
+    //api接口来源名称 90001:野子科技
+    optional string api_origin_name = 3;
+	//比赛 id(api字段)
+	optional int32 game_id = 4;
+    //当前局数(api字段)
+	optional int32 game_round = 5;
+	//局数 id(api字段)
+    optional int32 game_round_id = 6;
+    //比赛状态(当前局数的比赛状态:1:进行中 2:已结束) (api字段)
+    optional int32 game_status = 7;
+    //项目 id(api字段)
+    optional string	event_id = 8;
+    //持续时间:单位秒(api字段)
+    optional int32 duration = 9;
+    //肉山刷新时间:0：表示存活(api字段)
+    optional int32 roshan_rtimer = 10;
+    //当局胜者:radiant | dire(api字段)
+    optional string	winner = 11;
+    //战队 a 信息
+    optional ApiDOTATeam team_a = 12;
+    //战队 b 信息
+    optional ApiDOTATeam team_b = 13;
+    //战队 a队员信息
+    optional ApiDOTAPlayer player_a_info = 14;
+    //战队 b队员信息
+    optional ApiDOTAPlayer player_b_info = 15;
+    //创建时间
+    optional int64 create_time = 16;
+    //更新时间
+    optional int64 update_time = 17;
+}
+//API战队信息结构(DOTA实时数据表用)
+message ApiDOTATeam {
+    //战队类型(radiant：天辉,dire：夜魇)(api字段)
+	optional string faction = 1;
+    //选取的英雄(选取的英雄 id)
+	repeated int32 picks = 2;
+	//禁用的英雄(禁用的英雄 id)
+    repeated int32 bans = 3;
+    //战队 a 名称
+    optional string name = 4;
+    //战队 id
+    optional int32 id = 5;
+    //人头
+    optional int32 score = 6;
+    //当前总经济
+    optional int32 glod = 7;
+    //塔状态:推掉对方塔数(2字节16位二进制对应)
+    optional int32 tower_state = 8;
+    //兵营状态:推掉对方兵营数(1字节8位二进制进行对应)
+    optional int32 barracks_state = 9;
+}
+
+//API队员信息结构(DOTA实时数据表用)
+message ApiDOTAPlayer {
+    //队员名称(api字段)
+	optional string name = 1;
+	//队员使用英雄 id(api字段)
+	optional int32 hero_id = 2;
+	//队员战术位置 (api字段)
+    optional int32 player_part = 3;
+    //击杀(api字段)
+    optional int32 kills = 4;
+    //死亡(api字段)
+    optional int32 death = 5;
+    //助攻(api字段)
+    optional int32 assists = 6;
+    //正补数(api字段)
+    optional int32 subsidy = 7;
+    //反补数(api字段)
+    optional int32 anti_subsidy = 8;
+    //剩余金钱(api字段)
+    optional int32 gold = 9;
+    //等级(api字段)
+    optional int32 level = 10;
+    //平均每分钟金钱数(api字段)
+    optional int32 gpm = 11;
+    //平均每分钟经验(api字段)
+    optional int32 xpm = 12;
+    //大招等级(api字段)
+    optional int32 ultimate_level = 13;
+    //大招冷却时间:秒(api字段)
+    optional int32 ultimate_cd = 14;
+    //装备栏道具 id(api字段) N:0~5 分别表示道 具 id
+    //这里和LOL、WZRY、CSGO不一致、装备栏道具 id(api字段)
+    optional int32 item0 = 15;
+    optional int32 item1 = 16;
+    optional int32 item2 = 17;
+    optional int32 item3 = 18;
+    optional int32 item4 = 19;
+    optional int32 item5 = 20;
+    //复活时间:秒(api字段)
+    optional int32 rtimer = 21;
+    //队员当前 x 坐标(api字段)
+    optional double px = 22;
+    //队员当前 y 坐标(api字段)
+    optional double py = 23;
+    //队员总经济(api字段)
+    optional int32 net_worth = 24;
+}
+
+//API=======LOL游戏实时数据
+message TableESPortsLOLRealTimeData{
+    //唯一自增ID (game_id,api_origin,game_round的组合)
+    required int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //(扩展字段为了存redis)对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 app_label_id = 2;
+    //(扩展字段)对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional string app_label_name = 3;
+    //api接口来源 90001:野子科技
+    optional int32 api_origin = 4;
+    //api接口来源名称 90001:野子科技
+    optional string api_origin_name = 5;
+	//比赛 id(api字段)
+	optional int32 game_id = 6;
+    //当前局数(api字段)
+	optional int32 game_round = 7;
+    //比赛状态(当前局数的比赛状态:1:进行中 2:已结束) (api字段)
+    optional int32 game_status = 8;
+    //项目 id(api字段)
+    optional string	event_id = 9;
+    //持续时间:单位秒(api字段)
+    optional int32 duration = 10;
+    //当局胜者:team_a | team_b(api字段)
+    optional string	winner = 11;
+    //战队 a 信息(api字段)
+    optional ApiLOLTeam team_a = 12;
+    //战队 b 信息(api字段)
+    optional ApiLOLTeam team_b = 13;
+    //战队 a队员信息(api字段)
+    repeated ApiLOLPlayer player_a_info = 14;
+    //战队 b队员信息(api字段)
+    repeated ApiLOLPlayer player_b_info = 15;
+    //(扩展字段)一塔 0:无、1:A队一塔 2:B队一塔
+    optional int32 first_tower = 16;
+    //(扩展字段)一小龙  0:无、1:A队一小龙 2:B队一小龙
+    optional int32 first_small_dragon = 17;
+    //(扩展字段)先五杀  0:无、1:A队先五杀 2:B队先五杀
+    optional int32 first_five_kill = 18;
+    //(扩展字段)一大龙  0:无、1:A队一大龙 2:B队一大龙
+    optional int32 first_big_dragon = 19;
+    //(扩展字段)先十杀  0:无、1:A队先十杀 2:B队先十杀
+    optional int32 first_ten_kill = 20;
+    //(扩展字段)创建时间
+    optional int64 create_time = 21;
+    //(扩展字段)更新时间
+    optional int64 update_time = 22;
+
+}
+
+//API战队信息结构(LOL实时数据表用)
+message ApiLOLTeam {
+    //战队类型(blue,red)(api字段)
+	optional string faction = 1;
+    //选取的英雄(选取的英雄 id)(api字段)
+	repeated int32 picks = 2;
+	//禁用的英雄(禁用的英雄 id)(api字段)
+    repeated int32 bans = 3;
+    //战队 a 名称(api字段)
+    optional string name = 4;
+    //战队 id(api字段)
+    optional int32 id = 5;
+    //人头(api字段)
+    optional int32 score = 6;
+    //当前总经济(api字段)
+    optional int32 glod = 7;
+    //补刀数(api字段)
+    optional int32 subsidy = 8;
+    //塔状态:推掉对方塔数(api字段)
+    optional int32 tower_state = 9;
+    //击杀小龙数(api字段)
+    optional int32 drakes = 10;
+    //击杀大龙数(api字段)
+    optional int32 nahsor_barons = 11;
+    //经济曲线数据(扩展字段)
+    repeated share_message.GoldTimeData gold_time_data = 12;
+}
+
+//API队员信息结构(LOL实时数据表用)
+message ApiLOLPlayer {
+    //队员名称(api字段)
+	optional string name = 1;
+	//队员使用英雄 id(api字段)
+	optional int32 hero_id = 2;
+	//队员战术位置:top、 mid、sup、jun、adc(api字段)
+    optional int32 player_part = 3;
+    //击杀(api字段)
+    optional int32 kills = 4;
+    //死亡(api字段)
+    optional int32 death = 5;
+    //助攻(api字段)
+    optional int32 assists = 6;
+    //正补数(api字段)
+    optional int32 subsidy = 7;
+    //剩余金钱(api字段)
+    optional int32 gold = 8;
+    //等级(api字段)
+    optional int32 level = 9;
+    //装备栏道具 id(api字段)
+    repeated int32 item = 10;
+    //召唤师技能(api字段)
+    repeated int32 summoner_spells = 11;
+    //承受伤害(api字段)
+    optional int32 damage_taken = 12;
+    //造成伤害(api字段)
+    optional int32 damage = 13;
+    //治疗(api字段)
+    optional int32 heal = 14;
+    //(api字段)
+    optional int32 hp = 15;
+   	//队员照片(扩展字段、程序自动匹配比赛详情中的玩家照片、没有的后台上传)
+   	optional string photo      = 16;
+}
+
+//API=======WZRY游戏实时数据
+message TableESPortsWZRYRealTimeData{
+    //唯一自增ID (game_id,api_origin,game_round的组合)
+    required int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //(扩展字段、为了存redis)对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 app_label_id = 2;
+    //(扩展字段)对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional string app_label_name = 3;
+    //api接口来源 90001:野子科技
+    optional int32 api_origin = 4;
+    //api接口来源名称 90001:野子科技
+    optional string api_origin_name = 5;
+	//比赛 id(api字段)
+	optional int32 game_id = 6;
+    //当前局数(api字段)
+	optional int32 game_round = 7;
+    //比赛状态(当前局数的比赛状态:1:进行中 2:已结束) (api字段)
+    optional int32 game_status = 8;
+    //项目 id(api字段)
+    optional string	event_id = 9;
+    //持续时间:单位秒(api字段)
+    optional int32 duration = 10;
+    //当局胜者:team_a | team_b(api字段)
+    optional string	winner = 11;
+    //战队 a 信息(api字段)
+    optional ApiWZRYTeam team_a = 12;
+    //战队 b 信息(api字段)
+    optional ApiWZRYTeam team_b = 13;
+    //战队 a队员信息(api字段)
+    repeated ApiWZRYPlayer player_a_info = 14;
+    //战队 b队员信息(api字段)
+    repeated ApiWZRYPlayer player_b_info = 15;
+    //(扩展字段)一塔 0:无、1:A队一塔 2:B队一塔
+    optional int32 first_tower = 16;
+    //(扩展字段)一小龙  0:无、1:A队一小龙 2:B队一小龙
+    optional int32 first_small_dragon = 17;
+    //(扩展字段)先五杀  0:无、1:A队先五杀 2:B队先五杀
+    optional int32 first_five_kill = 18;
+    //(扩展字段)一大龙  0:无、1:A队一大龙 2:B队一大龙
+    optional int32 first_big_dragon = 19;
+    //(扩展字段)先十杀  0:无、1:A队先十杀 2:B队先十杀
+    optional int32 first_ten_kill = 20;
+    //(扩展字段)创建时间
+    optional int64 create_time = 21;
+    //(扩展字段)更新时间
+    optional int64 update_time = 22;
+}
+
+//API战队信息结构(WZRY实时数据表用)
+message ApiWZRYTeam {
+    //战队类型(blue,red)(api字段)
+	optional string faction = 1;
+	//是否主场(true:主,false:客)(api字段)
+    optional bool is_home = 2;
+    //选取的英雄(选取的英雄 id)(api字段)
+	repeated int32 picks = 3;
+	//禁用的英雄(禁用的英雄 id)(api字段)
+    repeated int32 bans = 4;
+    //战队 a 名称(api字段)
+    optional string name = 5;
+    //战队 id(api字段)
+    optional int32 id = 6;
+    //人头(api字段)
+    optional int32 score = 7;
+    //塔状态:推掉对方塔数(api字段)
+    optional int32 tower_state = 8;
+    //击杀小龙数(扩展字段、跟LOL一致、后台可修改)
+    optional int32 drakes = 9;
+    //击杀大龙数(扩展字段、跟LOL一致、后台可修改)
+    optional int32 nahsor_barons = 10;
+    //当前总经济(扩展字段、跟LOL一致、不可修改、需将队员经济累加后设置)
+    optional int32 glod = 11;
+
+    //经济曲线数据(扩展字段)
+    repeated GoldTimeData gold_time_data = 12;
+}
+
+//API队员信息结构(WZRY实时数据表用)
+message ApiWZRYPlayer {
+    //队员名称(api字段)
+	optional string name = 1;
+	//队员使用英雄 id(api字段)
+	optional int32 hero_id = 2;
+    //击杀(api字段)
+    optional int32 kills = 4;
+    //死亡(api字段)
+    optional int32 death = 5;
+    //助攻(api字段)
+    optional int32 assists = 6;
+    //经济(api字段)
+    optional int32 gold = 7;
+    //队员当前 x 坐标(api字段)
+    optional int32 px = 8;
+    //队员当前 y 坐标(api字段)
+    optional int32 py = 9;
+    //复活时间:秒(api字段)
+    optional int32 respawn_time = 10;
+    //装备栏道具 id(api字段)
+    repeated int32 item = 11;
+    //队员照片(扩展字段、程序自动匹配比赛详情中的玩家照片、没有的后台上传)
+    optional string photo  = 12;
+}
+
+//LOL、WZRY经济曲线对象(记录离比赛开始时间的经济数据、每一分钟记录一次)
+message GoldTimeData{
+	//离比赛时间的距离(秒)
+    optional int32 game_time_distance = 1;
+    //该时间点的队伍经济
+    optional int32 gold = 2;
+}

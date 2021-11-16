@@ -1,0 +1,522 @@
+package share_message; //
+import "ggotag.proto";
+
+message BroadCastData{
+    required int32 Level = 1;           //广播等级:
+    required string Content = 2;        //消息内容
+    required int32 Count = 3;           //广播次数
+    optional int32 BroadId = 4;         //广播id
+
+    optional int32 MsgType=5;  //消息类型 0:全部 100：游戏 101：非游戏 1：百人牛牛 2：炸金花2D 3：龙虎斗 4：红黑大战 5：捕鱼 6：抢红包 7：拉霸 8：斗地主 9：炸金花3D
+    optional int64 Amount =6;          //金额
+    optional  string NickName =7;          //昵称
+}
+
+message BroadIdReq {
+    required int32 BroadId = 4;         //广播id
+}
+
+message BroadCastMsg{
+    repeated BroadCastData Data = 1;
+    optional string Site = 2 ;//广播的站点
+}
+
+message DynamicDataListPage {
+    repeated DynamicData DynamicData = 1;
+    optional  int32 TotalCount = 2; // 总条数
+    optional  int32 PageCount = 3; // 总页数
+}
+
+message TeamPlayerInfo{
+    optional int64 PlayerId = 1; // 玩家 id
+    optional string Account = 2; //闲聊号
+    optional string NickName = 3;// 玩家呢称
+    optional string HeadIcon = 4;// 玩家头像
+    optional int32 Sex = 5;// 性别 0:默认 1：男 2:女
+    optional string ReName = 6;//好友备注
+    optional string TeamName = 7;//群个人备注
+    optional string Phone = 8;//手机号
+    repeated string Photo = 9;//照片
+    optional string Signature = 10;// 个性签名
+    optional string Provice = 11;//省
+    optional string City = 12;//市
+    optional string Channel = 13;//添加群的渠道
+    optional int32 State = 14;//1:好友 2:不是好友
+    optional int64 TeamId = 15;//群id
+    optional int32 Type = 16;//客户端用
+    optional int32 Fans = 17;//粉丝数量
+    optional int32 Attentions = 18;//关注数量
+    optional int32 Zans = 19; //获赞数量
+    optional int32 Icon = 20;//硬币数量
+    optional DynamicDataListPage DynamicData = 21;//动态数据
+    optional bool IsOnMyAttentionList = 22;// 玩家是否在我的关注列表中
+    optional bool IsOnMyBlackList = 23;// 玩家是否在我的黑名单列表中
+    repeated share_message.LabelInfo LabelInfo = 24;// 标签信息
+    optional int32 AccountState = 25;     //状态:0正常，1前端冻结，2后台冻结，3注销中，4已注销
+    optional string BackgroundImageURL = 26;// 我的主页的背景图
+    optional int32 Types= 27;					//用户类型 1普通用户,2营销运营,3商城账号,4管理运营,5官方运营,6运营测试
+    optional int32 AddFriendType= 28;					// 添加好友类型
+    optional int32 TeamPosition = 29;           //群职位
+    optional int32 Constellation =30;            //星座
+
+}
+
+message LabelInfo{
+    optional int32 Id = 1;
+    optional string Name = 2;//
+}
+
+
+message NoticeInfo{
+    optional bool IsAll = 1;// true :全部人
+    repeated int64 PlayerId = 2;//
+}
+
+message Chat {
+    optional int64 SourceId = 1;            //说话人id
+    optional int64 TargetId = 2;            //目标人id或群id
+	optional string Content = 3;            //说话内容
+	optional int32 ChatType = 4;             //说话类型:1私聊，2群聊，3讨论组
+	repeated int64 PlayIds = 5;             //跨大厅发送消息时，需要广播聊天信息的人物id
+    optional int64 Time = 6;                //发送的时间戳
+    optional int64 LogId = 7;               //日志id
+    optional int32 ContentType = 8;         //发送内容类型:0系统提示，1文字，2语音，3图片，4红包json格式,5转账 6群名片 7个人名片 8领取提示 9撤回消息 10语音通话 11视屏通话 12领转账提示 13引用语句 14群公告
+    optional TeamPlayerInfo CardInfo = 10;//个人名片信息
+    optional int64 CardPlayerId = 11;//个人名片人物id
+    optional string Mark = 12;//客户端字符串标识
+    optional int32 IsSuccessSend = 13;//  不是好友情况下 能否成功发送信息  1 陌生人发送失败 2:黑名单发送失败 3:群禁言，4：敏感词屏蔽,5:账号已注销,6陌生人对话超3次
+    //7不允许陌生人打招呼，8不允许群聊打招呼，9不允许二维码打招呼，10，不允许名片打招呼，11你的好友达上线，12对方的好友达上线,13陌生人发送次数达2次
+    optional string Cite = 14;//引用的语句
+    optional string SourceName = 15;//
+    optional string SourceHeadIcon = 16;//
+    optional int32 SourceSex = 17;//
+    optional NoticeInfo NoticeInfo = 18;//@的信息
+    optional int32 EvilType=19; //聊天:0,100:正常 20001：政治 20002：色情 20006：涉毒违法 20007：谩骂 20103 性感 20105：广告引流 24001：暴恐
+    optional string DirtyWord = 20; //屏蔽词
+    optional bool IsWelcome = 21; // 是否入群欢迎语,true 是入群欢迎语
+    optional int64 QPId = 22;   //气泡框id,0表示不适用气泡框
+    optional int32 Types = 23[(gogoproto.jsontag) = "-"];
+    optional string SessionId = 24;    //会话id
+    optional int32 SayType = 25;   //私聊入口:AddFriend_Type:1柠檬号搜索,2手机号码,3二维码添加,4微信好友,5群聊添加,6附近的人,7玩家id,8名片添加,9陌生人,10注册推荐,11 社交广场,12语音名片
+    optional string ExtentValue = 26;    //扩展字段值
+}
+
+message MsgData{
+    optional int32 ServerType = 1;          //服务器类型:1大厅，2后台，3商场
+    optional string RpcName = 2;            //Rpc名称
+    optional int64 MsgId = 3;               //消息名称
+    optional string MsgName = 4;            //消息体结构名
+    optional bytes Msg = 5;                 //序列化后的消息
+    repeated int64 Playerids= 6;            //指定玩家推送
+    optional bool IsAll = 7;                //是否所有大厅
+}
+message PlayerState{
+    optional int64 PlayerId = 1;
+    optional int32 ServerId = 2;//服务器id
+}
+message PlayerOnlineInfo{
+    repeated PlayerState OnLines= 1; //玩家在线状态
+}
+//秒到支付订单请求数据
+message RechargeOrder{
+    optional string totalAmount = 1;                //充值金额
+    optional string productName= 2;                //商品名称
+    optional string merchantNo= 3;                  //商户号
+    optional string outTradeNo = 4;                 //外部订单号
+    optional string appId = 5;                           //小程序appId
+    optional string openId = 6;                         //小程序openId
+    optional string piType=7;                           //支付产品
+    optional string gatewayPayMethod= 8;      //接入方式:MINIPROGRAM=小程序,SUBSCRIPTION=公众号或服务号
+    optional string agencyCode = 9;                 //机构号
+    optional string notifyUrl = 10;                  //回调地址
+    optional string callBackUrl = 11;              //页面回调地址
+    optional string billSplitList = 12;          //分账信息
+    optional string returnParams = 13;            //回传参数
+    optional string sign = 14;                    //签名
+    optional int32 SourceType = 15;               //
+}
+//支付返回
+message RechargeOrderResult{
+    optional string data =1;
+    optional int32  payType = 2;              //0:返回预支付 id,用 js 调用支付  1:返回链接,用于跳转支付
+    optional string perparePayInfo  = 3;     //当 resultCode 是 200 时,返回
+    optional bool result  = 4;               //true：成功  false：失败
+    optional int32  code = 5;                  //业务返回码
+    optional string message =6;             //业务信息
+}
+message PerPayInfo{
+    optional string perparePayInfo=1;   //
+}
+//登录充值
+message RechargeData{
+    optional string Code  = 1;               //登录时获取的 code
+    optional string TotalAmount= 2;          //充值金额
+    optional string ProductName = 3;         //商品名
+    optional string ReturnParams=4;          //回传参数
+}
+//充值完成
+message RechargeFinish{
+    optional string TradeNo = 1;            //订单
+    optional int64 Amount = 2;             //交易金额：元
+    optional int64 PayFinishTime = 3;      //交易时间
+    optional bool Result = 4;               //交易是否成功
+}
+//小程序微信登录返回
+message WXLoginResult{
+    optional string openid=1;                    //用户唯一标识
+    optional string session_key =2;              //会话密钥
+    optional string unionid  = 3;                //用户在开放平台的唯一标识符，在满足 UnionID 下发条件的情况下会返回，详见 UnionID 机制说明
+    optional int32 errcode =4;                   //错误码:-1 系统繁忙，此时请开发者稍候再试,0请求成功,40029 code无效，45011 频率限制，每个用户每分钟100次
+    optional string errmsg= 5;                   //错误信息
+    optional string wxtoken= 6;                  //微信自定义登录token
+}
+
+message PayData{
+    optional int32  PayId= 1;                   //1秒到，2通联，后续扩展增加
+    optional int32 PayWay = 2;                 //支持的支付方式:1微信支付，2支付宝支付，3银联支付，后续扩展增加
+    optional int32 PaySence = 3;               ////支付场景:微信支付下：1小程序，2公众号。支付宝支付下：3sdk接口，4公众号
+}
+message AliPayData{
+    optional int64 PlayerId =1;                 //玩家id
+    optional string Num = 2;                    //支付金额
+    optional string OrderId = 3;                //返回订单
+}
+
+//通联支付订单请求数据
+message RechargeTLOrder{
+    optional string cusid = 1;                //商户号,实际交易的商户号
+    optional string appid= 2;                //应用ID,平台分配的APPID
+    optional string version= 3;               //接口版本号 默认填11
+    optional string trxamt = 4;               //交易金额 单位为分
+    optional string reqsn = 5;                //商户交易单号,商户的交易订单号
+    optional string paytype = 6;              //交易方式 W06:微信小程序支付,A03:支付宝APP支付
+    optional string body=7;                   //订单标题,订单商品名称，为空则以商户名作为商品名称
+    optional string remark= 8;                 //备注，可为空
+    optional string validtime = 9;             //有效时间，订单有效时间，以分为单位，不填默认为5分钟
+    optional string acct = 10;                  //支付平台用户标识，JS支付时使用，微信支付-用户的微信openid， 支付宝支付-用户user_id，微信小程序-用户小程序的openid
+    optional string notify_url = 11;            //交易结果通知地址，接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数
+    optional string limit_pay = 12;             //支付限制，no_credit--指定不能使用信用卡支付
+    optional string sub_appid = 13;            //微信子appid，微信小程序/微信公众号/APP的appid
+    optional string goods_tag = 14;             //订单优惠标识，订单优惠标记，用于区分订单是否可以享受优惠，字段内容在微信后台配置券时进行设置，说明详见代金券或立减优惠
+    optional string benefitdetail = 15;          //优惠信息，Benefitdetail的json字符串,注意是String
+    optional string chnlstoreid=16;                //渠道门店编号,商户在支付渠道端的门店编号
+    optional string subbranch=17;                 //门店号
+    optional string extendparams=18;             //扩展参数，json字符串，注意是String一般用于渠道的活动参数填写
+    optional string cusip = 19;                  //终端ip
+    optional string idno = 20;                  //证件号,实名交易必填.填了此字段就会验证证件号和姓名
+    optional string truename = 21;              //付款人真实姓名，实名交易必填.填了此字段就会验证证件号和姓名
+    optional string asinfo = 22;                //分账信息
+    optional string fqnum = 23;                   //花呗分期
+    optional string signtype = 24;               //签名方式，MD5 RSA 不填默认MD5
+    optional string sign = 25;                    //签名
+    optional string randomstr = 26;                    //随机字符串
+}
+//通联支付返回
+message RechargeTLOrderResult{
+    optional string retcode = 1;            //返回码，SUCCESS/FAIL
+    optional string retmsg = 2;             //返回码说明
+    optional string cusid = 3;              //平台分配的商户号
+    optional string appid = 4;              //平台分配的APPID
+    optional string trxid = 5;              //收银宝订单号
+    optional string chnltrxid = 6;          //渠道平台交易单号,例如微信,支付宝平台的交易单号
+    optional string reqsn=7;                //商户的交易订单号
+    optional string randomstr = 8;          //随机数
+    optional string trxstatus = 9;          //交易状态，对于刷卡支付，该状态表示实际的支付结果，其他为下单状态
+    optional string fintime = 10;           //交易完成时间：yyyyMMddHHmmss
+    optional string errmsg = 11;            //错误原因
+    optional string payinfo = 12;           //微信支付串,
+    optional string sign = 13;              //签名
+}
+
+//社交广场动态
+message DynamicData{
+    optional int64 LogId = 1 [(gogoproto.jsontag) = "_id,omitempty"];//
+    optional int64 PlayerId = 2;
+    optional string HeadIcon = 3 [(gogoproto.jsontag) = "-"];//
+    optional int32 Sex = 4 [(gogoproto.jsontag) = "-"];//
+    optional int32 PlayerTypes = 28 [(gogoproto.jsontag) = "-"];//
+    optional string Content = 5;//
+    repeated string Photo = 6;//
+    optional int32 Zan = 7 [(gogoproto.jsontag) = "-"];// 赞的数量
+    optional bool IsZan = 8 [(gogoproto.jsontag) = "-"]; //是否点赞了这条动态
+    optional bool IsAtten = 9 [(gogoproto.jsontag) = "-"];//是否关注
+    optional string Voice = 10;//
+    optional string Video = 11;//
+    optional int64 CreateTime = 12;//
+    optional int64 CommentNum = 13 [(gogoproto.jsontag) = "-"];//评论数量
+    optional CommentList CommentList = 14[(gogoproto.jsontag) = "-"];//评论信息
+    optional int32 TrueZan = 15;//赞的数量（假&后台使用）
+    optional int32 Statue = 16;// 0：正常 1:后台删除 2：前端删除,3未发布，4已过期
+    optional int64 VoiceTime = 17;//录音时长
+    optional string NickName = 18 [(gogoproto.jsontag) = "-"];//
+    optional string Account=19 [(gogoproto.jsontag) = "-"];	//用户柠檬号
+    optional double High = 20;//图片或视频高度
+    optional double Weight = 21;//图片或视频宽度
+    optional int64 TopOverTime=22; //置顶到期时间
+    optional bool IsBsTop=23;	//后台置顶
+    optional bool IsShield=24;  //是否屏蔽
+    optional string Note=25;	//屏蔽 删除等操作的原因
+    optional bool IsTop=26;		//app置顶 普通置顶
+    optional string VideoThumbnailURL=27;		// 视频缩略图url
+    optional string ClientUniqueCode = 29; // 客户端唯一码
+    optional int64 SendTime=30; //发送时间 0立即发布
+    optional int32 Check=31; //审核状态 0未处理,1已审核,2已拒绝，3自动审核
+    optional AdvSetting  AdvSetting= 32;// 广告内容
+    optional int32 DataType= 33; //  0-动态;1-广告,2-话题
+    optional int32 HostScore= 34; // 热门分值
+    optional int32 SenderType=35;   //发布用户类型 1普通用户,2营销运营,3商城账号,4管理运营,5官方运营
+    optional int64 ReportCount=36;  //被举报的次数，每次被举报加1
+    optional int32 HotType=37[(gogoproto.jsontag) = "-"];  // 0:不是热门;1:普通热门
+    optional bool IsHot=38 [(gogoproto.jsontag) = "-"];	// 是否设置热门.
+    optional int32 OldStatue = 39[(gogoproto.jsontag) = "-"];// 编辑的时候使用,就是当初这条动态的状态,传给服务器使用.
+    repeated int64 TopicId=40;  // 话题id
+    repeated Topic TopicList = 41; // 话题列表
+    optional int64 PropsId=42;  // 气泡道具的id
+    optional int32 Types= 43[(gogoproto.jsontag) = "-"]; //用户类型 1普通用户,2营销运营,3商城账号,4管理运营,5官方运营,6运营测试
+    repeated TopicTop TopicTopSet=44;//动态话题置顶设置
+}
+//动态话题置顶设置
+message TopicTop{
+    optional int64 TopicId=1;//话题ID
+    optional bool IsTopicTop=2;//是否话题内置顶
+    optional int64 TopicTopOverTime=3; //话题内置顶到期时间
+    optional int64 TopicTopTime=4; //话题内置顶操作时间
+}
+
+message CommentList{
+    repeated int64 HotList =1;      //热门评论id
+    repeated CommentData CommentInfo = 14;//评论信息
+}
+
+//评论记录：table:square_comment
+message CommentData{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];//
+    optional int64 LogId = 2;//广场动态id
+    optional int64 PlayerId = 3;// 谁评论的
+    optional string Content = 4;//评论内容
+    optional int64 BelongId = 5;// 属于哪个评论底下的子评论  如果等于0 代表是主评论
+    optional int64 CreateTime = 6;
+    optional int64 TargetId = 7;// 被评论的人物id
+    optional int32 Sex = 8 ;//
+    optional string Name = 9 ;//
+    optional string OtherName = 10 [(gogoproto.jsontag) = "-"];//被评论的名字
+    optional int32 OtherSex = 11 [(gogoproto.jsontag) = "-"];//被评论的性别
+    optional int64 TotalNum = 12;// 总共有多少条子评论
+    optional int64 OwnerId = 13;//这条评论是属于谁发布的动态
+    optional string HeadIcon = 14;//
+    optional int32 Statue = 15;// 0：正常 1:删除
+    optional string Note=16;	//屏蔽 删除等操作的原因
+    optional int32 Score = 17;  //评分
+    optional bool IsHot = 18 [(gogoproto.jsontag) = "-"];   //是否热评，根据评分决定
+    optional int64 ZanNum = 19 ;   //点赞数
+    optional bool IsZan = 20 [(gogoproto.jsontag) = "-"];   // 自己是否点赞
+    optional int32 Types = 21 [(gogoproto.jsontag) = "-"];          // 账号类型
+}
+//table:square_comment_zan
+message CommentDataZan{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];//
+    optional int64 PlayerId = 2; //点赞人
+    optional int64 DynamicId = 3; //动态id
+    optional int64 CommentId = 4; //评论id
+    optional int64 CreateTime = 5; //点赞时间
+}
+//点赞记录
+message ZanData{
+    optional int64 LogId = 1 [(gogoproto.jsontag) = "_id,omitempty"];//
+    optional int64 PlayerId = 2;//
+    optional int64 OperateId = 3;//操作人id
+    optional int64 DynamicId = 4;//动态id
+    optional int64 CreateTime = 5;//
+    optional int32 Sex = 6 [(gogoproto.jsontag) = "-"];//
+    optional string Name = 7 [(gogoproto.jsontag) = "-"];//
+    optional string HeadIcon = 8 [(gogoproto.jsontag) = "-"];//
+    optional int32 Types = 9[(gogoproto.jsontag) = "-"];			    //  类型
+}
+//关注记录
+message AttentionData{
+    optional int64 LogId = 1 [(gogoproto.jsontag) = "_id,omitempty"];//
+    optional int64 PlayerId = 2;//
+    optional int64 OperateId = 3;//操作人id
+    optional int64 CreateTime = 4;//
+    optional int32 Sex = 5 [(gogoproto.jsontag) = "-"];//
+    optional string Name = 6 [(gogoproto.jsontag) = "-"];//
+    optional string HeadIcon = 7 [(gogoproto.jsontag) = "-"];//
+    optional int32 Types = 8[(gogoproto.jsontag) = "-"];			    //  类型
+    optional int32 Source = 9;//來源，空或者0是im其他入口， 1是电竞入口
+}
+
+//小程序微信登录返回
+message AliLoginResult {
+    optional AliLoginErrorResponse error_response = 1;
+    optional AlipaySystemOauthTokenResponse alipay_system_oauth_token_response = 2;
+    optional string  sign = 3;
+}
+message AliLoginErrorResponse {
+    optional string code = 1;
+    optional string msg = 2;
+    optional string sub_code = 3;
+    optional string sub_msg = 4;
+
+}
+message AlipaySystemOauthTokenResponse{
+    optional string access_token = 1;
+    optional string alipay_user_id = 2;
+    optional int32 expires_in = 3;
+    optional int32 re_expires_in = 4;
+    optional string refresh_token = 5;
+    optional string user_id = 6;
+}
+
+message BackstageNotifyTopReq{
+    optional int64 LogId = 1  [(gogoproto.jsontag) = "_id,omitempty"]; // 动态id
+    optional int64 TopOverTime = 2;// 置顶到期时间
+    optional bool isBsTop = 3;// 置顶到期时间
+    optional bool isTop = 4;// 置顶到期时间
+}
+message CreateAccountData{
+    optional string Phone = 1;          //电话号码
+    optional string PassWord = 2;       //密码
+    optional bool IsVisitor = 3;        //游客
+    optional string Ip = 4;             //地址
+    optional bool IsOnline = 5;         //是否在线
+    optional int32 Types = 6;           //类型
+    optional string AreaCode = 7;       //国际区号
+}
+
+// 新版本的刷新信息
+message NewVersionFlushInfo{
+    optional int32 Type = 1;//1 广场 2:关注
+    optional int64 AdvId = 2; // 上一次返回的最后一条的广告id,第一页的时候提交0给后端.
+    optional int32 Page = 3; // 当前页
+    optional int32 PageSize = 4; // 页面大小
+    optional int64 PlayerId = 5; // 用户id,前端不用管,服务器使用的.
+}
+//  刷新动态信息信息,只刷新广场页,关注页新添加rpc
+message  FlushSquareDynamicTopicReq{
+    optional int64 AdvId = 1; // 上一次返回的最后一条的广告id,第一页的时候提交0给后端.
+    optional int32 Page = 2; // 当前页
+    optional int32 PageSize = 3; // 页面大小
+    optional int64 PlayerId = 4; // 用户id,前端不用管,服务器使用的.
+}
+
+message NewVersionAllInfo{
+    optional share_message.DynamicDataListPage SquareInfo = 1;// 分页的动态数据
+    optional bool FirstAddSquareDynamic = 2; // 是否第一次发布动态,true:首次,false:不是首次
+}
+
+
+
+//广告系统==========================================================================
+//广告表 adv_setting
+message AdvSetting{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional string Title=2;			//标题
+    optional int32 Types=4;				//素材类型： 1图片，2视频,3文字
+    optional int32 Location=5;			//位置类型：1社交动态信息流广告，2启动页广告，3banner位横幅广场页广告，4banner位横幅个人页广告，5banner硬币页,6 banner消息页广告左侧，7恋爱匹配信息流广告，8 banner消息页广告右侧，9弹窗广告，10首页Tips广告
+    optional int32 Status=6;			//上架状态：1上架，2下架
+    optional int64 CreateTime=7;		//创建时间 毫秒时间
+    optional int64 StartTime=10;		//开始投放时间 毫秒时间
+    optional int64 EndTime=11;			//结束投放时间 毫秒时间
+    optional int32 JumpType=15;         //跳转类型 1外链,2内部跳转,3跳转其他APP
+    optional int32 JumpStyle=28;        //跳转对象样式 0默认，1隐藏头部
+    optional int32 JumpObject=16;       //跳转位置 1 主界面，2 柠檬助手，3 柠檬团队，4附近的人，5社交广场-主界面，6社交广场-新增关注，7社交广场-指定动态：通过填写动态ID指定，8好物-主界面，9好物-指定商品：通过填写商品ID指定,10群-指定群id,11社交广场发布页,12零钱,13话题-指定话题,14-指定的动态评论,15-话题主界面,16-硬币商城主页,17-电竞币充值页,18-指定资讯详情,19-指定视频详情,20-电竞主页
+    optional string JumpObjectId=17;    //跳转对象id
+    optional string JumpUrl=18;			//跳转对象url 外链跳转的url
+    optional string TxtSource=19;		//文字广告素材
+    optional string ImgSource=20;		//图片广告素材
+    optional string VideoSource=21;		//视频广告素材
+    optional int32 Weights=22;			//权重/排序，权重值越高排序越考前
+    optional int32 AdvertiserId=25;		//广告主ID
+    optional string Advertiser=26;		//广告主名称
+    optional string AdvertiserIcon=27;	//广告主头像
+    optional bool IsShield=29;          //是否屏蔽
+    optional string BKUrl = 30;         //广告边框url
+    optional bool IsOpenBKUrl = 31;     //是否打开广告边框
+    optional int32 DisplayTime=32;      //广告展示间隔时长 单位秒
+    optional int32 AdvType = 33;        //0其他广告，1许愿池广告，2电竞广告
+    optional string DisplayUrl= 34;     //悬浮球资源url
+    optional bool IsTop=35;             //是否置顶显示
+    optional string JumpAppName=36;     //跳转其他app包名安卓
+    optional string JumpAppNameIos=37;  //跳转其他app包名苹果
+}
+
+//广告报表
+message AdvReport{
+	optional string Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+	optional int64 CreateTime=2;	//时间 0点时间戳
+	optional int64 AdvId=3;			//广告id
+	optional int64 PvCount=4;		//展示次数
+	optional int64 UvCount=5;		//展示人数
+	optional int64 Clicks=6;		//点击次数
+	optional int64 ClickPlayers=7;	//点击人数
+	optional AdvSetting Adv=8;
+}
+//服务器间通讯通用结构
+message MsgToServer{
+    optional int64 PlayerId = 1;            //指定玩家
+    optional string RpcName = 2;            //rpc名字
+    optional string MsgName = 3;            //消息体结构名
+    optional bytes Msg = 4;                 //序列化后的消息
+}
+//服务器间通讯，直接返回给客户端
+message MsgToClient {
+    repeated int64 PlayerIds = 1;            //玩家id
+    optional string RpcName = 2;            //rpc名字
+    optional string MsgName = 3;            //消息体结构名
+    optional bytes Msg = 4;                 //序列化后的消息
+    optional bool IsSend = 5;                 // 是否发送给客户端
+}
+
+// 话题参与的用户
+message TopicParticipatePlayer{
+    optional int64 PlayerId = 1; // 玩家id
+    optional int64 TopicId = 2; // 话题id
+    optional int32 Sex = 3;						//性别 1男 2女
+    optional string HeadIcon = 4;				//头像
+    optional string NickName = 5;				//昵称
+    optional string Signature = 6;				//个性签名
+    optional int64 DynamicId = 7;				//动态id
+    optional int64 FansNum = 8;			    // 粉丝数
+    optional int32 Types = 9[(gogoproto.jsontag) = "-"];			    //  类型
+}
+
+
+// 具体的话题
+message Topic {
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];			// 话题id
+    optional int64 TopicTypeId = 2;         // 类别id,属于哪个类别的话题
+    optional string Name = 3;               // 话题名字
+    optional string HeadURL = 4;            // 话题头像
+    optional int64 HotScore = 5;            // 后台管理系统可变的热门分
+    optional int32 TopicClass = 6;          // 1-官方的话题,2-用户自定义的话题.
+    optional int64 FansNum = 7;             // 粉丝数
+    optional int64 ParticipationNum = 8;    // 参与数
+    optional int64 ViewingNum = 9;          // 浏览数
+    optional string Description = 10;       // 介绍
+    optional bool IsAttention = 11[(gogoproto.jsontag) = "-"]; // 是否已关注
+    optional int64 CreateTime = 12;         //创建时间
+    optional int64 UpdateTime=14;           //更新时间
+    optional int32 Status=15;               //状态 1开启,2关闭
+    optional string Owner=16;               //话题用户管理员
+    optional string Admin = 17;             //后台管理员
+    optional bool IsOpen=18;                //是否开放申请管理员
+    optional string BgUrl=19;               //话题背景图
+    optional bool IsRecommend=20;           //是否推荐
+    optional int64 SortRecommend=21;        //推荐排序
+    optional bool IsHot = 22;               //是否热门
+    optional int64 TopicMaster = 23;        //话题主ID
+    optional string TopicRule = 24;         //话题规则
+    optional int64 AddViewingNum = 30; // 后台增加浏览数
+    optional int64 AddParticipationNum = 31; // 后台增加参与数
+    optional int64 AddFansNum = 32; // 后台增加粉丝数
+}
+
+message PipeIntCount{
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+	optional int64 Count=2;
+}
+
+message PipeStringCount{
+    optional string Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+	optional int64 Count=2;
+}

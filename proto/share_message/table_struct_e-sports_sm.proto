@@ -1,0 +1,335 @@
+// 如果仅用于通讯的 message,别放在这里
+package share_message;
+import "ggotag.proto";
+//import "table_struct_e-sports.proto";
+//api字段不要改动,不然接api的时候接不到数据
+//比赛列表视图表
+message ESPortsGameItemView{
+     optional int64 id = 1[(gogoproto.jsontag) = "_id,omitempty"];    //唯一自增ID
+     optional string match_vs_name = 2;       //拼接后的比赛名字
+
+}
+
+//系统消息
+message ESPortsSysMsgView {
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //数据ID
+    optional string Title = 3;
+    //数据ID
+    optional string Content = 4;
+    //创建时间
+    optional int64 CreateTime = 7;
+    //跳转信息
+    //optional ESPortsJumpInfo JumpInfo = 8;
+    //发布时间 前端显示时间
+    optional int64 EffectiveTime = 9;
+    //推送消息(极光推送)
+    optional bool IsPush = 11;
+    //消息中心
+    optional bool IsMessageCenter= 12;
+    //icon 推送的图标
+    optional string Icon=13;
+}
+
+
+
+//消息中心的竞猜数据
+message ESPortsGameOrderSysMsgView{
+    //投注表订单号
+    required int64 OrderId = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //比赛ID
+    optional int64 UniqueGameId = 2;
+	//竞猜赔率
+	optional string Odds = 4;
+    //竞猜结果 1待结算、2成功、3失败、4返回、5扣除
+    optional string BetResult =6;
+    //竞猜目标
+    optional string BetTitle = 7;
+    //竞猜项Id
+    optional string BetNum = 8;
+	//竞猜项
+	optional string BetName = 9;
+	//游戏名称
+	optional string GameName = 10;
+    //投注时间
+    optional int64 CreateTime = 11;
+    //返还金额
+    optional int64 ResultAmount =13;
+    //玩家ID
+    optional int64 PlayerId = 14;
+    //竞猜金额
+    optional int64 BetAmount =15;
+}
+//房间消息
+message ESPortsLiveRoomMsgView{
+     //唯一ID
+     optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+     //发送者用户ID
+     optional int64 SenderPlayerId = 2;
+     //发送者名称
+     optional string NickName = 3;
+     //正文
+     optional string Content = 4;
+     //发送者头像
+     optional string HeadIcon = 5;
+     //放映厅直播Id
+     optional int64 LiveId = 6;
+     //数据类型 1 发言 2进入直播间
+     optional int32 DataType = 7;
+     //发送时间
+     optional int64 CreateTime = 8;
+}
+
+//关注或者历史使用的结构
+message ESPortsFlowInfoView {
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //玩家ID
+    optional int64 PlayerId = 2;
+    //数据ID
+    optional int64 DataId = 3;
+    //展示在前端的时间
+    optional int64 CreateTime = 4;
+}
+//娱乐视频列表信息
+message ESPortsVideoItemView {
+    //唯一ID 普通查询时使用的主键
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //封面图
+    optional string CoverImageUrl =2;
+    //标题
+    optional string Title = 3;
+    //作者playerId
+    optional int64 AuthorPlayerId = 5;
+    //作者账号或柠檬号
+    optional string AuthorAccount = 4;
+    //作者
+    optional string Author = 11;
+    //数据来源
+    optional string DataSource = 12;
+    //实际浏览数量
+    optional int32 LookCount = 13;
+    //后台配置浏览数量
+    optional int32 LookCountSys = 14;
+    //游戏标签名称
+    optional string AppLabelName = 18;
+    //其他数据ID
+    optional int64 DataId = 29;
+    //关联比赛表标题
+    optional string UniqueGameName = 38;
+    //关联比赛表ID
+    optional int64 UniqueGameId = 26; //没有的话，就是0
+}
+//放映厅或娱乐视频详详细信息
+message ESPortsVideoInfoView {
+    //唯一ID 普通查询时使用的主键
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //封面图
+    optional string CoverImageUrl =2;
+    //标题
+    optional string Title = 3;
+    //作者playerId
+    optional int64 AuthorPlayerId = 5;
+    //作者账号或柠檬号
+    optional string AuthorAccount = 4;
+    //作者
+    optional string Author = 11;
+    //数据来源
+    optional string DataSource = 12;
+    //实际浏览数量
+    optional int32 LookCount = 13;
+    //后台配置浏览数量
+    optional int32 LookCountSys = 14;
+    //游戏标签名称
+    optional string AppLabelName = 18;
+    //视频连接
+    optional string VideoUrl = 8;
+    //关联比赛表ID
+    optional int64 UniqueGameId = 26; //没有的话，就是0
+    //关联比赛表标题
+    optional string UniqueGameName = 38;
+    //是否关注 1已关注 2未关注
+    optional int32 IsFollow = 42[(gogoproto.jsontag) = "-"];
+    //是否关注作者 1已关注 2未关注
+    optional int32 IsAuthorFollow = 43[(gogoproto.jsontag) = "-"];
+    //粉丝人数，不做存储
+    optional int32 FanCount=36;
+    //用户图标url
+    optional string PlayerIconUrl = 37;
+    //关注人数
+    optional int64 FlowCount=34;
+    //后台配置关注人数
+    optional int64 FlowCountSys = 39;
+    //公告
+    optional string Content = 32;
+    //观看者是否点赞 不做存储 1已点赞 0未点赞
+    optional int32 IsThumbsUp=33;
+}
+
+//放映厅详细信息
+message ESPortsMyLiveInfoView {
+    //唯一ID 普通查询时使用的主键
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //封面图
+    optional string CoverImageUrl =2;
+    //标题
+    optional string Title = 3;
+    //游戏标签名称
+    optional string AppLabelName = 18;
+    //视频连接
+    optional string VideoUrl = 8;
+    //关联比赛表ID
+    optional int64 UniqueGameId = 26; //没有的话，就是0
+    //关联比赛表标题
+    optional string UniqueGameName = 38;
+    //公告
+    optional string Content = 32;
+    //状态
+    optional int32 Status = 5;  //0未发布(未审核) 1已发布(审核通过) 2已删除(审核拒绝) 3已禁用 4已过期
+    //游戏标签ID
+    optional int64 AppLabelID = 17;
+}
+
+//资讯列表
+message ESPortsRealTimeItemView {
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //创建时间
+    optional int64 CreateTime = 3; //展示时间
+    //封面大图
+    optional string CoverBigImageUrl = 6;
+    //标题
+    optional string Title = 8;
+    //作者
+    optional string Author = 12;
+    //实际浏览数量
+    optional int32 LookCount = 14;
+    //后台配置浏览数量
+    optional int32 LookCountSys = 15;
+    //实际点赞
+    optional int32 ThumbsUpCount = 16;
+    //后台配置点赞
+    optional int32 ThumbsUpCountSys = 17;
+    //游戏标签ID
+    optional int64 AppLabelID = 18;
+    //游戏标签名称
+    optional string AppLabelName = 19;
+    //评论数量
+    optional int32 CommentCount=23;
+    //观看者是否点赞 不做存储 1已点赞 0未点赞
+    optional int32 IsThumbsUp=27;
+}
+//资讯详细
+message ESPortsRealTimeInfoView {
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //创建时间
+    optional int64 CreateTime = 3; //展示时间
+    //封面大图
+    optional string CoverBigImageUrl = 6;
+    //标题
+    optional string Title = 8;
+    //正文html格式
+    optional string Content = 9;
+    //作者playerId
+    optional int64 AuthorPlayerId = 10;
+    //作者账号或柠檬号
+    optional string AuthorAccount = 11;
+    //作者
+    optional string Author = 12;
+    //数据来源
+    optional string DataSource = 13;
+    //实际浏览数量
+    optional int32 LookCount = 14;
+    //后台配置浏览数量
+    optional int32 LookCountSys = 15;
+    //实际点赞
+    optional int32 ThumbsUpCount = 16;
+    //后台配置点赞
+    optional int32 ThumbsUpCountSys = 17;
+    //游戏标签ID
+    optional int64 AppLabelID = 18;
+    //游戏标签名称
+    optional string AppLabelName = 19;
+    //评论数量
+    optional int32 CommentCount=23;
+    //观看者是否点赞 不做存储 1已点赞 0未点赞
+    optional int32 IsThumbsUp=27;
+}
+
+//评论节点
+message ESportCommentView{
+     //唯一ID
+     optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+     //内容
+     optional string Content = 2;
+     //点赞
+     optional int32 ThumbsUpCount = 3;
+     //时间
+     optional int64 CreateTime = 4;
+     //用户Id
+     optional int64 PlayerId = 5;
+     //用户昵称
+     optional string PlayerNickName = 6;
+     //父级ID
+     optional int64 ParentId = 7;
+     //回复数量
+     optional int32 ReplyCount=10;
+     //某个评论的ID
+     optional int64 CommentId = 12;
+     //用户图标url
+     optional string PlayerIconUrl = 13;
+     //观看者是否点赞 不做存储 1已点赞 0未点赞
+     optional int32 IsThumbsUp=14;
+     //被回复的用户ID
+     optional int64 ReplyPlayerId=15;
+     //被回复的用户昵称(数据不做存储)
+     optional string ReplyPlayerNickName=16;
+}
+
+//通用标签
+message ESPortsLabelView{
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //标题
+    optional string Title = 2;
+    //游戏标签ID
+    optional int64 LabelId = 7;
+    //标签类型  当 LabelType = 3游戏标签ID 使用LabelId  其他使用自增Id
+    optional int32 LabelType = 8; //1 行为标签  2 系统标签 3 游戏标签
+    //标签图标url
+    optional string IconUrl = 9;
+}
+
+// 轮播图
+message ESPortsCarouselView{
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //标题
+    optional string Title = 2;
+    //图片地址
+    optional string ImageUrl = 6;
+    //投放位置
+    optional int32  MenuId = 9;
+    //跳转类型
+    //optional ESPortsJumpInfo JumpInfo=10;
+
+}
+
+//电竞风控redis存放结构体
+message GameGuessBetRiskCtrlObj {
+   //电竞配置
+   	optional int64 EsOneBetGold=1;		//电竞每用户单笔下注硬币上限
+   	optional int64 EsOneDayBetGold=2;	//电竞每用户单日下注总硬币上限
+   	optional int64 EsDaySumGold=3;		//电竞单日所有用户下注总硬币上限
+}
+
+//电竞游戏标签redis存储结构
+message GameLabelRedisObj {
+   	optional string WZRYIcon=1;		//王者荣耀图标
+   	optional string CSGOIcon=2;	    //CSGO图标
+   	optional string LOLIcon=3;		//LOL图标
+    optional string DOTAIcon=4;		//DOTA图标
+    optional string OTHERIcon=5;    //OTHER图标
+}

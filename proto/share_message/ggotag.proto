@@ -1,0 +1,5 @@
+package gogoproto;
+import "descriptor.proto";
+extend google.protobuf.FieldOptions {
+	optional string jsontag = 65005;
+}

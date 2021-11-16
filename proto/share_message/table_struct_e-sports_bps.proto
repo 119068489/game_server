@@ -1,0 +1,293 @@
+// Buried point statistics  埋点统计
+package share_message;
+import "ggotag.proto";
+
+//停留时长
+message TableESPortsBpsDuration{
+    //对应key
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //时间 以当天时间的24点为准(0點)
+    optional int64 TimeKey = 2;
+    //玩家ID
+    optional int64  PlayerId = 3;
+    //进入时间
+    optional int64 CreateTime = 4;
+    //退出时间
+    optional int64 EndTime = 5;
+    //停留時長
+    optional int64 Duration = 6;
+    //菜單id
+    optional int32 MenuId = 7;
+    //标签数据ID
+    optional int64 LabelId = 8;
+    //扩展tabId
+    optional int64 ExTabId = 9;
+    //内容详细页Id
+    optional int64 DataId = 10;
+    //内容子页Id
+    optional int64 ExId = 11;
+    //數據類型：
+    //1000、进入模块（im首页底下导航按钮）
+    //2000、菜单
+    //3000、自定标签
+    //4000、扩展tabId
+    //5000、内容页
+    //6000、内容页子页
+    optional int32 PageType = 12;
+    //底部导航模块按钮  当前 PageType = 1000的时候生效  1 消息、2 通讯录、3 广场、4电竞、 5我的
+    optional int32 NavigationId = 13;
+}
+
+//埋点点击
+message TableESPortsBpsClick{
+    //对应key
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //时间 以当天时间的24点为准
+    optional int64 TimeKey = 2;
+    //玩家ID
+    optional int64  PlayerId = 3;
+    //点击时间
+    optional int64 CreateTime = 4;
+    //菜單id   100 = 系统消息，其他301等等按照原来的意思
+    optional int32 MenuId = 7;
+    //标签数据ID   当 PageType = 3000 ， LabelId= -1000 的时候  就是等于玩家点中了 标签筛选按钮
+    optional int64 LabelId = 8;
+    //扩展tabId
+    optional int64 ExTabId = 9;
+    //内容详细页Id
+    optional int64 DataId = 10;
+    //内容子页Id PageType=6000
+    optional int64 ExId = 11;
+    //數據類型：
+    //1000、进入模块（im首页底下按钮）
+    //2000、菜单
+    //3000、自定标签
+    //4000、扩展tabId
+    //5000、内容页
+    //6000、内容页子页
+    optional int32 PageType = 12;
+    //點擊次數
+    optional int32 ActCount = 13;
+   	//im在电竞中的模块定义 等于1000时使用 1 消息、2 通讯录、3 广场、4电竞、 5我的
+    optional int32 NavigationId = 14;
+    // 1 轮播图  2 内容详细页  3 申请放映厅 针对DataId 使用
+    optional int32 DataType = 15;
+    //点击哪个按钮 按钮ID
+    optional int32 ButtonId = 16;
+}
+
+//=====报表===================================================================>
+//基础埋点报表
+message BasisPointsReport{
+    //日期
+    optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //底部按钮点击总次数
+    optional int64 SumClick=2;
+    //底部电竞点击人数/活跃用户数
+    optional int64 EsClickCount=3;
+    //底部电竞点击次数
+    optional int64 EsClick=4;
+    //人均使用时长
+    optional int64 PerAvgTime=5;
+    //单次使用平均时长
+    optional int64 SigAvgTime=6;
+    //忠诚用户数
+    optional int64 LoyalUserCount=8;
+    //浏览页面总数
+    optional int64 PvSum=9;
+    //次日留存
+    optional int64 NextDayCount=11;
+    //三日留存
+    optional int64 ThreeDayCount=12;
+    //七日留存
+    optional int64 SevenDayCount=13;
+    //app登录人数
+    optional int64 LoginCount=14;
+    //次留首日新增
+    optional int64 NextNewCount=15;
+    //三留首日新增
+    optional int64 ThreeNewCount=16;
+    //七留首日新增
+    optional int64 SevenNewCount=17;
+}
+//Tab菜单埋点报表
+message MenuPointsReport{
+     //日期
+     optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+     //资讯点击人数
+     optional int64 NewsCount=2;
+     //娱乐点击人数
+     optional int64 AmuseCount=3;
+     //放映厅点击人数
+     optional int64 VdoHallCount=4;
+     //赛事点击人数
+     optional int64 MatchCount=5;
+     //底部电竞点击人数
+    optional int64 EsClickCount=6;
+}
+//标签埋点报表 301-资讯,302-娱乐,303-赛事,304-放映厅
+message LabelPointsReport{
+    //CreateTime+MenuId
+    optional string Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //日期
+    optional int64 CreateTime=2; 
+    //菜單id  所属菜单模块
+    optional int32 MenuId = 3; 
+    //底部电竞点击人数
+    optional int64 EsClickCount=4;
+    //标签管理按钮点击人数
+    optional int64 LabMagBtnCount=5;
+    //标签更改按钮点击人数
+    optional int64 LabChaBtnCount=6;
+    //自定义标签
+    repeated LabelPointsstruct Custom=7;
+    //固定标签
+    repeated LabelPointsstruct Fixed=8;
+}
+////标签下级结构
+message LabelPointsstruct{
+    optional int64 Id=1;
+    optional string Title=2;
+    optional int64 Count=3;
+}
+//资讯/娱乐埋点报表
+message NewsAmusePointsReport{
+    //CreateTime+MenuId
+    optional string Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //日期
+    optional int64 CreateTime=2; 
+    //菜單id  所属菜单模块
+    optional int32 MenuId = 3;
+    //人均停留时长
+    optional int64 AvgTime=4;
+    //单次停留平均时长
+    optional int64 SigAvgTime=5;
+    //阅读总量
+    optional int64 ReadSum=6;
+}
+//放映厅埋点报表
+message VdoHallPointsReport{
+    //日期
+    optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //阅读总次数
+    optional int64 ReadSum=2;
+    //点击次数
+    optional int64 ClickSum=3;
+    //点击放映厅人数
+    optional int64 EsUserCount=4;
+    //放映厅关注人数
+    optional int64 FollowHallCount=5;
+    //放映厅主播关注人数
+    optional int64 FollowUserCount=6;
+    //人均停留时长
+    optional int64 AvgTime=7;
+    //单次停留平均时长
+    optional int64 SigAvgTime=8;
+    //开通按钮点击人数
+    optional int64 OpenUserCount=9;
+    //放映列表点击人数
+    optional int64 VdoLsCount=10;
+    //我的关注点击人数
+    optional int64 MyFollowCount=11;
+    //观看记录点击人数
+    optional int64 PlayLogCount=12;
+
+}
+//申请放映厅埋点报表
+message ApplyVdoHallPointsReport{
+    //日期
+    optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //去开通点击总量人数
+    optional int64 OpenCount=2;
+    //提交申请点击人数
+    optional int64 ApplyCount=3;
+    //申请单跳出人数
+    optional int64 ApplyBackCount=4; 
+}
+//赛事列表埋点报表
+message MatchLsPointsReport{
+    //日期
+    optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //赛事列表页面点击总次数
+    optional int64 MatchLsClick=2;
+    //人均停留时长
+    optional int64 AvgTime=3;
+    //单次停留平均时长
+    optional int64 SigAvgTime=4;
+    //今日按钮点击人数
+    optional int64 TodayCount=5;
+    //赛前按钮点击人数
+    optional int64 MatchCount=6;
+    //滚盘按钮点击人数
+    optional int64 RollCount=7;
+    //已结束按钮点击人数
+    optional int64 OverCount=8;
+    //赛事列表页面点击总人数
+    optional int64 MatchLsCount=9;
+}
+//赛事详情埋点报表
+message MatchDilPointsReport{
+    //日期
+    optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //赛事页点击总次数
+    optional int64 MatchClick=2;
+    //底部电竞点击人数
+    optional int64 EsClickCount=3;
+    //人均停留时长
+    optional int64 AvgTime=4;
+    //单次停留平均时长
+    optional int64 SigAvgTime=5;
+    //阵容点击人数
+    optional int64 LineupCount=6;
+    //数据点击人数
+    optional int64 DataCount=7;
+    //数据页人均停留时长
+    optional int64 DataAvgTime=8;
+    //数据页单次停留时长
+    optional int64 DataSigAvgTime=9;
+    //竞猜点击人数
+    optional int64 GuessCount=10;
+    //竞猜页人均停留时长
+    optional int64 GuessAvgTime=11;
+    //竞猜页单次停留时长
+    optional int64 GuessSigTime=12;
+    //赛事详情点击人数
+    optional int64 MatchDilCount=13;
+}
+//竞猜页埋点报表
+message GuessPointsReport{
+    //日期
+    optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //底部电竞点击人数
+    optional int64 EsClickCount=2;
+    //点击投注按钮人数
+    optional int64 BetCount=3;
+    //投注成功人数
+    optional int64 BetOkCount=4;
+}
+//消息页埋点报表
+message MsgPointsReport{
+    //日期
+    optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //底部电竞点击人数
+    optional int64 EsClickCount=2;
+    //消息按钮点击人数
+    optional int64 MsgCount=3;
+    //系统消息按钮点击人数
+    optional int64 SysMsgCount=4;
+    //未结算按钮点击人数
+    optional int64 UnSettle=5;
+    //已结算按钮点击人数
+    optional int64 Settle=6;
+}
+//电竞币埋点报表
+message EsportCoinPointsReport{
+    //日期
+    optional int64 CreateTime=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //底部电竞点击人数
+    optional int64 EsClickCount=2;
+    //电竞币按钮点击人数
+    optional int64 EsCoinCount=3;
+    //兑换成功人数
+    optional int64 ExchangeOkCount=4;
+}

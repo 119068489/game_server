@@ -1,0 +1,62 @@
+{
+  "1": {
+    "id": 1,
+    "name_en": "Daughter",
+    "name_zh": "虚空之女",
+    "icon": "https://img1.famulei.com/images/lol/champion/145.png"
+  },
+  "2": {
+    "id": 2,
+    "name_en": "Minotaur",
+    "name_zh": "牛头酋长",
+    "icon": "https://img1.famulei.com/common/images/champion/Alistar.png"
+  },
+  "3": {
+    "id": 3,
+    "name_en": "Walker",
+    "name_zh": "兽灵行者",
+    "icon": "https://img1.famulei.com/common/images/champion/Udyr.png"
+  },
+  "4": {
+    "id": 4,
+    "name_en": "Missing Link",
+    "name_zh": "迷失之牙",
+    "icon": "https://img1.famulei.com/common/images/champion/Gnar.png"
+  },
+  "5": {
+    "id": 5,
+    "name_en": "Lady Clockwork",
+    "name_zh": "发条魔灵",
+    "icon": "https://img1.famulei.com/common/images/champion/Orianna.png"
+  },
+  "6": {
+    "id": 6,
+    "name_en": "Berserker",
+    "name_zh": "狂战士",
+    "icon": "https://img1.famulei.com/common/images/champion/Olaf.png"
+  },
+  "7": {
+    "id": 7,
+    "name_en": "Iron Maiden",
+    "name_zh": "镕铁少女",
+    "icon": "https://img.scoregg.com/images/lol/champion_new/259.png"
+  },
+  "8": {
+    "id": 8,
+    "name_en": "Bashful  Bloom",
+    "name_zh": "含羞蓓蕾",
+    "icon": "https://img1.famulei.com/images/lol/champion_new/254.png"
+  },
+  "9": {
+    "id": 9,
+    "name_en": "Butcher Sands",
+    "name_zh": "荒漠屠夫",
+    "icon": "https://img1.famulei.com/common/images/champion/Renekton.png"
+  },
+  "10": {
+    "id": 10,
+    "name_en": "Emperor Sands",
+    "name_zh": "沙漠皇帝",
+    "icon": "https://img1.famulei.com/common/images/champion/Azir.png"
+  }
+}

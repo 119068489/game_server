@@ -1,0 +1,16 @@
+package main
+
+import (
+	"flag"
+	"game_server/easygo"
+	"game_server/login"
+	"os"
+)
+
+func main() {
+	defer easygo.PanicWriter.Flush()
+	defer easygo.RecoverAndLog()
+
+	flagSet := flag.NewFlagSet(os.Args[0], flag.PanicOnError)
+	login.Entry(flagSet, os.Args[1:])
+}

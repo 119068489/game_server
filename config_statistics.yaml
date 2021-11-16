@@ -1,0 +1,10 @@
+INCLUDE: ["config_share.yaml"] # 可以包含多个其他 *.yaml 文件
+
+SERVER_TYPE: 5     #服务器类型
+SERVER_ID: 6001     #服务器编号:5000开头
+SERVER_NAME: "统计服务器1"  #服务器名称
+SERVER_ADDR: "127.0.0.1"  #服务器外部地址
+SERVER_ADDR_INTERNAL: "127.0.0.1"  #服务器内部地址
+LISTEN_PORT_FOR_WEB_API_CLIENT: 6511  #监听 http对外客户端请求
+LISTEN_PORT_FOR_WEB_API_SERVER: 6611  #监听 http对内服务器间请求
+

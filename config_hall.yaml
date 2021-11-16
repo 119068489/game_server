@@ -1,0 +1,27 @@
+# 若要加配置、改配置名,请一定在打包脚本 build_linux_yaml_template.py 的模板上也同时加上
+
+INCLUDE: ["config_share.yaml","config_hall_secret.yaml"] # 可以包含多个其他 *.yaml 文件
+
+SERVER_TYPE: 2     #服务器类型
+SERVER_ID: 2001     #服务器编号:2000开头
+SERVER_NAME: "大厅服1"  #服务器名称
+
+REDIS_SERVER_DATABASE: 0             #redis数据库序号
+
+SERVER_ADDR: "127.0.0.1"  #服务器外部地址
+SERVER_ADDR_INTERNAL: "127.0.0.1"  #服务器内部地址
+LISTEN_PORT_FOR_CLIENT: 2001 # 监听 WebSocket 客户端的链接(U3D,H5)取值区间(2001-2299)
+LISTEN_PORT_FOR_CLIENT_TCP: 2301  #监听 TCP 客户端的链接
+LISTEN_PORT_FOR_WEB_API_CLIENT: 2511  #监听 http对外客户端请求
+LISTEN_PORT_FOR_WEB_API_SERVER: 2611  #监听 http对内服务器间请求
+LISTEN_ADDR_FOR_WEB_API: 2601 # Web API 地址
+
+PAYMENT_ADDRESS: "http://54.92.13.178:1511/payment" # 第三方支付回调监听端口(端口要和上面的 LISTEN_ADDR_FOR_WEB_API 一样)
+
+TLS_CRT_FILE_PATH: "" # crt 文件路径. 比如 www.test.com.crt 或 ./test/www.test.com.crt, 值为空串时变成走 ws 协议
+TLS_KEY_FILE_PATH: "" # key 文件路径. 比如 www.test.com.key 或 ./test/www.test.com.key, 值为空串时变成走 ws 协议
+
+SHARE_QR_CODE_URL: "http://54.92.13.178:8001/#/signIn?site=%s&parentid=%d&channel=%d" # 扫码跳转注册新玩家页面
+
+CLIENT_ARTICLE_URL: "http://appshare.lemonchat.cn/article.html"  # 文章访问地址
+VERSION_NUMBER: "1.0.0" # 版本号.升级了版本号记得到 build_linux_yaml_template.py 打包模板修改一下

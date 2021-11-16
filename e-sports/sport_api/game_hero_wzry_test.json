@@ -1,0 +1,62 @@
+{
+  "11": {
+    "id": 11,
+    "name_en": "buzhihuowu",
+    "name_zh": "不知火舞",
+    "icon": "https://img1.famulei.com/z/0/p/173/3015271277155.jpg"
+  },
+  "12": {
+    "id": 12,
+    "name_en": "direnjie",
+    "name_zh": "狄仁杰",
+    "icon": "https://img1.famulei.com/z/0/p/173/3015294580551.jpg"
+  },
+  "13": {
+    "id": 13,
+    "name_en": "zhubajie",
+    "name_zh": "猪八戒",
+    "icon": "https://img1.famulei.com/images/pvp/champion/200511.png"
+  },
+  "14": {
+    "id": 14,
+    "name_en": "lvbu",
+    "name_zh": "吕布",
+    "icon": "https://img1.famulei.com/z/0/p/173/3015474889490.jpg"
+  },
+  "15": {
+    "id": 15,
+    "name_en": "nakelulu",
+    "name_zh": "娜可露露",
+    "icon": "https://img1.famulei.com/z/0/p/173/3015353995408.jpg"
+  },
+  "16": {
+    "id": 16,
+    "name_en": "jing",
+    "name_zh": "镜",
+    "icon": "https://img1.famulei.com/images/pvp/champion_new/252.png"
+  },
+  "17": {
+    "id": 17,
+    "name_en": "jiangzhiya",
+    "name_zh": "姜子牙",
+    "icon": "https://img1.famulei.com/z/0/p/173/3015594293045.jpg"
+  },
+  "18": {
+    "id": 18,
+    "name_en": "makeboluo",
+    "name_zh": "马可波罗",
+    "icon": "https://img1.famulei.com/z/0/p/173/3015464293558.jpg"
+  },
+  "19": {
+    "id": 19,
+    "name_en": "taiyizhenren",
+    "name_zh": "太乙真人",
+    "icon": "https://img1.famulei.com/z/0/p/173/3015330240791.jpg"
+  },
+  "20": {
+    "id": 20,
+    "name_en": "taiyizhenren",
+    "name_zh": "lbds",
+    "icon": "https://img1.famulei.com/images/pvp/champion_new/249.png"
+  }
+}

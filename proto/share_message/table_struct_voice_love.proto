@@ -1,0 +1,153 @@
+// 语音恋爱匹配相关表放这里
+
+package share_message;
+import "ggotag.proto";
+
+
+//亲密度配置:intimacy_config
+message IntimacyConfig{
+    optional int32 Lv = 1[(gogoproto.jsontag) = "_id,omitempty"];   //阶段1-6:心颗数
+    optional int64 MaxVal= 2;    //升级需要值
+    optional int32 PerDayVal = 3; //每天递减值，百分比
+}
+//玩家亲密度
+message PlayerIntimacy{
+    optional string Id =1 [(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 IntimacyVal = 2;   //亲密值
+    optional int32 IntimacyLv = 3;    //亲密等级
+    optional int64 LastTime = 4;      //上一次加分时间
+    optional bool IsSayHi = 5;     //是否打过招呼，只有打过招呼才能显示
+}
+
+//语音恋爱操作行为:player_vc_zan_log
+message PlayerVCZanLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 PlayerId  = 2;   //点赞人
+    optional int64 TargetId = 3;    //被点赞人
+    optional int64 CreateTime = 4;        //点赞时间
+    optional int32 ZanNum = 5;      //点赞次数，最多点赞6次
+}
+
+//打招呼行为列表:player_vc_say_hi_log
+message PlayerVCSayHiLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 PlayerId = 2;    //打招呼的人
+    optional int64 TargetId = 3;    //被打招呼的人
+    optional int64 CreateTime = 4;  //打招呼时间
+}
+//关注，包括打招呼和点赞的玩家
+message PlayerAttentionLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional int64 PlayerId = 2;    //打招呼的人
+    optional int64 TargetId = 3;    //被打招呼的人
+    optional int64 SortTime = 4;    //排序时间时间
+    optional int64 SayHiTime = 5;   //打招呼时间
+    optional int32 Opt = 6;         //操作行为:1-点赞，2-SayHi（若同时为1,2则显示2）
+}
+//公共背景音频短片:bg_voice_video
+message BgVoiceVideo{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //自增序号
+    optional int64 PlayerId = 2;    //作者ID，0表示系统
+    optional string Maker = 3;      //作者昵称
+    optional string Name = 4;       //名称
+    repeated int32 Tags = 5;        //作品标签
+    optional string Content =6;     //内容对白
+    optional string MusicUrl = 7;   //音频链接
+    optional string ImageUrl = 8;   //图片链接
+    optional int32 Type = 9;        //类型：1独白，2电影，3唱一唱
+    optional int64 CreateTime = 10; //制作时间
+    optional int64 PlayerType=11;   //玩家类型
+    optional int64 UseCount=12;     //使用次数
+    optional int32 Status=13;       //状态：0-未审核,1-通过,2-拒绝 ,3-删除
+    optional int64 MusicTime = 14;   //音乐时长:秒
+    optional string PlayerAccount=18[(gogoproto.jsontag) = "-"];   //玩家柠檬号(不存库)
+
+
+}
+//玩家制作的语音:player_mix_voice_video
+message PlayerMixVoiceVideo{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"]; //自增序号
+    optional int64 PlayerId = 2;        //玩家id
+    optional int64 BgId = 3;            //背景音频ID
+    optional string MixVoiceUrl = 4;    //合成音频url
+    optional int64 CreateTime = 5;      //合成时间
+    optional int64 PlayerType=6;        //玩家类型
+    optional int32 Status=7;            //状态：0-未审核,1-已发布,3-已删除
+    optional int64 MixTime = 8;         //合成音频时长:秒
+    optional bool IsUse=13;             //是否使用
+    optional string PlayerAccount=10[(gogoproto.jsontag) = "-"];   //玩家柠檬号(不存库)
+    optional int32 Type = 11[(gogoproto.jsontag) = "-"];           //类型：1独白，2电影，3唱一唱
+    optional string Content =12[(gogoproto.jsontag) = "-"];        //内容对白
+}
+
+//匹配度分值配置
+message MatchingDegreeParam{
+    optional int32 OnLine = 1;      //在线分值
+    optional int32 OffLine = 2;     //离线分值
+    optional int32 SameSex = 3;     //同性别
+    optional int32 UnSameSex = 4;   //不同性别
+    optional int32 LabelMax = 5;        //标签最大分值
+    optional int32 LabelPer = 6;        //每个标签分值
+    optional int32 PersonalTagMax = 7;  //个性化标签最大分值
+    optional int32 PersonalTagPer = 8; //每个性化标签分值
+    optional int32 Constellation =9;   //星座分值
+}
+
+//系统背景图:system_bg_image
+message SystemBgImage{
+    optional string Url = 1[(gogoproto.jsontag) = "_id,omitempty"]; //存储的url
+}
+
+//埋点日志记录:burying_point_log
+message BuryingPointLog{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //自增id
+    optional int64 PlayerId = 2;                            //操作玩家
+    optional int32 EventType = 3;  //事件
+    optional int64 Time = 4;       //时间,毫秒
+    optional int64 LastTime = 5;   //页面持续时间
+    optional int64 TargetId = 6;   //事件目标id
+}
+//埋点报表，每天一份:vc_burying_point_report
+message VCBuryingPointReport{
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];  //每天的0点时间戳
+    optional int64 MainEnterPeopleNum = 2;   //进入恰柠檬人数
+    optional int64 MainEnterNum = 3;         //进入总次数
+    optional int64 MainReadCardNum = 4;      //查看名片次数
+    optional int64 MainSayHiNum = 5;         //sayHi按钮人数
+    optional int64 MainZanNum = 6;           //喜欢按钮人数
+    optional int64 MainFreshNum = 7;         //刷新按钮次数
+    optional int64 MainHeadNum = 8;          //个人头像点击人数
+    optional int64 MainRecordNum = 9;        //录制按钮点击人数
+    optional int64 MainFinishNum = 10;       //完成录制按钮点击人数
+    optional int64 MainHeadCardNum = 11;     //头像名片点击人数
+    optional int64 MainHandShake = 12;       //摇一摇人数
+    optional int64 MainOnLineTime = 13;      //主页面停留总时长，毫秒
+    optional int64 LZMPEnterPeopleNum = 14;  //进入录制名片人数
+    optional int64 LZMPEnterNum = 15;         //进入录制名片总次数
+    optional int64 LZMPBackNum = 16;          //录制名片页返回人数
+    optional int64 LZMPDuBai = 17;           //点击独白人数
+    optional int64 LZMPdypy = 18;            //点击电影配音人数
+    optional int64 LZMPcyc = 19;             //点击唱一唱人数
+    optional int64 LZMPly = 20;             //点击录音按钮人数
+    optional int64 LZMPlyNum = 21;             //点击录音按钮次数
+    optional int64 LZMPssgd = 22;            //点击搜索更多人数
+    optional int64 LZMPqx = 23;              //取消按钮次数 录音
+    optional int64 LZMPcg = 24;              //上传按钮次数 录音
+    optional int64 LZMPjymp = 25;             //设置交友名片次数
+    optional int64 LZMPOnlineTime = 26;       //录音页面停留总时长,毫秒
+    optional int64 SXHWEnterPeopleNum = 27;   //谁喜欢我页面人数
+    optional int64 SXHWxhw = 28;              //点击喜欢我按钮人数
+    optional int64 SXHWwxh = 29;              //点击我喜欢按钮人数
+    optional int64 SXHWxhwHuiFu = 30;         //点击喜欢我页回复人数
+    optional int64 SXHWxhwSayHi = 31;           //点击喜欢我页sayHi按钮点击人数
+    optional int64 SXHWxhwZan = 32;             //点击喜欢我页喜欢按钮点击人数
+    optional int64 SXHWwxhBoFang= 33;           //点击我喜欢页播放按钮点击次数
+    optional int64 SXHWwxhChat= 34;             //点击我喜欢页聊天按钮点击次数
+    optional int64 SXHWwxhHead= 35;             //点击我喜欢页头像按钮点击次数
+    optional int64 SSGDEnterPeopleNum = 36;     //搜索更多人数
+    optional int64 SSGDsc = 37;                 //点击上传按钮人数 进入上传页
+    optional int64 SSGDscBackNum = 38;         //上传页返回按钮人数 背景资源
+    optional int64 SSGDscTJNum = 39;            //上传页提交人数 背景资源
+    optional int64 SSGDOnlineTime = 40;         //搜索页面停留总时长,毫秒
+    optional int64 LZMPcgOK = 41;              //上传录音成功次数 录音
+}

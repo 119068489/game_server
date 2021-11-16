@@ -1,0 +1,829 @@
+// 如果仅用于通讯的 message,别放在这里
+package share_message;
+import "ggotag.proto";
+
+//爬虫进度表 job_crawl
+message TableCrawlJob{
+    optional string Id=1[(gogoproto.jsontag) = "_id,omitempty"]; //目标站点ID 
+    optional string Value=2;     //当前进度值
+    optional int64 Time=3;      //最后更新时间
+    optional string Name=4;     //目标名称
+}
+//电竞玩家表
+message TableESPortsPlayer{
+    //玩家Id
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];         // 唯一ID 也是playerId
+    //状态
+    optional int32 Status = 2;  //1正常 2禁用
+    //上次拉取消息的时间
+    optional int64  LastPullTime = 3;
+    //当前所在房间直播ID（放映厅ID）
+    optional int64 CurrentRoomLiveId=4;
+    //创建时间
+    optional int64  CreateTime = 5;
+    //最后登录时间
+    optional int64  LastLoginTime = 6;
+}
+//跳转信息
+message ESPortsJumpInfo {
+    //跳转类型 1外部跳转，2内部跳转,3跳转其他APP
+    optional int32 JumpType=10;
+    //跳转对象Id
+    optional int64 JumpObjId=11;
+    //跳转位置 1 主界面，2 柠檬团队，3 柠檬助手，4附近的人，5社交广场-主界面，6社交广场-新增关注，7社交广场-指定动态：通过填写动态ID指定，8好物-主界面，9好物-指定商品：通过填写商品ID指定,10群-指定群id,11社交广场发布页,12零钱,13话题-指定话题,14-指定的动态评论,15-话题主界面,16-硬币商城主页,17-电竞币充值页,18-指定资讯详情,19-指定视频详情,20-电竞主页
+    optional int32 JumpObject = 12;
+    //跳转URL
+	optional string JumpUrl = 13;
+	//跳转对象样式 0默认，1隐藏头部
+    optional int32 JumpStyle=14;
+}
+// 轮播图
+message TableESPortsCarousel{
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //标题
+    optional string Title = 2;
+    //修改时间
+    optional int64 UpdateTime = 3;
+    //创建时间
+    optional int64 CreateTime = 4;
+    //状态
+    optional int32 Status = 5;  //1正常 2禁用
+    //图片地址
+    optional string ImageUrl = 6;
+    // 点击次数
+    optional int32 ActionCount = 8;
+    //投放位置
+    optional int32  MenuId = 9; 
+    //跳转类型
+    optional ESPortsJumpInfo JumpInfo=10;
+    //权重
+    optional int32 Weight = 14;  //数值越大，越排前面
+    //广告类型
+    optional int32 Types=15; //1-日常赠送,2-首充赠送,3-活动赠送
+
+}
+//通用标签
+message TableESPortsLabel{
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //标题
+    optional string Title = 2;
+    //状态 1正常 2禁用
+    optional int32 Status = 3;
+    //权重 数值越大，越排前面
+    optional int32 Weight = 4;
+     //菜单Id
+    optional int32 MenuId = 6;
+    //游戏标签ID
+    optional int64 LabelId = 7;
+    //标签类型  当 LabelType = 3游戏标签ID 使用LabelId  其他使用自增Id (1 行为标签  2 系统标签 3 游戏标签)
+    optional int32 LabelType = 8;
+    //标签图标url
+    optional string IconUrl = 9;
+}
+//点赞实体
+message ThumbsUpInfo {
+    //游戏标签ID
+    optional int64 AppLabelID = 18;
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //实际点赞
+    optional int32 ThumbsUpCount = 2;
+    //菜单ID
+    optional int32 MenuId = 22;
+
+}
+//评论节点
+message TableESportComment{
+     //唯一ID
+     optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+     //内容
+     optional string Content = 2;
+     //点赞
+     optional int32 ThumbsUpCount = 3;
+     //时间
+     optional int64 CreateTime = 4;
+     //用户Id
+     optional int64 PlayerId = 5;
+     //用户昵称
+     optional string PlayerNickName = 6;
+     //父级ID
+     optional int64 ParentId = 7;
+     //菜单ID
+     optional int32 MenuId = 8;
+     //游戏标签ID
+     optional int64 AppLabelID = 9;
+     //回复数量
+     optional int32 ReplyCount=10;
+     //状态 1正常 2前端删除 3后台删除
+     optional int32 Status = 11; 
+     //某个评论的ID
+     optional int64 CommentId = 12;
+     //用户图标url
+     optional string PlayerIconUrl = 13;
+     //观看者是否点赞 不做存储 1已点赞 0未点赞
+     optional int32 IsThumbsUp=14;
+     //被回复的用户ID
+     optional int64 ReplyPlayerId=15;
+     //被回复的用户昵称(数据不做存储)
+     optional string ReplyPlayerNickName=16;
+}
+//资讯表
+message TableESPortsRealTimeInfo {
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //修改时间
+    optional int64 UpdateTime = 2;
+    //创建时间
+    optional int64 CreateTime = 3;
+    //状态
+    optional int32 Status = 4;  //0未发布 1已发布 2已删除 3已禁用 4已过期
+    //来源公开时间
+    optional int64 IssueTime = 5;
+    //封面大图
+    optional string CoverBigImageUrl = 6;
+    //小图可多个
+    repeated string CoverSmallImageUrl = 7;
+    //标题
+    optional string Title = 8;
+    //正文html格式
+    optional string Content = 9;
+    //作者playerId
+    optional int64 AuthorPlayerId = 10;
+    //作者账号或柠檬号
+    optional string AuthorAccount = 11;
+    //作者
+    optional string Author = 12;
+    //数据来源
+    optional string DataSource = 13;
+    //实际浏览数量
+    optional int32 LookCount = 14;
+    //后台配置浏览数量
+    optional int32 LookCountSys = 15;
+    //实际点赞
+    optional int32 ThumbsUpCount = 16;
+    //后台配置点赞
+    optional int32 ThumbsUpCountSys = 17;
+    //游戏标签ID
+    optional int64 AppLabelID = 18;
+    //游戏标签名称
+    optional string AppLabelName = 19;
+    //发布时间
+    optional int64 BeginEffectiveTime = 20; //当EffectiveType =2的时候生效
+    //发布类型
+    optional int64 EffectiveType = 21; //1立刻有效 2 定时有效
+    //菜单ID
+    optional int32 MenuId = 22;
+    //评论数量
+    optional int32 CommentCount=23;
+    //展示模板类型 1标准3图 2大图  3左文右图
+    optional int32 ShowType = 24;
+    // 系统自定义标签 一对多关系
+    repeated int64 LabelIds = 25;
+    //备注字段
+    optional string Note=26;
+    //观看者是否点赞 不做存储 1已点赞 0未点赞
+    optional int32 IsThumbsUp=27;
+}
+//赛事信息
+message UniqueGameInfo {
+    //赛事名
+    optional string matchName = 1;
+    //場次名
+    optional string matchStage = 2;
+    //bo
+    optional string bo = 3;
+    //A隊伍信息
+    optional string teamAName = 4;
+    //B隊伍信息
+    optional string teamBName= 5;
+}
+
+//视频表
+message TableESPortsVideoInfo {
+    //唯一ID 普通查询时使用的主键
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //修改时间
+    optional int64 UpdateTime = 2;
+    //创建时间
+    optional int64 CreateTime = 3; 
+    //来源公开时间
+    optional int64 IssueTime = 4;
+    //状态
+    optional int32 Status = 5;  //0未发布(未审核) 1已发布(审核通过) 2已删除(审核拒绝) 3已禁用 4已过期
+    //封面图
+    optional string CoverImageUrl = 6;
+    //标题
+    optional string Title = 7;
+    //视频连接
+    optional string VideoUrl = 8;
+    //作者playerId
+    optional int64 AuthorPlayerId = 9;
+    //作者账号或柠檬号
+    optional string AuthorAccount = 10;
+    //作者
+    optional string Author = 11;
+    //数据来源
+    optional string DataSource = 12;
+    //实际浏览数量
+    optional int32 LookCount = 13;
+    //后台配置浏览数量
+    optional int32 LookCountSys = 14;
+    //实际点赞
+    optional int32 ThumbsUpCount = 15;
+    //后台配置点赞
+    optional int32 ThumbsUpCountSys = 16;
+    //游戏标签ID
+    optional int64 AppLabelID = 17;
+    //游戏标签名称
+    optional string AppLabelName = 18;
+    //发布时间
+    optional int64 BeginEffectiveTime = 21; //当EffectiveType = 2 的时候生效
+    //发布类型
+    optional int64 EffectiveType = 22; // 1立刻有效 2 定时有效
+    //视频类型
+    optional int64 VideoType = 23;     // 1视频 2 直播（放映厅）
+    //推荐
+    optional int32 IsRecommend = 24;   //1推荐 0未推荐
+    //热门
+    optional int32 IsHot = 25;         //1热门 0不是热门
+
+    //菜单ID
+    optional int32 MenuId = 27;
+    //评论数量
+    optional int32 CommentCount=28;
+    //其他数据ID，不做存储，关注或查询历史观看时使用的主键
+    optional int64 DataId = 29;
+    //系统自定义标签 一对多关系
+    repeated int64 LabelIds = 30;
+    //备注字段
+    optional string Note=31;
+    //公告
+    optional string Content = 32;
+    //观看者是否点赞 不做存储 1已点赞 0未点赞
+    optional int32 IsThumbsUp=33;
+    //关注人数
+    optional int64 FlowCount=34; 
+    //后台配置关注人数
+    optional int64 FlowCountSys = 39;
+    //比赛名称
+    optional string MatchName=35[(gogoproto.jsontag) = "-"];
+    //粉丝人数，不做存储
+    optional int32 FanCount=36;
+    //用户图标url
+    optional string PlayerIconUrl = 37;
+    //关联比赛表ID
+    optional int64 UniqueGameId = 26; //没有的话，就是0
+    //关联比赛表标题
+    optional string UniqueGameName = 38;
+    //作者playerId对应用户类型
+    optional int32 AuthorPlayerType = 40;
+    optional string Operator = 41;                                         // 后台操作人
+    //是否关注 1已关注 2未关注
+    optional int32 IsFollow = 42[(gogoproto.jsontag) = "-"];
+    //是否关注作者 1已关注 2未关注
+    optional int32 IsAuthorFollow = 43[(gogoproto.jsontag) = "-"];
+    //作者昵称
+    optional string AuthorNickName = 44[(gogoproto.jsontag) = "-"];
+    //比赛场次信息与队伍信息 当VideoType = 2  UniqueGameId >0 并且有关联比赛时生效
+    optional UniqueGameInfo UniqueGameInfo = 45;
+}
+
+//关注或者历史使用的结构
+message TableESPortsFlowInfo {
+    //唯一ID
+    optional string Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //玩家ID
+    optional int64 PlayerId = 2;
+    //数据ID
+    optional int64 DataId = 3;
+    optional int64 CreateTime = 4; //展示在前端的时间
+}
+
+//系统消息
+message TableESPortsSysMsg {
+    //唯一ID
+    optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+   //接收者类型 0 全体，1 IOS,2 Android
+    optional int64 RecipientType = 2;
+    //数据ID
+    optional string Title = 3;
+    //数据ID
+    optional string Content = 4;
+     //状态，0-未推送,1-已推送，2-已过期
+    optional int32 Status = 5;
+    //创建时间
+    optional int64 CreateTime = 7;
+    //跳转信息
+    optional ESPortsJumpInfo JumpInfo = 8;
+    //发布时间 前端显示时间
+    optional int64 EffectiveTime = 9; 
+    //发送类型
+    optional int64 EffectiveType = 10; // 1立刻有效 2 定时有效
+    //推送消息(极光推送)
+    optional bool IsPush = 11;
+    //消息中心
+    optional bool IsMessageCenter= 12;
+    //icon 推送的图标
+    optional string Icon=13;
+    //失效時間  0 代表 永久有效 單位秒
+    optional int64 FailureTime =14;
+}
+
+//竞猜投注表
+message TableESPortsGuessBetRecord {
+    //唯一ID(从redis取得)
+    required int64 OrderId = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //比赛列表中唯一的id(app_label_id,game_id,api_origin的组合)
+    optional int64 UniqueGameId = 2;
+    //动态盘口表中的唯一的id
+    optional int64 UniqueGameGuessId = 3;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional int32 AppLabelId = 4;
+    //对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+    optional string AppLabelName = 5;
+    //api接口来源 90001:野子科技
+    optional int32 ApiOrigin = 6;
+    //api接口来源名称 90001:野子科技
+    optional string ApiOriginName = 7;
+    //api的比赛id
+    optional string GameId = 8;
+    //1:早盘,2:滚盘(app内部区分用)
+    optional int32 MornRollGuessFlag = 9;
+    //投注用户信息
+    optional GuessBetPlayerInfo PlayInfo = 10;
+    //用户投注的比赛信息
+    optional GuessBetGameInfo GameInfo = 11;
+    //竞猜内容 id
+	optional string BetId = 12;
+	//竞猜内容(竞猜目标)
+    optional string BetTitle = 13;
+    //竞猜项 id(在同一个来源同一个比赛中可以确定唯一的投注项)
+    optional string BetNum = 14;
+    //竞猜项名称(存储计算过的页面上传过来)
+	optional string BetName = 15;
+	//实时赔率
+	optional string Odds = 16;
+	//用户投注金额
+    optional int64 BetAmount =17;
+    //用户成功金额(舍弃小数后保存的数据)
+    optional int64 SuccessAmount =18;
+    //用户失败金额
+    optional int64 FailAmount =19;
+    //用户无效返回金额
+    optional int64 DisableAmount =20;
+    //用户违规扣除金额
+    optional int64 IllegalAmount =21;
+    //用户无效违规理由
+    optional string Reason =22;
+    //理由详细描述
+    optional string ReasonDetail =23;
+    //投注状态 1进行中(待结算)、2完成(成功、失败)、3无效(返还)、4违规(扣除)
+    optional string BetStatus =24;
+    //投注结果 1待结算、2成功、3失败、4返还、5扣除
+    optional string BetResult =25;
+    //创建时间(投注时间精确到秒)
+    optional int64 CreateTime = 26;
+    //更新时间
+    optional int64 UpdateTime = 27;
+}
+
+message GuessBetPlayerInfo {
+    //用户柠檬账户中的id
+    optional int64 PlayId = 1;
+    //用户柠檬闲聊号
+    optional string Account = 2;
+    //用户手机号
+    optional string Phone = 3;
+    //昵称
+    optional string NickName=4;
+ }
+
+message GuessBetGameInfo {
+    //比赛名称(比赛表中赛事名+"-"+赛事阶段+"BO"+赛制)
+    optional string	gameName = 1;
+    //a队名字
+    optional string TeamAName  = 2;
+    //B队名字
+    optional string TeamBName  = 3;
+}
+
+//注单统计报表
+message BetSlipReport{
+	optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];				//比赛id 玩家id
+	optional string Account = 2;       	//用户柠檬闲聊号
+    optional GuessBetGameInfo GameInfo = 3;		//比赛名称(赛事名+赛事阶段名+赛事阶段id)
+    optional int64 AppLabelID = 4;      //游戏标签ID
+	optional string AppLabelName = 5;  	//对应本项目的标签id 10001:王者荣耀,10002:dota2,10003:英雄联盟,10004:CSGO
+	optional int64 Players = 6;			//玩家数
+    optional int64 BetSlips=7;			//注单数
+    optional int64 CreateTime=8;        //时间
+	optional int64 BetAmount =10;       //投注金额
+    optional int64 SuccessAmount =11;   //成功金额(舍弃小数后保存的数据)
+    optional int64 FailAmount =12;      //失败金额
+    optional int64 DisableAmount =13;   //无效返回金额
+	optional int64 IllegalAmount =14;   //违规扣除金额
+	optional int64 SumAmount = 15;		//总盈利金额
+}
+
+//消息中心的竞猜数据
+message TableESPortsGameOrderSysMsg{
+    //投注表订单号
+    required int64 OrderId = 1[(gogoproto.jsontag) = "_id,omitempty"];
+    //比赛列表中唯一的id(app_label_id,game_id,api_origin的组合)
+    optional int64 UniqueGameId = 2;
+    //投注表中的创建时间即投注时间
+    optional int64 BetTime = 3;
+	//实时赔率
+	optional string Odds = 4;
+   //投注结果 1待结算、2成功、3失败、4无效、5违规
+    optional string BetResult =6;
+    //竞猜内容(竞猜目标)
+    optional string BetTitle = 7;
+    //竞猜项 id(在同一个来源同一个比赛中可以确定唯一的投注项)
+    optional string BetNum = 8;
+	//竞猜项名称(存储计算过的页面上传过来)
+	optional string BetName = 9;
+	//游戏名称
+	optional string GameName = 10;
+    //创建时间(投注时间精确到秒)
+    optional int64 CreateTime = 11;
+    //更新时间
+    optional int64 UpdateTime = 12;
+   //用户失败金额
+    optional int64 ResultAmount =13;
+   //玩家ID
+    optional int64 PlayerId = 14;
+    //用户投注金额
+    optional int64 BetAmount =15;
+
+}
+
+
+message TableESPortsLiveRoomMsgLog{
+     //唯一ID
+     optional int64 Id = 1[(gogoproto.jsontag) = "_id,omitempty"];
+     //发送者用户ID
+     optional int64 SenderPlayerId = 2;
+     //发送者名称
+     optional string NickName = 3;
+     //正文
+     optional string Content = 4;
+     //发送者头像
+     optional string HeadIcon = 5;
+     //放映厅直播Id
+     optional int64 LiveId = 6;
+     //数据类型 1 发言 2进入直播间
+     optional int32 DataType = 7;
+     //发送时间
+     optional int64 CreateTime = 8;
+}
+
+//风控用户当日投注额度记录表
+message TableESPortsBetRiskOneDay{
+     //用户ID
+     optional int64 PlayerId = 1;
+     //日期YYYYmmDD
+     optional string DateStr = 2;
+     //当日投注总额
+     optional int64 AmountDay = 3;
+     //创建时间
+     optional int64 CreateTime = 4;
+     //更新时间
+     optional int64 UpdateTime = 5;
+}
+
+//风控平台当日投注额度记录表
+message TableESPortsBetRiskPlatFormDaySum{
+     //日期YYYYmmDD
+     optional string DateStr = 1;
+     //平台当日投注总额
+     optional int64 AmountDaySum = 2;
+     //创建时间
+     optional int64 CreateTime = 3;
+     //更新时间
+     optional int64 UpdateTime = 4;
+}
+
+//电竞币兑换配置
+message TableESportsExchangeCfg{
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];     //电竞币额度
+    optional int64 Coin=2;          //硬币额度
+    optional int64 DailyGive=3;     //日常赠送额度
+    optional int64 FirstGive=4;     //首充赠送额度
+    repeated ExchangeRate Rate=5;   //活动赠送概率
+}
+
+message ExchangeRate{
+    //左边赠送的额度百分比
+    optional int32 Ratio=1;
+    //赠送的概率
+    optional int32 odds=2;
+}
+
+//充值活动赠送白名单
+message TableESportsGiveWhiteList{
+    optional int64 PlayerId=1[(gogoproto.jsontag) = "_id,omitempty"];
+    optional string NickName=2[(gogoproto.jsontag) = "-"];
+    optional string Account=3[(gogoproto.jsontag) = "-"];
+    optional string Note=4;
+}
+
+//电话竞币兑换首冲记录表
+message TableESPortsExChangeFirst{
+     //用户ID
+     optional int64 PlayerId = 1[(gogoproto.jsontag) = "_id,omitempty"];
+     //创建时间
+     optional int64 CreateTime = 2;
+     //更新时间
+     optional int64 UpdateTime = 3;
+}
+
+//=======================近6场关于比赛的历史数据↓定义开始===============================
+message RecentData {
+    //scoregg的比赛id
+    optional int64 Id=1[(gogoproto.jsontag) = "_id,omitempty"];
+    //队伍表现
+    optional TournamentBiaoxian tournament_biaoxian=3;
+    //指数相关
+    optional StrengthIndex strength_index=4;
+    //对位比赛数据
+    repeated MatchData match_data=5;
+    //比赛记录
+    optional MatchRecord match_record=6;
+    //a比赛记录
+    optional MatchRecord match_record_a=7;
+    //b比赛记录
+    optional MatchRecord match_record_b=8;
+}
+
+//两支队伍表现
+message TournamentBiaoxian{
+    //A队伍表现
+    optional TeamBX team_a=1;
+    //B队伍表现
+    optional TeamBX team_b=2;
+}
+//=队伍表现
+message TeamBX{
+    //队伍ID
+    optional string teamID=1;
+    //KDA
+    optional string KDA=2;
+    //场均击杀
+    optional string AVERAGE_KILLS=3;
+    //场均支援
+    optional string AVERAGE_ASSISTS=4;
+    //场均死亡
+    optional string AVERAGE_DEATHS=5;
+    //分均补刀
+    optional string MINUTE_HITS=6;
+    //分均经济
+    optional string MINUTE_ECONOMIC=7;
+    //分均输出
+    optional string MINUTE_DAMAGEDEALT=8;
+    //小龙控制率
+    optional double SMALLDRAGON_RATE=9;
+    //大龙控制率
+    optional double BIGDRAGON_RATE=10;
+    //胜率
+    optional double VICTORY_RATE=11;
+    //胜利场数
+    optional int32 VICTORY_COUNT=12;
+    //失败场数
+    optional int32 FAIl_COUNT=13;
+    //持续胜场
+    optional int32 continuity_count=14;
+}
+
+//指数
+message StrengthIndex{
+    //胜场交手（近6场）
+    optional string hand_win_team_a=1;
+    optional string hand_win_team_b=2;
+    //输场交手（近6场）
+    optional string hand_lose_team_a=3;
+    optional string hand_lose_team_b=4;
+    //胜场战绩（近6场）
+    optional string record_win_team_a=5;
+    optional string record_win_team_b=6;
+    //输场战绩（近6场）
+    optional string record_lose_team_a=7;
+    optional string record_lose_team_b=8;
+    //场均击杀（近6场）
+    optional string average_kills_team_a=9;
+    optional string average_kills_team_b=10;
+    //场均拆塔（近6场）
+    optional string average_tower_team_a=11;
+    optional string average_tower_team_b=12;
+    //场均经济（近6场）
+    optional string average_money_team_a=13;
+    optional string average_money_team_b=14;
+    //预测胜率
+    optional string score_team_a=15;
+    optional string score_team_b=16;
+    //胜率
+    optional string victory_rate_a=17;
+    optional string victory_rate_b=18;
+    //场均时长（近6场）
+    optional string average_time_a=19;
+    optional string average_time_b=20;
+    //场均支援（近6场）
+    optional string average_assists_team_a=21;
+    optional string average_assists_team_b=22;
+    //场均死亡（近6场）
+    optional string average_deaths_team_a=23;
+    optional string average_deaths_team_b=24;
+    //KDA数据（近6场）
+    optional string average_kda_team_a=25;
+    optional string average_kda_team_b=26;
+    //一血率
+    optional string firstBloodKill_team_a=27;
+    optional string firstBloodKill_team_b=28;
+    //分均伤害
+    optional string minute_damage_team_a=29;
+    optional string minute_damage_team_b=30;
+    //一塔率
+    optional string firstTowerKill_team_a=31;
+    optional string firstTowerKill_team_b=32;
+    //场均经济差
+    optional string average_money_diff_team_a=33;
+    optional string average_money_diff_team_b=34;
+    //分均经济
+    optional string minute_money_team_a=35;
+    optional string minute_money_team_b=36;
+    //分均补刀
+    optional string minute_hits_team_a=37;
+    optional string minute_hits_team_b=38;
+    //场均小龙
+    optional string average_dragon_team_a=39;
+    optional string average_dragon_team_b=40;
+    //场均大龙
+    optional string average_baron_team_a=41;
+    optional string average_baron_team_b=42;
+    //小龙控制率
+    optional string rate_dragon_team_a=43;
+    optional string rate_dragon_team_b=44;
+    //大龙控制率
+    optional string rate_baron_team_a=45;
+    optional string rate_baron_team_b=46;
+    //分均插眼
+    optional string minute_wardsPlaced_team_a=47;
+    optional string minute_wardsPlaced_team_b=48;
+    //分均排眼
+    optional string minute_wardsKilled_team_a=49;
+    optional string minute_wardsKilled_team_b=50;
+    //场均被推塔
+    optional string average_be_turretKills_team_a=51;
+    optional string average_be_turretKills_team_b=52;
+    //满局率
+    optional string rate_full_bureau_team_a=53;
+    optional string rate_full_bureau_team_b=54;
+    optional string total_dragon_team_a=55;
+    optional string total_dragon_team_b=56;
+    optional string total_baron_team_a=57;
+    optional string total_baron_team_b=58;
+}
+
+//对位比赛数据
+message MatchData{
+    //选手ID
+    optional string playerID=1;
+    //选手名字
+    optional string nickname=2;
+    //位置ID(1:ADC 2:中单 3:上单 4:打野 5:辅助)
+    optional string positionID=3;
+    //所属队伍ID
+    optional string teamID=4;
+    //选手头像
+    optional string player_image_thumb=5;
+    //位置名称
+    optional string position_name=6;
+    //国家ID
+    optional string country_id=7;
+    //国旗
+    optional string country_image=8;
+    //队伍名称缩写
+    optional string team_short_name=9;
+    //队伍图标
+    optional string team_image_thumb=10;
+    //选手名称
+    optional string player_chinese_name=11;
+    optional string total=12;
+    //伤害转化率
+    optional string DamageDealPercent=13;
+    //参团率
+    optional string TeamPercent=14;
+    //分均输出
+    optional double MINUTE_DAMAGEDEALT=15;
+    //场均击杀
+    optional string AVERAGE_KILLS=16;
+    //场均支援
+    optional string AVERAGE_ASSISTS=17;
+    //场均死亡
+    optional string AVERAGE_DEATHS=18;
+    //KDA
+    optional string KDA=19;
+    //分均经济
+    optional double MINUTE_ECONOMIC=20;
+    //分均队伍插眼数
+    optional string MINUTE_WARDSPLACED=21;
+    //场均补兵数
+    optional string AVERAGE_MinionsKilled=22;
+    //场均
+    optional string AVERAGE_Life=23;
+    //承伤
+    optional double totalDamageTaken=24;
+    //击杀野怪数
+    optional string neutralMinionsKilled=25;
+    //队伍插眼数
+    optional string wardsPlaced=26;
+    //队伍排眼数
+    optional string wardsKilled=27;
+    optional string statusID=28;
+    //胜利场数
+    optional int32 win_count=29;
+    //失败场数
+    optional int32 lose_count=30;
+    //最后上场时间
+    optional string last_match_time=31;
+    //最近6场胜负
+    repeated string win_lose=32;
+    //胜率
+    optional string VICTORY_RATE=33;
+    //所属队伍
+    optional string team_type=34;
+    //击杀野怪率
+    optional string neutralMinionsKilled_rate=35;
+    //英雄输赢记录
+    repeated HeroWinLose hero_win_lose=36;
+
+}
+//=英雄输赢
+message HeroWinLose{
+    //英雄ID
+    optional string heroID=1;
+    //英雄图标
+    optional string hero_image=2;
+    //胜利场数
+    optional int32 win=3;
+    //失败场数
+    optional int32 lose=4;
+}
+
+//比赛记录
+message MatchRecord{
+    //队伍a胜场数
+    optional int32 team_a_win_count=1;
+    //队伍b胜场数
+    optional int32 team_b_win_count=2;
+    repeated MatchRecordList list=3;
+}
+//=MatchRecordList
+message MatchRecordList{
+    //获胜队伍ID
+    optional string win_team_id=1;
+    //获胜队伍名称
+    optional string win_team_name=2;
+    //开场时间
+    optional string start_time=3;
+    //比赛ID
+    optional string matchID=4;
+    //比赛标题全称
+    optional string title=5;
+    //队伍a的ID
+    optional string teamID_a=6;
+    //队伍b的ID
+    optional string teamID_b=7;
+    //队伍a图标
+    optional string team_a_image=8;
+    //队伍b图标
+    optional string team_b_image=9;
+    //队伍a名称缩写
+    optional string team_a_short_name=10;
+    //队伍b名称缩写
+    optional string team_b_short_name=11;
+    //队伍a胜场
+    optional string team_a_win=12;
+    //队伍b胜场
+    optional string team_b_win=13;
+    //详情
+    repeated MatchRecordResultList result_list=14;
+}
+//==MatchRecordResultList
+message MatchRecordResultList{
+    //场次ID
+    optional string resultID=1;
+    //获胜队伍ID
+    optional string win_teamID=2;
+    //队伍名称
+    optional string team_name=3;
+    //队伍名称缩写
+    optional string team_short_name=4;
+    //队伍图标
+    optional string team_image=5;
+    //比赛轮数
+    optional string bo=6;
+}
+//=========================近6场数据↑定义结束=============================

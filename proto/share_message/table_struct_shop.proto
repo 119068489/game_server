@@ -1,0 +1,236 @@
+// 如果仅用于通讯的 message,别放在这里
+package share_message;
+import "ShopCommon.proto";
+import "ggotag.proto";
+//商品表
+message TableShopItem{
+    required int64 item_id = 1[(gogoproto.jsontag) = "_id,omitempty"];         // 商品唯一ID
+    optional int32 price = 2;           // 价格
+    optional int32 origin_price = 3;     // 原始价格(商城3.0页面去掉项目,数据结构保留)
+    repeated ItemFile item_files = 4;      // 文件url(包括图片和视频)
+    optional string title = 5;          // 商品正文描述
+    optional int64 player_id = 7;        // 玩家ID
+    optional string nickname = 8;        // 昵称
+    optional string avatar = 9;          // 头像
+    optional string user_name = 10;      //发货人姓名
+    optional string phone = 11;          //发货人手机号
+    optional string address = 12;        // 发货人地区
+    optional string detail_address = 13;  // 发货人详细地址
+    optional int32 state = 14;          // 0 上架 1下架 2删除 3审核中 4审核失败
+    optional ShopItemType type = 15;    // 商品标签
+    optional int64 create_time = 16;    // 创建时间或发布时间
+    optional int32 stock_count = 17;     // 库存数量
+    optional int32 lock_count = 18;      // 锁定数量
+    optional bool IsRecommend=19;		//是否推荐
+    optional string player_account=20;  //玩家柠檬号
+    optional int64 sold_out_time=21;  //下架时间
+    optional string name=22;           //商品名称(商城3.0页面增加项目即商品标题)
+    optional int32 sex=23;				        //性别
+    optional int32 real_payCnt=24;		//该商品的真实付款数(为了减少查询,做数据冗余,也可以从订单表查询)
+    optional int32 fake_payCnt=25;		//该商品的假的付款数(支持后台数据修改,该值为0时，显示真实付款数)
+    optional int32 real_pageViews=26;		   //真实浏览量
+    optional int32 fake_pageViews=27;		   //假的浏览量(支持后台数据修改,该值为0时，显示真实浏览量)
+    optional int32 real_goodCommCnt=28; //该商品的真实好评数(为了减少查询,做数据冗余,也可以从订单表查询)
+    optional int32 real_finCommCnt=29; //该商品的真实已经完成的评价数(为了减少查询,做数据冗余,也可以从订单表查询)
+    optional int32 fake_goodCommCnt=30; //该商品的假的好评数(支持后台数据修改,该值和fake_finCommCnt一起用,其中有一个为0,好评率就用真实的去算)
+    optional int32 fake_finCommCnt=31; //该商品的假的已经完成的评价数(支持后台数据修改)
+    optional int32 fake_fixGoodComm_rate=32; //该商品的固定的好评率(支持后台数据修改,如果有值，就显示该值且固定,优先级最高)
+    optional int32 real_commentCnt=33; //该商品的所有留言和评价数的总和(冗余记录,排序时候用)
+    optional int32 real_storeCnt=34; //该商品的收藏数总和(冗余记录,排序时候用)
+    optional int32 real_finOrderCnt=35; //该商品的真实订单完成数(即该商品在平台的交易数)(冗余记录,排序时候用)
+    optional string point_card_name=36; //点卡名称
+}
+// 商店订单物品结构体
+message ShopOrderItem{
+    optional int64 item_id = 1;         // 商品唯一ID
+    optional string name = 2;           // 商品名字
+    optional int32 origin_price = 3;           // 原价格(已经弃用)
+    optional int32 price = 4;           // 价格
+    optional ItemFile item_file = 5;      // 文件url(包括图片和视频)
+    optional int32 count = 6;           // 数量
+    optional string title = 7;           // 商品正文描述
+    optional string point_card_name = 8;     // 点卡名称
+    optional string copy_name = 9;     // 备份商品名称(点卡的时候为了客户端不改代码,会把商品名称覆盖掉,该字段备用)
+    repeated ShopPointCardInfo pointCardInfos = 10;         // 点卡信息(可以有多个,存放卡号密码以及解密key)
+    optional int32 item_type = 11;           // 商品分类
+}
+
+// 商店订单表
+message TableShopOrder{
+    required int64 order_id = 1[(gogoproto.jsontag) = "_id,omitempty"];                // 订单唯一ID
+    optional int64 sponsor_id = 2;              // 卖家ID
+    optional int32 sponsor_sex=3;				//卖家性别
+    optional string sponsor_nickname = 4;       // 卖家昵称
+    optional string sponsor_avatar = 5;         //卖家头像
+    optional int64 receiver_id = 6;             // 买家ID
+    optional int32 receiver_sex=7;				//买家性别
+    optional string receiver_nickname=8;		//买家昵称
+    optional string receiver_avatar=9;		    //买家头像
+    optional ShopOrderItem items = 10;           // 订单物品
+    optional int32 state = 11;                    // 订单状态  0待付款 1超时 2取消 3待发货 4待收货 5已完成 6评价 7后台取消
+    optional int32 delay_receive = 12;           // 延长发货 0未延长 1已延长
+    optional int32 delete_buy = 13;             // 买家删除 0未删除 1删除
+    optional int32 delete_sell = 14;           // 卖家删除  0未删除 1删除
+    optional DeliverAddress deliverAddress = 15;   //发货地址信息
+    optional ReceiveAddress receiveAddress = 16;   //收货地址信息
+    optional int32 receiver_addEditCnt = 17;     // 修改收货地址的次数
+    optional string express_code = 18;           // 快递单号
+    optional string express_com = 19;           // 快递公司代码
+    optional string sponsor_account=20;				//卖家柠檬号
+	optional string receiver_account=21;				//买家柠檬号
+	optional int64 create_time = 22;              // 创建订单时间  这个时间一旦生成不能改变,超时取消要用于判断
+    optional int64 pay_time = 23;              // 付款时间
+    optional int64 send_time = 24;              // 发货时间
+    optional int64 receive_time = 25;             // 收货时间(该值发货就会加七天,自动收货用于判断和手动收货，延长收货用，没有实际意义)
+    optional int64 finish_time = 26;             // 成交时间(即真正的收货时间,最终和收货时间一致,该值便于页面判断用即成交时间)
+    optional string remark = 27;                  // 备注
+    optional string cancel_reason = 28;            // 取消原因
+    optional string express_name = 29;           // 快递公司名字
+    optional bool receiver_notify_flag = 30;           //买家订单中心红点flag  false已阅读或者订单未发生状态改变   true未阅读或者订单状态改变
+    optional bool sponsor_notify_flag = 31;           //卖家订单中心红点flag  false已阅读或者订单未发生状态改变   true未阅读或者订单状态改变
+    optional int64 update_time = 32;           //订单生成的时候和订单状态改变的时候,用于排序
+    optional string h5_search_con = 33;           //h5下单时候输入的手机号或者邮箱(目前可能只有邮箱)
+}
+
+// 订单物流信息缓存表(单独设计一个表便于管理)
+message TableShopCacheExpress{
+    required int64 order_id = 1[(gogoproto.jsontag) = "_id,omitempty"];                // 订单唯一ID
+    repeated QueryExpressBody express_list = 2;                // 物流信息列表
+    optional int64 create_time = 3;           // 缓存生成的时间
+}
+//收货地址
+message TableReceiveAddress{
+    required int64 address_id = 1[(gogoproto.jsontag) = "_id,omitempty"];               // 地址ID
+    required int64 player_id = 2;              // 玩家ID
+    required string name = 3;                   // 名字
+    required string phone = 4;                  // 手机号
+    required string region = 5;                 // 地区
+    required string detail_address = 6;         // 详细地址
+    optional int32 default_flag=7;				//默认地址标识 0不默认 1默认
+    optional int64 create_time = 8;    // 创建时间
+}
+//发货地址
+message TableDeliverAddress{
+    required int64 address_id = 1[(gogoproto.jsontag) = "_id,omitempty"];               // 地址ID
+    required int64 player_id = 2;              // 玩家ID
+    required string name = 3;                   // 名字
+    required string phone = 4;                  // 手机号
+    required string region = 5;                 // 地区
+    required string detail_address = 6;         // 详细地址
+    optional int32 default_flag=7;				//默认地址标识 0不默认 1默认
+    optional int64 create_time = 8;    // 创建时间
+}
+//批量订单
+message TableBill{
+    required int64 order_id = 1[(gogoproto.jsontag) = "_id,omitempty"];                // 订单唯一ID
+    repeated int64 order_list = 2;              // 订单列表
+    required int32 state = 3;                   // 0未付款 3已付款
+    required int32 price = 4;                   // 价格
+}
+
+//用户购物车
+message TablePlayerCart{
+    required int64 player_id = 1;        // 玩家唯一ID
+    required int64 item_id = 2;         // 商品唯一ID
+    required string title = 3;          // 商品正文描述
+    required int32 price = 4;           // 价格
+    required ItemFile item_file = 5;      // 文件url(包括图片和视频)
+    required int32 add_count = 6;     // 同一个商品加购的数量
+    required int64 create_time = 7;    // 创建时间
+    optional int32 origin_price = 8;   // 原来的价格
+    optional string  name = 9;          // 商品名称
+    optional int64  seller_playerId = 10;    // 卖家的唯一ID
+    optional string  seller_nickName = 11;    // 卖家的昵称
+}
+
+//用户收藏
+message TableShopPlayerStore{
+    required int64 player_id = 1;        // 玩家唯一ID
+    required int64 item_id = 2;         // 商品唯一ID
+    optional string  name = 3;          // 商品名称
+    optional string title = 4;          // 商品正文描述
+    optional int32 price = 5;           // 价格
+    optional ItemFile item_file = 6;      // 文件url(包括图片和视频)
+    optional int64 create_time = 7;    // 创建时间
+    optional int64  seller_playerId = 8;    // 卖家的唯一ID
+    optional int32  store_type = 9;    // 0 默认普通商品收藏
+}
+
+//用户留言
+message TableItemComment{
+    required int64 comment_id = 1[(gogoproto.jsontag) = "_id,omitempty"];         // 评论评价唯一ID
+    required int64 item_id = 2;         // 商品唯一ID
+    required int64 player_id = 3;        // 玩家唯一ID
+    required string nickname = 4;        // 昵称
+    required string avatar = 5;          // 头像
+    required string content = 6;            // 内容
+    required int64 create_time = 7;    // 创建时间
+    optional int32 sex=8;				        //性别
+    optional int32 star_level=9;		//星级 0 普通留言 1差评 2中评 3好评
+    optional int32 real_like_count =10;		//真实点赞数
+    optional int32 fake_like_count =11;		//假的点赞数(支持后台修改,该值为0，则显示真实点赞数)
+    optional string reContent=12;	//回复内容(备用)
+    optional int32 status=13;		//状态0未回复，1已回复(备用),2删除
+    optional int64 reTime=14;		//回复时间(备用)
+}
+
+//用户点赞记录表
+message TableLikeRecord{
+    required int64 comment_id = 1;       // 评论评价唯一ID
+    required int64 player_id = 2;        // 玩家唯一ID
+    optional bool like_flag = 3;        // false未点赞,true点赞
+    optional int64 create_time = 4;    // 创建时间
+    optional int64 item_id = 5;         // 商品唯一ID(备用，如果商品是删除或者下架的，可以批处理删除点赞)
+}
+
+//用户消息买家卖家提示
+message TableShopMessage{
+    required int64 message_id = 1[(gogoproto.jsontag) = "_id,omitempty"];   //消息ID
+    optional int32 user_type = 2;               // 0买家 1卖家
+    optional int64 sponsor_player_id = 3;       // 卖家ID
+    optional string sponsor_nickname = 4;               // 卖家昵称
+    optional string sponsor_avatar = 5;                 // 卖家头像
+    optional int32 sponsor_sex=6;				        //卖家性别
+    optional int64 receiver_player_id = 7;      // 买家ID
+    optional string receiver_nickname = 8;               // 买家昵称
+    optional string receiver_avatar = 9;                 // 买家头像
+    optional int32 receiver_sex=10;				        //买家性别
+    optional ItemFile file = 11;                 // 资源
+    optional string item_name=12;				//商品名称
+    optional string item_title=13;				//商品正文描述
+    optional string content = 14;                // 内容
+    optional int64 create_time = 15;             // 时间
+    optional int64 order_id = 16;                // 订单唯一ID
+    optional bool view_flag = 17;                // 是否阅读 false未阅读  true已阅读
+    optional string copy_name = 18;     // 备份商品名称(点卡的时候为了客户端不改代码,会把商品名称覆盖掉,该字段备用)
+}
+//阿里验证失败信息(只记录上架商品的审核;留言,评价不记录,目前记录在日志中)
+message TableShopAliAuditFail{
+    required int64 item_id = 1;                 // 商品
+    required string origin = 2;                 // 1:发布商品,2:留言,3:评价(留言,评价用作备用)
+    required string type = 3;                   // 1:文本,2:图片,3:视频
+    required string error_code = 4;             // 错误码
+    required string content = 5;                // 错误内容
+    required int64 create_time = 6;             // 时间
+}
+
+//发布商品商城认证表
+message TableShopPlayer{
+    required int64 player_id = 1[(gogoproto.jsontag) = "_id,omitempty"];   //用户id
+    optional int32 upload_auth_flag = 2;    // 发布商品认证flag 0未认证 1已认证
+    required int64 create_time = 3;         // 时间
+    optional int32 fakePlay_finOrderCnt=4; //该用户的假的订单完成数(即用户在平台的交易数)(支持后台数据修改,该值为0时，显示该用户真实订单完成数)
+}
+
+//商城点卡表
+message TableShopPointCard{
+    required int64 card_id = 1[(gogoproto.jsontag) = "_id,omitempty"];   //id
+    required string card_name = 2;    // 点卡名称
+    required string card_no = 3;    // 点卡号
+    required string card_password = 4;    // 点卡密码
+    required string seller_account = 5;    // 卖家柠檬号
+    required int32 card_status = 6;    // 点卡状态 1待售 2已售
+    optional int64 order_no = 7;    // 对应的订单号
+    required int64 create_time = 8;             // 创建时间
+    optional string key = 9;             // 卡密的key(每个卡不一样)
+}

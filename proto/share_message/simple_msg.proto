@@ -1,0 +1,30 @@
+package share_message; //
+
+
+// 
+message String {
+	optional string Value = 1; // 
+}
+
+message Bool {
+	optional bool Value = 1; // 
+}
+
+message Int32 {
+	optional int32 Value = 1; // 
+}
+
+message Int64 {
+	optional int64 Value = 1; // 
+}
+
+message Float {
+	optional float Value = 1; // 
+}
+
+message Double {
+	optional double Value = 1; // 
+}
+message Int32List {
+	repeated int32 Values = 1;
+}

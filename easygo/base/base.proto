@@ -1,0 +1,58 @@
+package base;
+
+message NoReturn {
+};
+
+message Empty {
+};
+
+enum PacketType {
+	TYPE_REQUEST = 0;
+	TYPE_RESPONSE = 1;
+};
+
+enum ResponseType {
+	TYPE_SUCCESS = 0;
+	TYPE_FAIL = 1;
+};
+
+
+message Fail {
+	optional string Reason = 1; // 失败原因
+	optional string Code = 2; // 失败代码
+};
+//公共参数
+message Common{
+    optional string Version=1;      //请求版本
+    optional int64 UserId= 2;     //用户id
+    optional string Token = 3;      //token串
+    optional int32 flag = 4;
+	optional int32 ServerType = 5; //消息指定到服务器:1登陆服,2大厅,3后台,4商城,5统计服,6社交广场.
+	optional string Ip=6;      // 请求ip
+}
+message Request {
+	optional uint64 RequestId = 1; // 请求 id
+	optional string MethodName = 2; // 请求的方法名
+	optional bytes Serialized = 3; // 序列化后的请求消息
+
+	optional int64 Timestamp = 4; // 发起请求的时间戳,毫秒
+	optional fixed32 Timeout = 5;
+	optional Common Common = 6; // 公共参数.
+	// 超时,若对端在规定时间内没有完成,就不用回复了,发送端会主动结束
+	// 0 表示不会超时
+	// 单位是毫秒
+
+};
+
+message Response {
+	optional uint64 ResponseId = 1; // 响应 id
+	optional ResponseType SubType = 2; // 子类型,成功 或是 失败
+	optional bytes Serialized = 3; // 序列化后的响应消息
+	optional string MsgName = 4;  //内容名称
+};
+
+message Packet {
+	optional PacketType Type = 1; // 消息类型(请求 或 响应)
+	optional bytes Serialized = 2; // 序列化后的请求或响应或失败的消息
+	// optional bytes Checksum = 3; // 校验和,使用 adler32 算法
+};

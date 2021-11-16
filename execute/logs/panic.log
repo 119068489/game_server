@@ -1,0 +1,15 @@
+2020/08/17 11:22:57.090  ================================================
+@@ open config_square.yaml: The system cannot find the file specified.
+F:/golang code/src/game_server/easygo/exception.go:91
+F:/golang code/src/game_server/easygo/exception.go:106
+F:/golang code/src/game_server/easygo/exception.go:127
+F:/golang code/src/game_server/easygo/exception.go:20
+F:/golang code/src/game_server/easygo/yaml_config.go:54
+F:/golang code/src/game_server/easygo/yaml_config.go:48
+F:/golang code/src/game_server/easygo/yaml_config.go:44
+F:/golang code/src/game_server/easygo/yaml_config.go:37
+F:/golang code/src/game_server/easygo/initializer.go:71
+F:/golang code/src/game_server/easygo/initializer.go:46
+F:/golang code/src/game_server/for_game/initializer.go:39
+F:/golang code/src/game_server/square/entry.go:34
+F:/golang code/src/game_server/execute/square/main.go:15
